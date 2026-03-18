@@ -15,3 +15,8 @@ fun EditorScreen() {
 
     }
 }
+
+@Composable
+fun EditorList() {
+
+}
