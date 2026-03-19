@@ -1,12 +1,12 @@
 package com.example.festimob.data.repositories
 
-import com.example.festimob.data.types.Editor
+import com.example.festimob.data.dao.EditorDao
 //import com.example.festimob.data.api.RetrofitInstance
 import com.example.festimob.data.local.LocalDataPlaceholder
 
 class OfflineEditorsRepository {
 
-    fun getLocalEditors() : List<Editor> {
+    fun getLocalEditors() : List<EditorDao> {
         return LocalDataPlaceholder()
     }
 }
