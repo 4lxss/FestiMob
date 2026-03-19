@@ -38,8 +38,8 @@ fun EditorDto.toEditor(): Editor {
             postalCode = this.postalCode ?: ""
         ),
         state = EditorState.fromString(this.state),
-        hasPresence = this.presence,
-        billingType = this.facture,
+        present = this.presence,
+        bill = this.facture,
         imageUrl = this.imageUrl
     )
 }

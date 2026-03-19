@@ -4,19 +4,19 @@ package com.example.festimob.data.models
 data class Editor(
     val id: Int,
     val name: String,
-    val address: Address,
     val state: EditorState,
-    val hasPresence: Boolean,
-    val billingType: String,
+    val present: Boolean,
+    val bill: String,
+    val address: Address?,
     val imageUrl: String?
 )
 
 //address object
 data class Address(
-    val street: String,
-    val city: String,
-    val country: String,
-    val postalCode: String
+    val street: String?,
+    val city: String?,
+    val country: String?,
+    val postalCode: String?
 )
 
 //workflow management

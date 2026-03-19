@@ -3,11 +3,14 @@ package com.example.festimob.data.repositories
 import com.example.festimob.data.dao.EditorDao
 //import com.example.festimob.data.api.RetrofitInstance
 import com.example.festimob.data.local.LocalDataPlaceholder
+import com.example.festimob.data.models.Editor
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOf
 
-class OfflineEditorsRepository {
-
-    fun getLocalEditors() : List<EditorDao> {
-        return LocalDataPlaceholder()
+class OfflineEditorsRepository : EditorsRepository {
+    override fun getEditorsStream(): Flow<List<Editor>> {
+        return flowOf(LocalDataPlaceholder.editorsPlaceholderData)
     }
 }
 
