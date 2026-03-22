@@ -13,8 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.data.UserPreferencesRepository
+import com.example.festimob.data.local.LocalDataPlaceholder
 import com.example.festimob.data.repositories.OfflineEditorsRepository
 import com.example.festimob.ui.editor.EditorScreen
+import com.example.festimob.ui.editor.EditorUiState
 import com.example.festimob.ui.editor.EditorViewModel
 import com.example.festimob.ui.theme.FestiMobTheme
 
@@ -27,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     EditorScreen(
                         modifier = Modifier.padding(innerPadding),
-                        viewModel = viewModel(factory = )
+                        viewModel(factory = EditorViewModel.Factory)
                     )
                 }
             }

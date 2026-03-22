@@ -78,9 +78,8 @@ fun EditorScreen(
     modifier: Modifier = Modifier,
     // Inject the ViewModel using the Factory we defined
     viewModel: EditorViewModel = viewModel(factory = EditorViewModel.Factory),
-    uiState: EditorUiState,
-    selectLayout : (Boolean) -> Unit,
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLinearLayout = uiState.isLinearLayout
     Scaffold(
         topBar = {
@@ -89,7 +88,7 @@ fun EditorScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            selectLayout(!isLinearLayout)
+                            viewModel.selectLayout(!isLinearLayout)
                         }
                     ) {
                         Icon(
