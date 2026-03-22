@@ -1,4 +1,4 @@
-package com.example.festimob.data.remote.dto
+package com.example.festimob.data.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
