@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="padding_medium">4</dimen>
+    <dimen name="padding_medium">4.dp</dimen>
+    <dimen name="padding_small">1.dp</dimen>
 </resources>
