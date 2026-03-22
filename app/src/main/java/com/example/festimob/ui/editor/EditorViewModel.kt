@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+
 data class EditorUiState(
     val editorsList: List<Editor> = emptyList(),
     @StringRes val toggleContentDescription: Int = R.string.grid_layout,
@@ -49,6 +51,16 @@ class EditorViewModel(
             toggleIcon = R.drawable.ic_linear
         )
     )
+
+    /*
+     * [selectLayout] change the layout and icons accordingly and
+     * save the selection in DataStore through [userPreferencesRepository]
+     */
+    fun selectLayout(isLinearLayout: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveLayoutPreference(isLinearLayout)
+        }
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
