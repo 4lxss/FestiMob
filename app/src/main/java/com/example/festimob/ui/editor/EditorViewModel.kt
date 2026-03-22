@@ -13,7 +13,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-data class EditorUiState(val editorsList: List<Editor> = emptyList())
+data class EditorUiState(val editorsList: List<Editor> = emptyList()) {
+    val toggleContentDescription: Int
+    val toggleIcon: Int
+    val isLinearLayout: Any
+}
 
 class EditorViewModel(private val editorsRepository: EditorsRepository) : ViewModel() {
 
