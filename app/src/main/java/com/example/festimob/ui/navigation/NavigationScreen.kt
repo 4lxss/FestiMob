@@ -25,9 +25,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.example.festimob.FestiMobApplication
+import com.example.festimob.ui.editor.EditorScreen
+import com.example.festimob.ui.editor.EditorViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,7 +107,10 @@ fun SmallNavigation() {
                         }
                     }
                     Destination.PAGES -> NavEntry(key) {
-                        FestivalListScreen()
+                        EditorScreen(
+                            modifier = Modifier.padding(innerPadding),
+                            viewModel = viewModel(factory = EditorViewModel.Factory)
+                        )
                     }
                     Destination.ALBUM -> NavEntry(key) {
                         Box(contentAlignment = Alignment.Center) {
