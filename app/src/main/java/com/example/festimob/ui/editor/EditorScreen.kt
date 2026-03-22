@@ -14,13 +14,17 @@ import com.example.festimob.data.models.Editor
 
 @Composable
 fun EditorScreen(
+    modifier: Modifier = Modifier,
     // Inject the ViewModel using the Factory we defined
     viewModel: EditorViewModel = viewModel(factory = EditorViewModel.Factory)
 ) {
     // Collect the UI state safely
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    EditorList(editors = uiState.editorsList)
+    EditorList(
+        modifier = modifier,
+        editors = uiState.editorsList
+    )
 }
 
 @Composable

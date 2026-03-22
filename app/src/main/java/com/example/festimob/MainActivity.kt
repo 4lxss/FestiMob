@@ -11,6 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.festimob.data.repositories.OfflineEditorsRepository
+import com.example.festimob.ui.editor.EditorScreen
+import com.example.festimob.ui.editor.EditorViewModel
 import com.example.festimob.ui.theme.FestiMobTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,9 +23,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             FestiMobTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                    EditorScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        viewModel = EditorViewModel(OfflineEditorsRepository())
                     )
                 }
             }
