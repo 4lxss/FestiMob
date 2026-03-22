@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     EditorScreen(
                         modifier = Modifier.padding(innerPadding),
-                        viewModel = EditorViewModel(OfflineEditorsRepository())
+                        viewModel = EditorViewModel(OfflineEditorsRepository(),)
                     )
                 }
             }
