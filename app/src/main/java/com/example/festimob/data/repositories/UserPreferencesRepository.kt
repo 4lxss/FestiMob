@@ -1,4 +1,4 @@
-package com.example.festimob.data
+package com.example.festimob.data.repositories
 
 import android.content.ContentValues
 import android.util.Log

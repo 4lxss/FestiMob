@@ -5,20 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.festimob.data.UserPreferencesRepository
-import com.example.festimob.data.local.LocalDataPlaceholder
-import com.example.festimob.data.repositories.OfflineEditorsRepository
-import com.example.festimob.ui.editor.EditorScreen
-import com.example.festimob.ui.editor.EditorUiState
-import com.example.festimob.ui.editor.EditorViewModel
 import com.example.festimob.ui.navigation.SmallNavigation
 import com.example.festimob.ui.theme.FestiMobTheme
 
