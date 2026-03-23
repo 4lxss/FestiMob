@@ -37,6 +37,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.festimob.R
 import com.example.festimob.data.local.LocalDataPlaceholder
 import com.example.festimob.data.models.Editor
+import com.example.festimob.ui.theme.AccentTurquoise
+import com.example.festimob.ui.theme.CardTeal
+import com.example.festimob.ui.theme.DarkTealBackground
+import com.example.festimob.ui.theme.TextWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,9 +52,10 @@ fun EditorScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLinearLayout = uiState.isLinearLayout
     Scaffold(
+        containerColor = DarkTealBackground,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.top_bar_name)) },
+                title = { Text(stringResource(R.string.editors_top_bar_name),color = TextWhite) },
                 actions = {
                     IconButton(
                         onClick = {
@@ -60,12 +65,12 @@ fun EditorScreen(
                         Icon(
                             painter = painterResource(uiState.toggleIcon),
                             contentDescription = stringResource(uiState.toggleContentDescription),
-                            tint = MaterialTheme.colorScheme.onBackground
+                            tint = AccentTurquoise
                         )
                     }
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.inversePrimary
+                    containerColor = DarkTealBackground
                 )
             )
         }
@@ -108,13 +113,14 @@ fun EditorListGridLayout(
         ) { editor ->
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = CardTeal
                 ),
-                modifier = Modifier.height(110.dp),
+                modifier = Modifier.height(200.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
                     text = editor.name,
+                    color = TextWhite,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -145,12 +151,13 @@ fun EditorListLinearLayout(
         ) { editor ->
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = CardTeal
                 ),
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
                     text = editor.name,
+                    color = TextWhite,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(dimensionResource(R.dimen.padding_medium)),
