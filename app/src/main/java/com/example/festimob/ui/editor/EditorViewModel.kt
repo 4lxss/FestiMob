@@ -21,8 +21,8 @@ import kotlinx.coroutines.launch
 
 data class EditorUiState(
     val editorsList: List<Editor> = emptyList(),
-    @StringRes val toggleContentDescription: Int = R.string.grid_layout,
-    @DrawableRes val toggleIcon: Int = R.drawable.ic_grid,
+    @param:StringRes val toggleContentDescription: Int = R.string.grid_layout,
+    @param:DrawableRes val toggleIcon: Int = R.drawable.ic_grid,
     val isLinearLayout: Boolean = false
 )
 
