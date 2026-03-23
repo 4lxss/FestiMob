@@ -36,8 +36,13 @@ import androidx.compose.ui.unit.dp
 import com.example.festimob.ui.viewmodels.FestivalListViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.R
+import com.example.festimob.data.api.FestivalDto
 import com.example.festimob.data.local.LocalDessertReleaseData
+import com.example.festimob.ui.viewmodels.ErrorView
+import com.example.festimob.ui.viewmodels.FestivalList
 import com.example.festimob.ui.viewmodels.FestivalListUiState
+import com.example.festimob.ui.viewmodels.LoadingView
+import com.example.festimob.ui.viewmodels.UiState
 
 @Composable
 fun FestivalListScreen(
@@ -46,6 +51,7 @@ fun FestivalListScreen(
     )
 ) {
     FestivalListScreen(
+        festivalListViewModel = festivalListViewModel,
         uiState = festivalListViewModel.uiState.collectAsState().value,
         selectLayout = festivalListViewModel::selectLayout
     )
@@ -54,6 +60,7 @@ fun FestivalListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FestivalListScreen(
+    festivalListViewModel: FestivalListViewModel,
     uiState: FestivalListUiState,
     selectLayout: (Boolean) -> Unit
 ) {
@@ -68,11 +75,14 @@ private fun FestivalListScreen(
                             selectLayout(!isLinearLayout)
                         }
                     ) {
-                        Icon(
-                            painter = painterResource(uiState.toggleIcon),
-                            contentDescription = stringResource(uiState.toggleContentDescription),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
+                        if (festivalListViewModel.state.value is UiState.Success) {
+                            IconButton(onClick = { selectLayout(!isLinearLayout) }) {
+                                Icon(
+                                    painter = painterResource(uiState.toggleIcon),
+                                    contentDescription = stringResource(uiState.toggleContentDescription)
+                                )
+                            }
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
@@ -81,28 +91,39 @@ private fun FestivalListScreen(
             )
         }
     ) { innerPadding ->
-        val modifier = Modifier
-            .padding(
-                top = dimensionResource(R.dimen.padding_medium),
-                start = dimensionResource(R.dimen.padding_medium),
-                end = dimensionResource(R.dimen.padding_medium),
-            )
-        if (isLinearLayout) {
-            FestivalListLinearLayout(
-                modifier = modifier.fillMaxWidth(),
-                contentPadding = innerPadding
-            )
-        } else {
-            FestivalListGridLayout(
-                modifier = modifier,
-                contentPadding = innerPadding,
-            )
+        when (val dataState = festivalListViewModel.state.value) {
+            is UiState.Loading -> {
+                println("TestingA: A")
+                LoadingView()
+            }
+            is UiState.Error -> {
+                println("TestingB: B")
+                    ErrorView(message = dataState.message)
+            }
+            is UiState.Success -> {
+                println("TestingC: C")
+                println("Testing" + dataState.festivals)
+                // Si succès, on utilise le layout choisi par l'utilisateur
+                val modifier = Modifier.padding(innerPadding)
+                if (isLinearLayout) {
+                    FestivalListLinearLayout(
+                        festivals = dataState.festivals, // On passe les vraies données
+                        modifier = modifier.fillMaxWidth()
+                    )
+                } else {
+                    FestivalListGridLayout(
+                        festivals = dataState.festivals, // On passe les vraies données
+                        modifier = modifier
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
 fun FestivalListLinearLayout(
+    festivals: List<FestivalDto>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -112,8 +133,8 @@ fun FestivalListLinearLayout(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
     ) {
         items(
-            items = LocalDessertReleaseData.dessertReleases,
-            key = { festival -> festival }
+            items = festivals,
+            key = { festival -> festival.id_f }
         ) { festival ->
             Card(
                 colors = CardDefaults.cardColors(
@@ -122,7 +143,7 @@ fun FestivalListLinearLayout(
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
-                    text = festival,
+                    text = festival.name,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(dimensionResource(R.dimen.padding_medium)),
@@ -135,6 +156,7 @@ fun FestivalListLinearLayout(
 
 @Composable
 fun FestivalListGridLayout(
+    festivals: List<FestivalDto>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -146,8 +168,8 @@ fun FestivalListGridLayout(
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {
         items(
-            items = LocalDessertReleaseData.dessertReleases,
-            key = { festival -> festival }
+            items = festivals,
+            key = { festival -> festival.id_f }
         ) { festival ->
             Card(
                 colors = CardDefaults.cardColors(
@@ -157,7 +179,7 @@ fun FestivalListGridLayout(
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
-                    text = festival,
+                    text = festival.name,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -171,5 +193,4 @@ fun FestivalListGridLayout(
         }
     }
 }
-
 
