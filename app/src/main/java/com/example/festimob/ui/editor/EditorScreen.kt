@@ -37,40 +37,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.festimob.R
 import com.example.festimob.data.local.LocalDataPlaceholder
 import com.example.festimob.data.models.Editor
-/*
-@Composable
-fun EditorScreen(
-    modifier: Modifier = Modifier,
-    // Inject the ViewModel using the Factory we defined
-    viewModel: EditorViewModel = viewModel(factory = EditorViewModel.Factory)
-) {
-    // Collect the UI state safely
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    EditorList(
-        modifier = modifier,
-        editors = uiState.editorsList,
-        selectLayout = viewModel::selectLayout
-    )
-}
-
-@Composable
-fun EditorList(
-    editors: List<Editor>,
-    selectLayout : (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyColumn(modifier = modifier) {
-        items(items = editors, key = { it.id }) { editor ->
-            // This is where you design your individual row
-            Text(
-                text = editor.name,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-    }
-}
-*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
