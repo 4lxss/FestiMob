@@ -134,12 +134,10 @@ fun EditorListLinearLayout(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    LazyVerticalGrid(
+    LazyColumn(
         modifier = modifier,
-        columns = GridCells.Fixed(3),
         contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
     ) {
         items(
             items = LocalDataPlaceholder.editorsPlaceholderData,
@@ -149,18 +147,13 @@ fun EditorListLinearLayout(
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 ),
-                modifier = Modifier.height(110.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
                     text = editor.name,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .padding(dimensionResource(R.dimen.padding_small))
-                        .align(Alignment.CenterHorizontally),
+                        .fillMaxWidth()
+                        .padding(dimensionResource(R.dimen.padding_medium)),
                     textAlign = TextAlign.Center
                 )
             }
