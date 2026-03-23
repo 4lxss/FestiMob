@@ -28,7 +28,7 @@ enum class EditorState {
 
     companion object {
         fun fromString(value: String): EditorState {
-            return entries.find { it.name.lowercase() == value.lowercase() } ?: A
+            return entries.find { it.name.equals(value, ignoreCase = true) } ?: A
         }
     }
 }
