@@ -1,4 +1,4 @@
-package com.example.festimob.ui.screens
+package com.example.festimob.ui.festival
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +35,7 @@ class FestivalEntryViewModel(private val festivalRepository: FestivalRepository)
         }
     }
 
-    suspend fun saveItem() {
+    suspend fun saveFestival() {
         if (validateInput()) {
             festivalRepository.insert(festivalUiState.festivalDetails.toFestival())
         }

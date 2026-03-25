@@ -1,4 +1,31 @@
 package com.example.festimob.data.api
 
-class AppContainer {
+import android.content.Context
+import com.example.festimob.data.UserPreferencesRepository
+import com.example.festimob.dataStore
+
+interface AppContainer {
+    val festivalRepository: FestivalRepository
+    val userPreferencesRepository: UserPreferencesRepository
+}
+
+/**
+ * [AppContainer] implementation that provides instance of [OfflineFestivalRepository]
+ */
+class AppDataContainer(private val context: Context) : AppContainer {
+    /**
+     * Implementation for |FestivalRepository]
+     */
+    private val database: ApplicationDatabase by lazy {
+        ApplicationDatabase.getDatabase(context)
+    }
+
+    override val festivalRepository: FestivalRepository by lazy {
+        // Attention : On utilise le NetworkFestivalRepository ici pour avoir le WiFi !
+        OfflineFestivalRepository(database.festivalDao(), RetrofitInstance.api)
+    }
+
+    override val userPreferencesRepository: UserPreferencesRepository by lazy {
+        UserPreferencesRepository(context.dataStore)
+    }
 }

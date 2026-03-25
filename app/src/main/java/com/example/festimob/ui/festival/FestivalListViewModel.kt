@@ -1,4 +1,4 @@
-package com.example.festimob.ui.viewmodels
+package com.example.festimob.ui.festival
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +30,8 @@ import com.example.festimob.R
 import com.example.festimob.data.UserPreferencesRepository
 import com.example.festimob.data.api.Festival
 import com.example.festimob.data.api.FestivalRepository
+import com.example.festimob.data.api.OfflineFestivalRepository
+import com.example.festimob.ui.viewmodels.UiState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -39,9 +41,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class FestivalListViewModel(
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val festivalRepository: FestivalRepository
 ) : ViewModel() {
-    private val festivalRepository = FestivalRepository()
     private var internalState : MutableState<UiState> = mutableStateOf(UiState.Loading)
     val state : State<UiState> = internalState
     // UI states access for various [FestivalListUiState]
@@ -71,27 +73,23 @@ class FestivalListViewModel(
         }
     }
 
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as FestiMobApplication)
-                FestivalListViewModel(application.userPreferencesRepository)
-            }
-        }
-    }
-
     init {
         fetchFestivals()
     }
 
     private fun fetchFestivals() {
         viewModelScope.launch {
-            internalState.value = UiState.Loading
             try {
-                val festivals = festivalRepository.getFestivals()
-                internalState.value = UiState.Success(festivals)
+                // On lance le rafraîchissement réseau (via la méthode qu'on a créée dans NetworkRepository)
+                // Si tu as gardé le nom "refreshFestivals"
+                (festivalRepository as? OfflineFestivalRepository)?.refreshFestivals()
+
+                // On observe les données qui viennent de Room
+                festivalRepository.getFestivals().collect { festivals ->
+                    internalState.value = UiState.Success(festivals)
+                }
             } catch (e: Exception) {
-                internalState.value = UiState.Error("Failed to load festivals "+e.message)
+                internalState.value = UiState.Error("Erreur: ${e.message}")
             }
         }
     }

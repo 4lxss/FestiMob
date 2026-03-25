@@ -1,4 +1,4 @@
-package com.example.festimob.ui.screens
+package com.example.festimob.ui.festival
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,23 +31,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.festimob.ui.viewmodels.FestivalListViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.R
 import com.example.festimob.data.api.Festival
-import com.example.festimob.data.local.LocalDessertReleaseData
-import com.example.festimob.ui.viewmodels.ErrorView
-import com.example.festimob.ui.viewmodels.FestivalList
-import com.example.festimob.ui.viewmodels.FestivalListUiState
-import com.example.festimob.ui.viewmodels.LoadingView
+import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.viewmodels.UiState
 
 @Composable
 fun FestivalListScreen(
+    navigateToFestivalEntry: () -> Unit,
+    navigateToFestivalDetails: (Int) -> Unit,
     festivalListViewModel: FestivalListViewModel = viewModel(
-        factory = FestivalListViewModel .Factory
+        factory = AppViewModelProvider.Factory
     )
 ) {
     FestivalListScreen(

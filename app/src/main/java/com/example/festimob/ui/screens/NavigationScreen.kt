@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.PlaylistAddCircle
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,12 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
-import com.example.festimob.FestiMobApplication
+import com.example.festimob.R
+import com.example.festimob.ui.festival.FestivalListScreen
+import com.example.festimob.ui.navigation.NavigationDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallNavigation() {
-    val backStack = rememberSaveable { mutableStateListOf<Destination>(Destination.ACCUEIL) }
+    val backStack = rememberSaveable { mutableStateListOf<Destination>(Destination.Accueil) }
+    val bottomNavItems = listOf(Destination.Accueil, Destination.FestivalList, Destination.Album)
     Scaffold (
         topBar = {
             CenterAlignedTopAppBar(
@@ -64,25 +67,25 @@ fun SmallNavigation() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary,
                 ) {
-                    Destination.entries.forEach { destination ->
+                    bottomNavItems.forEach { destination ->
                         NavigationBarItem(
                             selected = backStack.lastOrNull() == destination,
                             onClick = {
                                 if (backStack.lastOrNull() != destination) {
-                                    if (destination == Destination.ACCUEIL) {
+                                    if (destination == Destination.Accueil) {
                                         backStack.clear()
-                                        backStack.add(Destination.ACCUEIL)
+                                        backStack.add(Destination.Accueil)
                                     } else {
-                                        if (backStack.isEmpty() || backStack[0] != Destination.ACCUEIL) {
+                                        if (backStack.isEmpty() || backStack[0] != Destination.Accueil) {
                                             backStack.clear()
-                                            backStack.add(Destination.ACCUEIL)
+                                            backStack.add(Destination.Accueil)
                                         }
                                         backStack.remove(destination)
                                         backStack.add(destination)
                                     }
                                 }
                             },
-                            icon = { Icon(destination.icon, contentDescription = destination.contentDescription) },
+                            icon = { Icon(destination.icon, contentDescription = destination.label) },
                             label = { Text(destination.label) }
                         )
                     }
@@ -98,18 +101,28 @@ fun SmallNavigation() {
             modifier = Modifier.padding(innerPadding),
             entryProvider = { key ->
                 when(key) {
-                    Destination.ACCUEIL -> NavEntry(key) {
+                    is Destination.Accueil -> NavEntry(key) {
                         Box(contentAlignment = Alignment.Center) {
                             Text("PLAYLISTS")
                         }
                     }
-                    Destination.PAGES -> NavEntry(key) {
-                        FestivalListScreen()
+                    is Destination.FestivalList -> NavEntry(key) {
+                        FestivalListScreen(
+                            navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry) },
+                            navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) }
+                        )
                     }
-                    Destination.ALBUM -> NavEntry(key) {
+                    is Destination.Album -> NavEntry(key) {
                         Box(contentAlignment = Alignment.Center) {
                             Text("ALBUM")
                         }
+                    }
+                    is Destination.FestivalEntry -> NavEntry(key) {
+                        Text("Écran d'ajout ici") // Remplace par ton Composable
+                    }
+                    is Destination.FestivalDetails -> NavEntry(key) {
+                        // Ici on peut récupérer l'ID !
+                        Text("Détails du festival n° ${key.id}")
                     }
                 }
             }
@@ -117,13 +130,16 @@ fun SmallNavigation() {
     }
 }
 
-enum class Destination(
-    val route: String,
+sealed class Destination(
     val label: String,
     val icon: ImageVector,
-    val contentDescription: String
-) {
-    ALBUM("album", "Album", Icons.Default.Album, "Album"),
-    ACCUEIL("accueil", "Accueil", Icons.Default.Home, "Accueil"),
-    PAGES("pages", "Pages", Icons.Default.PlaylistAddCircle, "Pages")
+    override val route: String,
+    override val titleRes: Int
+) : NavigationDestination {
+    object Accueil : Destination("Accueil", Icons.Default.Home, "accueil", R.string.app_name)
+    object FestivalList : Destination("Festivals", Icons.Default.PlaylistAddCircle, "festivals", R.string.festivals_title)
+    object FestivalEntry : Destination("Ajout", Icons.Default.Add, "entry", R.string.item_entry_title)
+    object Album : Destination("Album", Icons.Default.Album, "album", R.string.item_entry_title)
+
+    data class FestivalDetails(val id: Int) : Destination("Détails", Icons.Default.Album, "details", R.string.details_title)
 }

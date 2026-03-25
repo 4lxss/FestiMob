@@ -16,6 +16,9 @@ interface FestivalDao {
     @Query("SELECT * FROM festival WHERE id_f = :id_f")
     fun getFestival(id_f: Int): Flow<Festival>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(festivals: List<Festival>)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(festival: Festival)
 
