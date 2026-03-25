@@ -20,11 +20,12 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 )
 
 class FestiMobApplication: Application() {
-
     lateinit var container: AppContainer
-
     override fun onCreate() {
         super.onCreate()
+        android.util.Log.d("DEBUG_APP", "FestiMobApplication a bien démarré !")
         container = AppDataContainer(this)
     }
 }
+
+

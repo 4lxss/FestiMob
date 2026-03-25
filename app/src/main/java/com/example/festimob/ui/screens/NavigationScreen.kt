@@ -25,9 +25,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.example.festimob.R
+import com.example.festimob.ui.AppViewModelProvider
+import com.example.festimob.ui.festival.FestivalDetailsScreen
+import com.example.festimob.ui.festival.FestivalDetailsViewModel
+import com.example.festimob.ui.festival.FestivalEntryScreen
 import com.example.festimob.ui.festival.FestivalListScreen
 import com.example.festimob.ui.navigation.NavigationDestination
 
@@ -107,9 +113,16 @@ fun SmallNavigation() {
                         }
                     }
                     is Destination.FestivalList -> NavEntry(key) {
+                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                        }
+
                         FestivalListScreen(
                             navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry) },
-                            navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) }
+                            navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) },
+                            // Si ton FestivalListScreen prend un viewModel en paramètre :
+                            // viewModel = viewModel(factory = AppViewModelProvider.Factory, extras = extras)
                         )
                     }
                     is Destination.Album -> NavEntry(key) {
@@ -118,11 +131,44 @@ fun SmallNavigation() {
                         }
                     }
                     is Destination.FestivalEntry -> NavEntry(key) {
-                        Text("Écran d'ajout ici") // Remplace par ton Composable
+                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+
+                        // 2. On crée des extras manuellement et on y injecte l'APPLICATION_KEY
+                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                        }
+
+                        FestivalEntryScreen(
+                            navigateBack = { backStack.removeLastOrNull() },
+                            // 3. On passe la factory ET les extras qu'on vient de fabriquer
+                            viewModel = viewModel(
+                                factory = com.example.festimob.ui.AppViewModelProvider.Factory,
+                                extras = extras
+                            )
+                        )
+
                     }
                     is Destination.FestivalDetails -> NavEntry(key) {
-                        // Ici on peut récupérer l'ID !
-                        Text("Détails du festival n° ${key.id}")
+                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+
+                        // 2. Créer les extras en mettant les DEUX clés nécessaires
+                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                            // Clé pour l'application (nécessaire pour le container/DB)
+                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                            // Clé pour l'ID du festival (nécessaire pour charger les données)
+                            set(com.example.festimob.ui.AppViewModelProvider.FestivalIdKey, key.id)
+                        }
+
+                        val viewModel: FestivalDetailsViewModel = viewModel(
+                            factory = com.example.festimob.ui.AppViewModelProvider.Factory,
+                            extras = extras
+                        )
+
+                        FestivalDetailsScreen(
+                            navigateBack = { backStack.removeLastOrNull() },
+                            navigateToEditItem = { id -> /* Ta logique d'édition */ },
+                            viewModel = viewModel
+                        )
                     }
                 }
             }

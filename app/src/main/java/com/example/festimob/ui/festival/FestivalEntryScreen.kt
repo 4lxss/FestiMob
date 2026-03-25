@@ -33,17 +33,10 @@ import kotlinx.coroutines.launch
 import java.util.Currency
 import java.util.Locale
 
-object FestivalEntryDestination : NavigationDestination {
-    override val route = "festival_entry"
-    override val titleRes = R.string.item_entry_title
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FestivalEntryScreen(
     navigateBack: () -> Unit,
-    onNavigateUp: () -> Unit,
-    canNavigateBack: Boolean = true,
     viewModel: FestivalEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
