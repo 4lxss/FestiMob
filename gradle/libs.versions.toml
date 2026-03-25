@@ -17,6 +17,7 @@ kotlinx-serialization = "1.10.0"
 lifecycleViewmodelKtx = "2.10.0"
 protoliteWellKnownTypes = "18.0.1"
 coreI18n = "1.0.0"
+datastoreCore = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,7 @@ kotlinx-serialization-json = {module = "org.jetbrains.kotlinx:kotlinx-serializat
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 androidx-core-i18n = { group = "androidx.core", name = "core-i18n", version.ref = "coreI18n" }
+androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 
 
 [plugins]
