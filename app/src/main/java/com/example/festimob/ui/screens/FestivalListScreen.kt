@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.example.festimob.ui.viewmodels.FestivalListViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.R
-import com.example.festimob.data.api.FestivalDto
+import com.example.festimob.data.api.Festival
 import com.example.festimob.data.local.LocalDessertReleaseData
 import com.example.festimob.ui.viewmodels.ErrorView
 import com.example.festimob.ui.viewmodels.FestivalList
@@ -123,7 +123,7 @@ private fun FestivalListScreen(
 
 @Composable
 fun FestivalListLinearLayout(
-    festivals: List<FestivalDto>,
+    festivals: List<Festival>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -156,7 +156,7 @@ fun FestivalListLinearLayout(
 
 @Composable
 fun FestivalListGridLayout(
-    festivals: List<FestivalDto>,
+    festivals: List<Festival>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {

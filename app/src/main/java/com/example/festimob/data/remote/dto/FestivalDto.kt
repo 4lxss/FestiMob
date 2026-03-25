@@ -1,10 +1,10 @@
 package com.example.festimob.data.remote.dto
 
-import androidx.room3.Entity
-import androidx.room3.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Entity(tableName = "items")
-data class Item(
+@Entity(tableName = "festival")
+data class Festival(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,

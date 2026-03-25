@@ -28,7 +28,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.festimob.FestiMobApplication
 import com.example.festimob.R
 import com.example.festimob.data.UserPreferencesRepository
-import com.example.festimob.data.api.FestivalDto
+import com.example.festimob.data.api.Festival
 import com.example.festimob.data.api.FestivalRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -123,7 +123,7 @@ fun ErrorView(message: String) {
 }
 
 @Composable
-fun FestivalList(festivals: List<FestivalDto>, modifier : Modifier) {
+fun FestivalList(festivals: List<Festival>, modifier : Modifier) {
     LazyColumn(
         modifier = modifier.fillMaxSize().padding(8.dp)
     ) {
