@@ -50,17 +50,16 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    
     // Dépendances restaurées
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.compose.material.icons.extended)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.retrofit2)
     implementation(libs.retrofit2.converter.kotlinx.serialization)
@@ -69,6 +68,8 @@ dependencies {
     implementation(libs.androidx.core.i18n)
     implementation(libs.androidx.datastore.preferences)
 
+    // For loading images from URLs in Compose (fake data now, real API later)
+    implementation(libs.coil.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
