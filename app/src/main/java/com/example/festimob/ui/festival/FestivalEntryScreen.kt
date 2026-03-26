@@ -104,7 +104,7 @@ fun FestivalInputForm(
         OutlinedTextField(
             value = festivalDetails.name,
             onValueChange = { onValueChange(festivalDetails.copy(name = it)) },
-            label = { Text(stringResource(R.string.item_name_req)) },
+            label = { Text(stringResource(R.string.festivals_title)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -118,7 +118,7 @@ fun FestivalInputForm(
             value = festivalDetails.price_multi_socket,
             onValueChange = { onValueChange(festivalDetails.copy(price_multi_socket = it)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            label = { Text(stringResource(R.string.item_price_req)) },
+            label = { Text(stringResource(R.string.price_multi_socket)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -133,7 +133,7 @@ fun FestivalInputForm(
             value = festivalDetails.nb_table_big,
             onValueChange = { onValueChange(festivalDetails.copy(nb_table_big = it)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            label = { Text(stringResource(R.string.quantity_req)) },
+            label = { Text(stringResource(R.string.nb_table_big)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -143,12 +143,62 @@ fun FestivalInputForm(
             enabled = enabled,
             singleLine = true
         )
-        if (enabled) {
-            Text(
-                text = stringResource(R.string.required_fields),
-                modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_medium))
-            )
-        }
+        OutlinedTextField(
+            value = festivalDetails.nb_table_small,
+            onValueChange = { onValueChange(festivalDetails.copy(nb_table_small = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            label = { Text(stringResource(R.string.nb_table_small)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            enabled = enabled,
+            singleLine = true
+        )
+        OutlinedTextField(
+            value = festivalDetails.nb_table_mairie,
+            onValueChange = { onValueChange(festivalDetails.copy(nb_table_mairie = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            label = { Text(stringResource(R.string.nb_table_mairie)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            enabled = enabled,
+            singleLine = true
+        )
+        OutlinedTextField(
+            value = festivalDetails.nb_chair,
+            onValueChange = { onValueChange(festivalDetails.copy(nb_chair = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            label = { Text(stringResource(R.string.nb_chair)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            enabled = enabled,
+            singleLine = true
+        )
+        OutlinedTextField(
+            value = festivalDetails.nb_chair_mairie,
+            onValueChange = { onValueChange(festivalDetails.copy(nb_chair_mairie = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            label = { Text(stringResource(R.string.nb_chair_mairie)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            enabled = enabled,
+            singleLine = true
+        )
     }
 }
 
@@ -157,9 +207,7 @@ fun FestivalInputForm(
 private fun FestivalEntryScreenPreview() {
     FestiMobTheme() {
         FestivalEntryBody(festivalUiState = FestivalUiState(
-            FestivalDetails(
-                name = "Festival name", price_multi_socket = "10.00", nb_table_big = "5"
-            )
+            FestivalDetails()
         ), onFestivalValueChange = {}, onSaveClick = {})
     }
 }

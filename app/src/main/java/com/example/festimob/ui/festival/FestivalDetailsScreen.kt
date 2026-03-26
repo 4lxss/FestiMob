@@ -77,7 +77,9 @@ fun FestivalDetailsScreen(
     ) { innerPadding ->
         FestivalDetailsBody(
             festivalDetailsUiState = uiState.value,
-            onModify = { viewModel.reduceQuantityByOne() },
+            onModify = {
+                println("Ouverture de la page modification")
+            },
             onDelete = {
                 coroutineScope.launch {
                     viewModel.deleteFestival()

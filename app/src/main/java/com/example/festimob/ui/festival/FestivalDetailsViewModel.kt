@@ -31,16 +31,6 @@ class FestivalDetailsViewModel(
                 initialValue = FestivalDetailsUiState()
             )
 
-    fun reduceQuantityByOne() {
-        viewModelScope.launch {
-            val currentFestival = uiState.value.festivalDetails.toFestival()
-            if (currentFestival.price_multi_socket > 0) {
-                festivalRepository.update(currentFestival.copy(price_multi_socket = currentFestival.price_multi_socket - 1))
-            }
-
-        }
-    }
-
     suspend fun deleteFestival() {
         festivalRepository.delete(uiState.value.festivalDetails.toFestival())
     }
