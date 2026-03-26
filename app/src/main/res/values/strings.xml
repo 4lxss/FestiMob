@@ -1,3 +1,42 @@
 <resources>
     <string name="app_name">FestiMob</string>
+    <string name="grid_layout_toggle">Grid layout</string>
+    <string name="linear_layout_toggle">Linear layout</string>
+    <string name="top_bar_name">FestiJeux Release</string>
+
+    <string name="attention">Attention</string>
+    <string name="back_button">Back</string>
+    <string name="delete">Delete</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="no_item_description">Oops!\nNo items in the inventory.\nTap + to add.</string>
+    <string name="edit_item_title">Edit Item</string>
+    <string name="item">Item</string>
+    <string name="item_detail_title">Item Details</string>
+    <string name="item_entry_title">Add Item</string>
+    <string name="item_name_req">Item Name*</string>
+    <string name="item_price_req">Item Price*</string>
+    <string name="no">No</string>
+    <string name="price">Price</string>
+    <string name="quantity_in_stock">Quantity in stock</string>
+    <string name="in_stock">%d in stock</string>
+    <string name="quantity_req">Quantity in Stock*</string>
+    <string name="save_action">Save</string>
+    <string name="sell">Sell</string>
+    <string name="yes">Yes</string>
+    <string name="required_fields">*required fields</string>
+
+    <string name="festivals_title"> Titre festival</string>
+    <string name="details_title"> Details festival</string>
+
+
+    <string name="modify"> Modifier </string>
+    <string name="price_multi_socket"> Prix par multiprise </string>
+    <string name="nb_table_big"> Nombre de grandes tables </string>
+    <string name="nb_table_small"> Nombre de petites tables</string>
+    <string name="nb_table_mairie"> Nombre de tables de la mairie </string>
+    <string name="nb_chair"> Nombre de chaises </string>
+    <string name="nb_chair_mairie"> Nombre de chaises de la mairie </string>
+    <string name="public_f"> Public </string>
+    <string name="start_date"> Date de début </string>
+    <string name="end_date"> Date de fin </string>
 </resources>

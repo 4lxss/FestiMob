@@ -1,0 +1,22 @@
+package com.example.festimob.data.api
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
+
+@Serializable
+@Entity(tableName = "festival")
+data class Festival(
+    @PrimaryKey(autoGenerate = true)
+    val id_f: Int = 0,
+    val name: String,
+    val start_date: String,
+    val end_date: String,
+    val nb_table_big: Int,
+    val nb_table_small: Int,
+    val nb_table_mairie: Int,
+    val nb_chair: Int,
+    val nb_chair_mairie: Int,
+    val public:	Boolean,
+    val price_multi_socket: Int
+)
