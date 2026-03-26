@@ -1,8 +1,12 @@
 package com.example.festimob.ui.editor
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,14 +33,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.room.util.TableInfo
 import coil.compose.AsyncImage
 import com.example.festimob.R
 import com.example.festimob.data.local.LocalDataPlaceholder
@@ -122,28 +130,44 @@ fun EditorListGridLayout(
                 modifier = Modifier.height(200.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
-                AsyncImage(
-                    model = editor.imageUrl, // Coil handles url
-                    contentDescription = "${editor.name}'s logo or picture",
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape),
-                    // Show a placeholder while loading or if URL is null
-                    placeholder = painterResource(R.drawable.default_editor_image),
-                    error = painterResource(R.drawable.error_loading_image)
-                )
-                Text(
-                    text = editor.name,
-                    color = TextWhite,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .padding(dimensionResource(R.dimen.padding_small))
-                        .align(Alignment.CenterHorizontally),
-                    textAlign = TextAlign.Center
-                )
+                Column(modifier = Modifier.fillMaxSize()) {
+                    // --- IMAGE SECTION (Top) ---
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1.3f) // Image takes more space than the text
+                    ) {
+                        AsyncImage(
+                            model = editor.imageUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop, // This makes it fill the top area
+                            modifier = Modifier.fillMaxSize(),
+                            placeholder = painterResource(R.drawable.default_editor_image),
+                            error = painterResource(R.drawable.error_loading_image)
+                        )
+                    }
+
+                    // --- TEXT SECTION (Bottom / Footer) ---
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.7f) // Footer takes the remaining space
+                            .background(Color(0xFF072924)) // Darker teal for the text area
+                            .padding(8.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start // Matches screenshot's left-aligned text
+                    ) {
+                        Text(
+                            text = editor.name,
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+
             }
         }
     }
