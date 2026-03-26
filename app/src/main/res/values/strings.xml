@@ -27,4 +27,16 @@
 
     <string name="festivals_title"> Titre festival</string>
     <string name="details_title"> Details festival</string>
+
+
+    <string name="modify"> Modifier </string>
+    <string name="price_multi_socket"> Prix par multiprise </string>
+    <string name="nb_table_big"> Nombre de grandes tables </string>
+    <string name="nb_table_small"> Nombre de petites tables</string>
+    <string name="nb_table_mairie"> Nombre de tables de la mairie </string>
+    <string name="nb_chair"> Nombre de chaises </string>
+    <string name="nb_chair_mairie"> Nombre de chaises de la mairie </string>
+    <string name="public_f"> Public </string>
+    <string name="start_date"> Date de début </string>
+    <string name="end_date"> Date de fin </string>
 </resources>

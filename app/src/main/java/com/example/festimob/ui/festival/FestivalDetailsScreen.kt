@@ -45,6 +45,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.data.api.Festival
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +77,7 @@ fun FestivalDetailsScreen(
     ) { innerPadding ->
         FestivalDetailsBody(
             festivalDetailsUiState = uiState.value,
-            onSellItem = { viewModel.reduceQuantityByOne() },
+            onModify = { viewModel.reduceQuantityByOne() },
             onDelete = {
                 coroutineScope.launch {
                     viewModel.deleteFestival()
@@ -96,7 +98,7 @@ fun FestivalDetailsScreen(
 @Composable
 private fun FestivalDetailsBody(
     festivalDetailsUiState: FestivalDetailsUiState,
-    onSellItem: () -> Unit,
+    onModify: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -111,12 +113,12 @@ private fun FestivalDetailsBody(
             modifier = Modifier.fillMaxWidth()
         )
         Button(
-            onClick = onSellItem,
+            onClick = onModify,
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small,
             enabled = true
         ) {
-            Text(stringResource(R.string.sell))
+            Text(stringResource(R.string.modify))
         }
         OutlinedButton(
             onClick = { deleteConfirmationRequired = true },
@@ -157,22 +159,61 @@ fun FestivalDetails(
                 dimensionResource(id = R.dimen.padding_medium)
             )
         ) {
+            Text(festival.name)
+            // Dates
             FestivalDetailsRow(
-                labelResID = R.string.item,
-                festivalDetail = festival.name,
+                labelResID = R.string.start_date,
+                festivalDetail = formatIsoNative(festival.start_date),
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(id = R.dimen.padding_medium)
                 )
             )
             FestivalDetailsRow(
-                labelResID = R.string.quantity_in_stock,
-                festivalDetail = festival.price_multi_socket.toString(),
+                labelResID = R.string.end_date,
+                festivalDetail = formatIsoNative(festival.end_date),
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(id = R.dimen.padding_medium)
+                )
+            )
+
+            // Meubles
+            FestivalDetailsRow(
+                labelResID = R.string.nb_table_big,
+                festivalDetail = festival.nb_table_big.toString(),
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(id = R.dimen.padding_medium)
                 )
             )
             FestivalDetailsRow(
-                labelResID = R.string.price,
+                labelResID = R.string.nb_table_small,
+                festivalDetail = festival.nb_table_small.toString(),
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(id = R.dimen.padding_medium)
+                )
+            )
+            FestivalDetailsRow(
+                labelResID = R.string.nb_table_mairie,
+                festivalDetail = festival.nb_table_mairie.toString(),
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(id = R.dimen.padding_medium)
+                )
+            )
+            FestivalDetailsRow(
+                labelResID = R.string.nb_chair,
+                festivalDetail = festival.nb_chair.toString(),
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(id = R.dimen.padding_medium)
+                )
+            )
+            FestivalDetailsRow(
+                labelResID = R.string.nb_chair_mairie,
+                festivalDetail = festival.nb_chair_mairie.toString(),
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(id = R.dimen.padding_medium)
+                )
+            )
+            FestivalDetailsRow(
+                labelResID = R.string.price_multi_socket,
                 festivalDetail = festival.formatedPrice(),
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(id = R.dimen.padding_medium)
@@ -224,8 +265,21 @@ fun FestivalDetailsScreenPreview() {
                 outOfStock = true,
                 festivalDetails = FestivalDetails()
             ),
-            onSellItem = {},
+            onModify = {},
             onDelete = {}
         )
+    }
+}
+
+fun formatIsoNative(isoString: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.US)
+
+        val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale.FRANCE)
+
+        val date = inputFormat.parse(isoString)
+        outputFormat.format(date!!)
+    } catch (e: Exception) {
+        "Erreur date"
     }
 }
