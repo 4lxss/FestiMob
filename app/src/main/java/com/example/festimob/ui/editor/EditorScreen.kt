@@ -131,7 +131,7 @@ fun EditorListGridLayout(
                 shape = MaterialTheme.shapes.medium
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    // --- IMAGE SECTION (Top) ---
+                    // --- CARD IMAGE ---
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -140,22 +140,22 @@ fun EditorListGridLayout(
                         AsyncImage(
                             model = editor.imageUrl,
                             contentDescription = null,
-                            contentScale = ContentScale.Crop, // This makes it fill the top area
+                            contentScale = ContentScale.Crop, // Makes it fill the top area
                             modifier = Modifier.fillMaxSize(),
                             placeholder = painterResource(R.drawable.default_editor_image),
                             error = painterResource(R.drawable.error_loading_image)
                         )
                     }
 
-                    // --- TEXT SECTION (Bottom / Footer) ---
+                    // --- CARD TEXT ---
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(0.7f) // Footer takes the remaining space
-                            .background(Color(0xFF072924)) // Darker teal for the text area
+                            .weight(0.7f) // Takes the remaining space
+                            .background(Color(0xFF072924)) // Darker teal for text area
                             .padding(8.dp),
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.Start // Matches screenshot's left-aligned text
+                        horizontalAlignment = Alignment.Start // To match website
                     ) {
                         Text(
                             text = editor.name,
