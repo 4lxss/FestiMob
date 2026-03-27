@@ -109,7 +109,8 @@ fun SmallNavigation() {
                     Destination.PAGES -> NavEntry(key) {
                         EditorScreen(
                             modifier = Modifier.padding(innerPadding),
-                            viewModel = viewModel(factory = EditorViewModel.Factory)
+                            viewModel = viewModel(factory = EditorViewModel.Factory),
+                            //navigateToAddForm = {}
                         )
                     }
                     Destination.ALBUM -> NavEntry(key) {

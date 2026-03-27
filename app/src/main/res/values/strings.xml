@@ -4,4 +4,5 @@
     <string name="grid_layout">Switch to grid view</string>
     <string name="linear_layout">Switch to list view</string>
     <string name="editors_top_bar_name">Editors</string>
+    <string name="editor_entry_title">Add new Editor</string>
 </resources>
