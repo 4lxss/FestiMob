@@ -143,7 +143,8 @@ fun EditorListGridLayout(
                             contentScale = ContentScale.Crop, // Makes it fill the top area
                             modifier = Modifier.fillMaxSize(),
                             placeholder = painterResource(R.drawable.default_editor_image),
-                            error = painterResource(R.drawable.error_loading_image)
+                            error = painterResource(R.drawable.error_loading_image),
+                            fallback = painterResource(R.drawable.default_editor_image)
                         )
                     }
 
