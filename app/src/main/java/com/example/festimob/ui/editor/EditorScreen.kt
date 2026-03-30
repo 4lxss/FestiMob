@@ -87,7 +87,7 @@ fun EditorScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navigateToAddForm },
+                onClick = { navigateToAddForm() },
                 containerColor = AccentTurquoise,
                 contentColor = DarkTealBackground // Contrast color for the icon
             ) {
