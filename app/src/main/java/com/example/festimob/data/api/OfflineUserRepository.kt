@@ -13,8 +13,8 @@ class OfflineUserRepository(
 
     suspend fun refreshUsers() {
         try {
-            val usersFromNetwork = apiService.getUsers()
-            userDao.insertAll(usersFromNetwork)
+            val UsersFromNetwork = apiService.getUsers()
+            userDao.insertAll(UsersFromNetwork)
 
         } catch (e: Exception) {
             Log.e("NetworkRepository", "Erreur réseau, utilisation du mode offline", e)

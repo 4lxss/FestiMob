@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Album
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlaylistAddCircle
 import androidx.compose.material3.BottomAppBar
@@ -41,7 +41,7 @@ import com.example.festimob.ui.navigation.NavigationDestination
 @Composable
 fun SmallNavigation() {
     val backStack = rememberSaveable { mutableStateListOf<Destination>(Destination.Accueil) }
-    val bottomNavItems = listOf(Destination.Accueil, Destination.FestivalList, Destination.Album)
+    val bottomNavItems = listOf(Destination.Accueil, Destination.FestivalList, Destination.Admin)
     Scaffold (
         topBar = {
             CenterAlignedTopAppBar(
@@ -125,10 +125,18 @@ fun SmallNavigation() {
                             // viewModel = viewModel(factory = AppViewModelProvider.Factory, extras = extras)
                         )
                     }
-                    is Destination.Album -> NavEntry(key) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text("ALBUM")
+                    is Destination.Admin -> NavEntry(key) {
+                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
                         }
+
+                        com.example.festimob.ui.user.UserListScreen(
+                            viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                factory = com.example.festimob.ui.AppViewModelProvider.Factory,
+                                extras = extras
+                            )
+                        )
                     }
                     is Destination.FestivalEntry -> NavEntry(key) {
                         val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
@@ -185,7 +193,7 @@ sealed class Destination(
     object Accueil : Destination("Accueil", Icons.Default.Home, "accueil", R.string.app_name)
     object FestivalList : Destination("Festivals", Icons.Default.PlaylistAddCircle, "festivals", R.string.festivals_title)
     object FestivalEntry : Destination("Ajout", Icons.Default.Add, "entry", R.string.item_entry_title)
-    object Album : Destination("Album", Icons.Default.Album, "album", R.string.item_entry_title)
+    object Admin : Destination("Admin", Icons.Default.AdminPanelSettings, "admin", R.string.item_entry_title)
 
-    data class FestivalDetails(val id: Int) : Destination("Détails", Icons.Default.Album, "details", R.string.details_title)
+    data class FestivalDetails(val id: Int) : Destination("Détails", Icons.Default.AdminPanelSettings, "details", R.string.details_title)
 }

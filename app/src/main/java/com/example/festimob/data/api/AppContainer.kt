@@ -7,7 +7,7 @@ import com.example.festimob.dataStore
 interface AppContainer {
     val festivalRepository: FestivalRepository
     val userPreferencesRepository: UserPreferencesRepository
-    val userRepository: UserRepository
+    val userRepository : UserRepository
 }
 
 /**
