@@ -83,6 +83,18 @@ fun EditorScreen(
                     containerColor = DarkTealBackground
                 )
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { onAdd() },
+                containerColor = AccentTurquoise,
+                contentColor = DarkTealBackground // Contrast color for the icon
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Editor"
+                )
+            }
         }
     ) { innerPadding ->
         val hereModifier = Modifier
@@ -103,6 +115,12 @@ fun EditorScreen(
             )
         }
     }
+}
+
+// Add button logic
+// Navigates to EditorForm
+fun onAdd() {
+    TODO("Not yet implemented")
 }
 
 @Composable
