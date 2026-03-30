@@ -1,0 +1,16 @@
+package com.example.festimob.data.api
+
+import kotlinx.coroutines.flow.Flow
+
+interface UserRepository {
+    fun getUsers(): Flow<List<User>>
+
+    fun getUserByID(id_u: Int): Flow<User?>
+
+    suspend fun insert(user: User)
+
+    suspend fun update(user: User)
+
+    suspend fun delete(user: User)
+
+}
