@@ -120,7 +120,7 @@ fun EditorScreen(
 // Add button logic
 // Navigates to EditorForm
 fun onAdd() {
-    TODO("Not yet implemented")
+    TODO("navigate to add form")
 }
 
 @Composable

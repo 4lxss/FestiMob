@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditorForm(
+fun EditorAddForm(
     onDismiss: () -> Unit,
     onSave: () -> Unit
 ) {
