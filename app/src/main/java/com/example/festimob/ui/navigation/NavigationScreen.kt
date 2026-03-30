@@ -73,28 +73,32 @@ fun SmallNavigation() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary,
                 ) {
-                    Destination.entries.forEach { destination ->
-                        NavigationBarItem(
-                            selected = backStack.lastOrNull() == destination,
-                            onClick = {
-                                if (backStack.lastOrNull() != destination) {
-                                    if (destination == Destination.ACCUEIL) {
-                                        backStack.clear()
-                                        backStack.add(Destination.ACCUEIL)
-                                    } else {
-                                        if (backStack.isEmpty() || backStack[0] != Destination.ACCUEIL) {
+                    Destination.entries
+                        .filter {
+                            it != Destination.EDITORENTRY
+                        }
+                        .forEach { destination ->
+                            NavigationBarItem(
+                                selected = backStack.lastOrNull() == destination,
+                                onClick = {
+                                    if (backStack.lastOrNull() != destination) {
+                                        if (destination == Destination.ACCUEIL) {
                                             backStack.clear()
                                             backStack.add(Destination.ACCUEIL)
+                                        } else {
+                                            if (backStack.isEmpty() || backStack[0] != Destination.ACCUEIL) {
+                                                backStack.clear()
+                                                backStack.add(Destination.ACCUEIL)
+                                            }
+                                            backStack.remove(destination)
+                                            backStack.add(destination)
                                         }
-                                        backStack.remove(destination)
-                                        backStack.add(destination)
                                     }
-                                }
-                            },
-                            icon = { Icon(destination.icon, contentDescription = destination.contentDescription) },
-                            label = { Text(destination.label) }
-                        )
-                    }
+                                },
+                                icon = { Icon(destination.icon, contentDescription = destination.contentDescription) },
+                                label = { Text(destination.label) }
+                            )
+                        }
                 }
             }
         }
@@ -116,7 +120,7 @@ fun SmallNavigation() {
                         EditorScreen(
                             modifier = Modifier.padding(innerPadding),
                             viewModel = viewModel(factory = EditorViewModel.Factory),
-                            navigateToAddForm = {},
+                            navigateToAddForm = { backStack.add(Destination.EDITORENTRY)},
                             navigateToUpdateForm = {}
                         )
                     }
