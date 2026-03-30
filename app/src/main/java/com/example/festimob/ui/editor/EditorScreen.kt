@@ -57,7 +57,8 @@ fun EditorScreen(
     modifier: Modifier = Modifier,
     // Inject the ViewModel using the Factory we defined
     viewModel: EditorViewModel = viewModel(factory = EditorViewModel.Factory),
-    //navigateToAddForm: () -> Unit,
+    navigateToAddForm: () -> Unit,
+    navigateToUpdateForm: (Int) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLinearLayout = uiState.isLinearLayout
@@ -86,7 +87,7 @@ fun EditorScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onAdd() },
+                onClick = { navigateToAddForm },
                 containerColor = AccentTurquoise,
                 contentColor = DarkTealBackground // Contrast color for the icon
             ) {
@@ -115,12 +116,6 @@ fun EditorScreen(
             )
         }
     }
-}
-
-// Add button logic
-// Navigates to EditorForm
-fun onAdd() {
-    TODO("navigate to add form")
 }
 
 @Composable

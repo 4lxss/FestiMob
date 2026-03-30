@@ -35,7 +35,8 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditorAddForm(
-    onDismiss: () -> Unit,
+    navigateBack: () -> Unit,
+    viewModel: EditorViewModel,
     onSave: () -> Unit
 ) {
     Column(
@@ -57,7 +58,7 @@ fun EditorAddForm(
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
-            IconButton(onClick = onDismiss) {
+            IconButton(onClick = navigateBack) {
                 Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
             }
         }
@@ -99,7 +100,7 @@ fun EditorAddForm(
 
         // --- BUTTONS ---
         OutlinedButton(
-            onClick = onDismiss,
+            onClick = navigateBack,
             modifier = Modifier.fillMaxWidth().height(56.dp),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
             border = BorderStroke(1.dp, Color.White),
