@@ -41,7 +41,7 @@ fun EditorForm(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF009688)) // The teal background from your image
+            .background(Color(0xFF009688)) // The teal background from the website
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
@@ -52,7 +52,7 @@ fun EditorForm(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Créer un éditeur",
+                text = "Add new Editor",
                 style = MaterialTheme.typography.headlineMedium,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
@@ -64,35 +64,35 @@ fun EditorForm(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // --- SECTION: INFORMATION ---
+        // --- EDITOR INFO ---
         FormSectionTitle("Information")
-        CustomTextField(label = "Nom de l'éditeur", placeholder = "Ed1")
+        CustomTextField(label = "Editor name", placeholder = "")
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // --- SECTION: CONTACT ---
-        FormSectionTitle("Contact principal")
+        // --- EDITOR CONTACT ---
+        FormSectionTitle("Main Contact")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CustomTextField(modifier = Modifier.weight(1f), label = "Nom", placeholder = "Entrez le nom")
-            CustomTextField(modifier = Modifier.weight(1f), label = "Prénom", placeholder = "Entrez le prénom")
+            CustomTextField(modifier = Modifier.weight(1f), label = "Name", placeholder = "Add Name")
+            CustomTextField(modifier = Modifier.weight(1f), label = "Firstname", placeholder = "Add Firstname")
         }
-        CustomTextField(label = "Profession", placeholder = "Entrez la profession")
+        CustomTextField(label = "Job", placeholder = "Add Job")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CustomTextField(modifier = Modifier.weight(1f), label = "Email", placeholder = "Entrez l'email")
-            CustomTextField(modifier = Modifier.weight(1f), label = "Numéro de téléphone", placeholder = "Entrez le numéro")
+            CustomTextField(modifier = Modifier.weight(1f), label = "Email", placeholder = "Add Email")
+            CustomTextField(modifier = Modifier.weight(1f), label = "Phone", placeholder = "Add Phone number")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // --- SECTION: ADRESSE ---
-        FormSectionTitle("Adresse de facturation")
+        // --- Editor ADDRESS ---
+        FormSectionTitle("Billing Address")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CustomTextField(modifier = Modifier.weight(2f), label = "Rue", placeholder = "Numéro et nom de rue")
-            CustomTextField(modifier = Modifier.weight(1f), label = "Code postal", placeholder = "Code postal")
+            CustomTextField(modifier = Modifier.weight(2f), label = "Street", placeholder = "Number & Street Name")
+            CustomTextField(modifier = Modifier.weight(1f), label = "Postcode", placeholder = "Add Postcode")
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CustomTextField(modifier = Modifier.weight(1f), label = "Ville", placeholder = "Ville")
-            CustomTextField(modifier = Modifier.weight(1f), label = "Pays", placeholder = "Pays")
+            CustomTextField(modifier = Modifier.weight(1f), label = "City", placeholder = "Add City")
+            CustomTextField(modifier = Modifier.weight(1f), label = "Country", placeholder = "Add Country")
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -105,7 +105,7 @@ fun EditorForm(
             border = BorderStroke(1.dp, Color.White),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Annuler", fontWeight = FontWeight.Bold)
+            Text("Cancel", fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -116,7 +116,7 @@ fun EditorForm(
             colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color(0xFF009688)),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Enregistrer", fontWeight = FontWeight.Bold)
+            Text("Save", fontWeight = FontWeight.Bold)
         }
     }
 }
