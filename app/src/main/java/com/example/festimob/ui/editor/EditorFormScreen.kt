@@ -105,7 +105,7 @@ fun EditorAddForm(
             label = "Editor name",
             placeholder = "",
             value = editorDetails.name,
-            onValueChange = {onValueChange(editorDetails.copy(name = it).toString())}
+            onValueChange = {onValueChange(editorDetails.copy(name = it))}
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -118,21 +118,21 @@ fun EditorAddForm(
                 label = "Name",
                 placeholder = "Add Name",
                 value = editorDetails.contactName,
-                onValueChange = {onValueChange(editorDetails.copy(contactName = it).toString())}
+                onValueChange = {onValueChange(editorDetails.copy(contactName = it))}
             )
             CustomTextField(
                 modifier = Modifier.weight(1f),
                 label = "Firstname",
                 placeholder = "Add Firstname",
                 value = editorDetails.contactFirstname,
-                onValueChange = {onValueChange(editorDetails.copy(contactFirstname = it).toString())}
+                onValueChange = {onValueChange(editorDetails.copy(contactFirstname = it))}
                 )
         }
         CustomTextField(
             label = "Job",
             placeholder = "Add Job",
             value = editorDetails.contactJob,
-            onValueChange = {onValueChange(editorDetails.copy(contactJob = it).toString())}
+            onValueChange = {onValueChange(editorDetails.copy(contactJob = it))}
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             CustomTextField(
@@ -140,14 +140,14 @@ fun EditorAddForm(
                 label = "Email",
                 placeholder = "Add Email",
                 value = editorDetails.contactEmail,
-                onValueChange = {onValueChange(editorDetails.copy(contactEmail = it).toString())}
+                onValueChange = {onValueChange(editorDetails.copy(contactEmail = it))}
                 )
             CustomTextField(
                 modifier = Modifier.weight(1f),
                 label = "Phone",
                 placeholder = "Add Phone number",
                 value = editorDetails.contactPhone,
-                onValueChange = {onValueChange(editorDetails.copy(contactPhone = it).toString())}
+                onValueChange = {onValueChange(editorDetails.copy(contactPhone = it))}
                 )
         }
 
@@ -161,14 +161,14 @@ fun EditorAddForm(
                 label = "Street",
                 placeholder = "Number & Street Name",
                 value = editorDetails.billingStreet,
-                onValueChange = {onValueChange(editorDetails.copy(billingStreet = it).toString())}
+                onValueChange = {onValueChange(editorDetails.copy(billingStreet = it))}
             )
             CustomTextField(
                 modifier = Modifier.weight(1f),
                 label = "Postcode",
                 placeholder = "Add Postcode",
                 value = editorDetails.billingPostcode,
-                onValueChange = {onValueChange(editorDetails.copy(billingPostcode = it).toString())}
+                onValueChange = {onValueChange(editorDetails.copy(billingPostcode = it))}
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -177,14 +177,14 @@ fun EditorAddForm(
                 label = "City",
                 placeholder = "Add City",
                 value = editorDetails.billingCity,
-                onValueChange = {onValueChange(editorDetails.copy(billingCity = it).toString())}
+                onValueChange = {onValueChange(editorDetails.copy(billingCity = it))}
             )
             CustomTextField(
                 modifier = Modifier.weight(1f),
                 label = "Country",
                 placeholder = "Add Country",
                 value = editorDetails.billingCountry,
-                onValueChange = {onValueChange(editorDetails.copy(billingCountry = it).toString())}
+                onValueChange = {onValueChange(editorDetails.copy(billingCountry = it))}
             )
         }
 
