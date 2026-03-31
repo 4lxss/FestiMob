@@ -31,7 +31,15 @@ class FestivalEntryViewModel(private val festivalRepository: FestivalRepository)
 
     private fun validateInput(uiState: FestivalDetails = festivalUiState.festivalDetails): Boolean {
         return with(uiState) {
-            name.isNotBlank() && price_multi_socket.isNotBlank() && name.isNotBlank()
+            name.isNotBlank() &&
+                    price_multi_socket.isNotBlank() &&
+                    nb_table_big.isNotBlank() &&
+                    nb_table_small.isNotBlank() &&
+                    nb_table_mairie.isNotBlank() &&
+                    nb_chair.isNotBlank() &&
+                    nb_chair_mairie.isNotBlank() &&
+                    start_date.isNotBlank() &&
+                    end_date.isNotBlank()
         }
     }
 

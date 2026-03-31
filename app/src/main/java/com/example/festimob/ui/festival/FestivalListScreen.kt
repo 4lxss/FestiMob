@@ -1,8 +1,11 @@
 package com.example.festimob.ui.festival
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,12 +38,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.protobuf.LazyStringArrayList.emptyList
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.R
 import com.example.festimob.data.api.Festival
 import com.example.festimob.ui.AppViewModelProvider
+import com.example.festimob.ui.theme.FestiMobTheme
 import com.example.festimob.ui.viewmodels.UiState
 
 @Composable
@@ -193,19 +198,68 @@ fun FestivalListGridLayout(
                 modifier = Modifier.height(110.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text(
-                    text = festival.name,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .padding(dimensionResource(R.dimen.padding_small))
-                        .align(Alignment.CenterHorizontally),
-                    textAlign = TextAlign.Center
-                )
+                Column() {
+                    Text(
+                        text = festival.name,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .wrapContentHeight(Alignment.CenterVertically)
+                            .padding(dimensionResource(R.dimen.padding_small))
+                            .align(Alignment.CenterHorizontally),
+                        textAlign = TextAlign.Center
+                    )
+                    Row() {
+                        Text(
+                            text = formatIsoNative(festival.start_date) + "-" ,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .wrapContentHeight(Alignment.CenterVertically)
+                                .padding(dimensionResource(R.dimen.padding_small)),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = formatIsoNative(festival.end_date),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .wrapContentHeight(Alignment.CenterVertically)
+                                .padding(dimensionResource(R.dimen.padding_small)),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FestivalListScreenPreview() {
+    FestiMobTheme() {
+        FestivalListLinearLayout(
+            festivals = listOf(
+                Festival(
+                    id_f = 14,
+                    name = "Festival du jeu 2026",
+                    start_date = "2026-04-18T00:00:00.000Z",
+                    end_date = "2026-04-19T00:00:00.000Z",
+                    nb_table_big = 30,
+                    nb_table_small = 30,
+                    nb_table_mairie = 25,
+                    nb_chair = 40,
+                    nb_chair_mairie = 18,
+                    public = true,
+                    price_multi_socket = 20
+                )
+            ),
+            onFestivalClick = {}
+        )
     }
 }
 
