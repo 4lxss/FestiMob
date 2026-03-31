@@ -44,7 +44,7 @@ class EditorFormViewModel(
     }
 
     suspend fun saveForm() {
-        if (validateInput()) {
+        if (validateInput(uiState.editorDetails)) {
             editorsRepository.insertEditor(uiState.editorDetails.toEditor())
         }
     }

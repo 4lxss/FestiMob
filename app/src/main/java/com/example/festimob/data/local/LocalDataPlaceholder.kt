@@ -5,7 +5,7 @@ import com.example.festimob.data.models.Editor
 import com.example.festimob.data.models.EditorState
 
 object LocalDataPlaceholder {
-    val editorsPlaceholderData = listOf(
+    var editorsPlaceholderData = listOf(
         Editor(1, "Ed1", state = EditorState.A, present = false, bill = "none", address = null, imageUrl = null),
         Editor(2, "Ed2", state = EditorState.A, present = false, bill = "none", address = null, imageUrl = null),
         Editor(3, "Ed3", state = EditorState.A, present = false, bill = "none", address = null, imageUrl = null),

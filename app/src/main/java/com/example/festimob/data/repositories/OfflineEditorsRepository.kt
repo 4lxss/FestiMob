@@ -12,6 +12,10 @@ class OfflineEditorsRepository : EditorsRepository {
     override fun getEditorsStream(): Flow<List<Editor>> {
         return flowOf(LocalDataPlaceholder.editorsPlaceholderData)
     }
+
+    override fun insertEditor(editor: Editor) {
+        LocalDataPlaceholder.editorsPlaceholderData += editor // Adds into the local list
+    }
 }
 
 /*
