@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.example.festimob.data.repositories.UserPreferencesRepository
 import com.example.festimob.data.repositories.EditorsRepository
-import com.example.festimob.data.repositories.OfflineEditorsRepository
+import com.example.festimob.data.repositories.OfflinePlaceholderEditorsRepository
 
 private const val LAYOUT_PREFERENCE_NAME = "layout_preferences"
 val IS_LINEAR_LAYOUT = booleanPreferencesKey("is_linear_layout")
@@ -23,6 +23,6 @@ class FestiMobApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         userPreferencesRepository = UserPreferencesRepository(dataStore)
-        editorsRepository = OfflineEditorsRepository() //uses offline for now
+        editorsRepository = OfflinePlaceholderEditorsRepository() //uses offline for now
     }
 }
