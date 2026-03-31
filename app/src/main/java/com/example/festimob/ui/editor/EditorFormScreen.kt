@@ -40,8 +40,7 @@ import com.example.festimob.FestiMobApplication
 
 @Composable
 fun EditorFormScreen(
-    navigateBack: () -> Unit,
-    uiState: EditorFormUiState
+    navigateBack: () -> Unit
 ) {
     val context = LocalContext.current.applicationContext as FestiMobApplication
 
@@ -59,7 +58,7 @@ fun EditorFormScreen(
         navigateBack = navigateBack,
         viewModel = viewModel,
         onSave = {},
-        editorDetails = uiState.editorDetails,
+        editorDetails = viewModel.uiState.editorDetails,
         onValueChange = viewModel::updateUiState
     )
 }
