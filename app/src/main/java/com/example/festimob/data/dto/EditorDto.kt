@@ -31,12 +31,14 @@ fun EditorDto.toEditor(): Editor {
     return Editor(
         id = this.id,
         name = this.name,
+        // Wrap dto fields into address object
         address = Address(
-            street = this.street ?: "",
-            city = this.city ?: "",
-            country = this.country ?: "",
-            postalCode = this.postalCode ?: ""
+            street = this.street,
+            city = this.city,
+            country = this.country,
+            postalCode = this.postalCode
         ),
+        // Uses the companion object in EditorState to map the String
         state = EditorState.fromString(this.state),
         present = this.presence,
         bill = this.facture,
