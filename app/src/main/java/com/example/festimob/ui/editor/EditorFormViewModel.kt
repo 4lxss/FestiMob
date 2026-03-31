@@ -43,6 +43,12 @@ class EditorFormViewModel(
         return editorDetails.name.isNotBlank() && editorDetails.contactEmail.contains("@")
     }
 
+    suspend fun saveForm() {
+        if (validateInput()) {
+            editorsRepository.insertEditor(uiState.editorDetails.toEditor())
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

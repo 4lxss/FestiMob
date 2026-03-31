@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +38,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.FestiMobApplication
+import com.example.festimob.data.models.Address
+import com.example.festimob.data.models.Editor
+import com.example.festimob.data.models.EditorState
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditorFormScreen(
@@ -54,10 +60,17 @@ fun EditorFormScreen(
         extras = extras
     )
 
+    val coroutineScope = rememberCoroutineScope()
+
     EditorAddForm(
         navigateBack = navigateBack,
         viewModel = viewModel,
-        onSave = {},
+        onSave = {
+            coroutineScope.launch {
+                viewModel.saveForm()
+                navigateBack()
+            }
+        },
         editorDetails = viewModel.uiState.editorDetails,
         onValueChange = viewModel::updateUiState
     )
@@ -264,3 +277,26 @@ data class EditorDetails(
     val billingCity : String = "",
     val billingCountry : String = "",
 )
+
+fun EditorDetails.toEditor(
+    id: Int = 0,
+    state: EditorState = EditorState.A,
+    isPresent: Boolean = false,
+    bill: String = "",
+    imageUrl: String? = null
+): Editor {
+    return Editor(
+        id = id,
+        name = name,
+        state = state,
+        present = isPresent,
+        bill = bill,
+        imageUrl = imageUrl,
+        address = Address(
+            street = billingStreet,
+            city = billingCity,
+            country = billingCountry,
+            postalCode = billingPostcode
+        )
+    )
+}
