@@ -44,6 +44,8 @@ class FestivalListViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val festivalRepository: FestivalRepository
 ) : ViewModel() {
+    private var _isOnline = mutableStateOf(false)
+    val isOnline: State<Boolean> = _isOnline
     private var internalState : MutableState<UiState> = mutableStateOf(UiState.Loading)
     val state : State<UiState> = internalState
     // UI states access for various [FestivalListUiState]
@@ -74,22 +76,29 @@ class FestivalListViewModel(
     }
 
     init {
-        fetchFestivals()
+        observeFestivals()
     }
 
-    private fun fetchFestivals() {
+    private fun observeFestivals() {
+        viewModelScope.launch {
+            festivalRepository.getFestivals().collect { festivals ->
+                internalState.value = UiState.Success(festivals)
+            }
+        }
+    }
+
+    fun refreshData() {
         viewModelScope.launch {
             try {
-                // On lance le rafraîchissement réseau (via la méthode qu'on a créée dans NetworkRepository)
-                // Si tu as gardé le nom "refreshFestivals"
-                (festivalRepository as? OfflineFestivalRepository)?.refreshFestivals()
+                if (state.value !is UiState.Success) internalState.value = UiState.Loading
 
-                // On observe les données qui viennent de Room
-                festivalRepository.getFestivals().collect { festivals ->
-                    internalState.value = UiState.Success(festivals)
-                }
+                val repo = (festivalRepository as? OfflineFestivalRepository)
+                val success = repo?.refreshFestivals() ?: false
+                _isOnline.value = success
             } catch (e: Exception) {
-                internalState.value = UiState.Error("Erreur: ${e.message}")
+                if (state.value !is UiState.Success) {
+                    internalState.value = UiState.Error("Erreur: ${e.message}")
+                }
             }
         }
     }

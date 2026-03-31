@@ -21,7 +21,6 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val festivalRepository: FestivalRepository by lazy {
-        // Attention : On utilise le NetworkFestivalRepository ici pour avoir le WiFi !
         OfflineFestivalRepository(database.festivalDao(), RetrofitInstance.api)
     }
 

@@ -60,20 +60,13 @@ fun FestivalDetailsScreen(
     val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navigateToEditItem(uiState.value.festivalDetails.id_f) },
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
+    androidx.compose.runtime.LaunchedEffect(key1 = true) {
+        viewModel.checkConnection()
+    }
 
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = stringResource(R.string.edit_item_title),
-                )
-            }
-        }, modifier = modifier
+    val isOnline by viewModel.isOnline
+
+    Scaffold(
     ) { innerPadding ->
         FestivalDetailsBody(
             festivalDetailsUiState = uiState.value,
@@ -92,7 +85,8 @@ fun FestivalDetailsScreen(
                     end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
                     top = innerPadding.calculateTopPadding()
                 )
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            isOnline = isOnline
         )
     }
 }
@@ -102,7 +96,8 @@ private fun FestivalDetailsBody(
     festivalDetailsUiState: FestivalDetailsUiState,
     onModify: () -> Unit,
     onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isOnline: Boolean,
 ) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
@@ -114,20 +109,23 @@ private fun FestivalDetailsBody(
             festival = festivalDetailsUiState.festivalDetails.toFestival(),
             modifier = Modifier.fillMaxWidth()
         )
-        Button(
-            onClick = onModify,
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.small,
-            enabled = true
-        ) {
-            Text(stringResource(R.string.modify))
-        }
-        OutlinedButton(
-            onClick = { deleteConfirmationRequired = true },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.delete))
+        if (isOnline) {
+            Button(
+                onClick = onModify,
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.small,
+                enabled = true
+            ) {
+                Text(stringResource(R.string.modify))
+            }
+
+            OutlinedButton(
+                onClick = { deleteConfirmationRequired = true },
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.delete))
+            }
         }
         if (deleteConfirmationRequired) {
             DeleteConfirmationDialog(
@@ -268,7 +266,8 @@ fun FestivalDetailsScreenPreview() {
                 festivalDetails = FestivalDetails()
             ),
             onModify = {},
-            onDelete = {}
+            onDelete = {},
+            isOnline = false
         )
     }
 }

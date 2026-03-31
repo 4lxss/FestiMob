@@ -54,11 +54,16 @@ fun FestivalListScreen(
     navigateToFestivalDetails: (Int) -> Unit,
     viewModel: FestivalListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    androidx.compose.runtime.LaunchedEffect(key1 = true) {
+        viewModel.refreshData()
+    }
     val uiState by viewModel.uiState.collectAsState()
     val state by viewModel.state
+    val isOnline by viewModel.isOnline
 
     FestivalListContent(
         state = state,
+        isOnline = isOnline,
         uiState = uiState,
         selectLayout = viewModel::selectLayout,
         onFestivalClick = navigateToFestivalDetails,
@@ -70,6 +75,7 @@ fun FestivalListScreen(
 @Composable
 private fun FestivalListContent(
     state: UiState,
+    isOnline: Boolean,
     uiState: FestivalListUiState,
     selectLayout: (Boolean) -> Unit,
     onFestivalClick: (Int) -> Unit,
@@ -99,15 +105,17 @@ private fun FestivalListContent(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddClick, // Correction : on utilise le paramètre onAddClick
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.item_entry_title)
-                )
+            if (state is UiState.Success && isOnline) {
+                FloatingActionButton(
+                    onClick = onAddClick, // Correction : on utilise le paramètre onAddClick
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.item_entry_title)
+                    )
+                }
             }
         },
     ) { innerPadding ->
