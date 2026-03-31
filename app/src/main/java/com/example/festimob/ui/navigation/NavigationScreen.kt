@@ -129,8 +129,7 @@ fun SmallNavigation() {
                     }
                     Destination.EDITORENTRY -> NavEntry(key) {
                         EditorFormScreen(
-                            navigateBack = { backStack.removeLastOrNull() },
-                            uiState = EditorFormUiState(EditorDetails())
+                            navigateBack = { backStack.removeLastOrNull() }
                         )
 
                     }
