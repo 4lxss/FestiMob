@@ -56,7 +56,7 @@ import com.example.festimob.ui.theme.TextWhite
 fun EditorScreen(
     modifier: Modifier = Modifier,
     // Inject the ViewModel using the Factory we defined
-    viewModel: EditorViewModel = viewModel(factory = EditorViewModel.Factory),
+    viewModel: EditorViewModel,
     navigateToAddForm: () -> Unit,
     navigateToUpdateForm: (Int) -> Unit
 ) {
