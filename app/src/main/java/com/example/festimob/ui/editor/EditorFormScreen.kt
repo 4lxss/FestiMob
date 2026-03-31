@@ -204,6 +204,7 @@ fun EditorAddForm(
 
         Button(
             onClick = onSave,
+            enabled = viewModel.uiState.isEntryValid,
             modifier = Modifier.fillMaxWidth().height(56.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color(0xFF009688)),
             shape = RoundedCornerShape(12.dp)
