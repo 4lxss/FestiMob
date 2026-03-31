@@ -2,6 +2,9 @@ package com.example.festimob.ui.editor
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -23,33 +26,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class EditorFormUiState(
-    val editorName: String = "",
-    val lastName: String = "",
-    val firstName: String = "",
-    val profession: String = "",
-    val email: String = "",
-    val phone: String = "",
-    val street: String = "",
-    val zipCode: String = "",
-    val city: String = "",
-    val country: String = "",
+    val editorDetails : EditorDetails,
     val isEntryValid: Boolean = false // Helper for the Save button
 )
 class EditorFormViewModel(
     private val editorsRepository: EditorsRepository,
 ) : ViewModel() {
+    var uiState by mutableStateOf(EditorFormUiState(EditorDetails()))
+        private set
 
-    private val _uiState = MutableStateFlow(EditorFormUiState())
-    val uiState: StateFlow<EditorFormUiState> = _uiState.asStateFlow()
-
-    fun updateUiState(newEditorState: EditorFormUiState) {
-        _uiState.update {
-            newEditorState.copy(isEntryValid = validateInput(newEditorState))
-        }
+    fun updateUiState(editorDetails: EditorDetails) {
+        uiState = EditorFormUiState(editorDetails, validateInput(editorDetails))
     }
 
-    private fun validateInput(uiState: EditorFormUiState): Boolean {
-        return uiState.editorName.isNotBlank() && uiState.email.contains("@")
+    private fun validateInput(editorDetails: EditorDetails): Boolean {
+        return editorDetails.name.isNotBlank() && editorDetails.contactEmail.contains("@")
     }
 
     companion object {

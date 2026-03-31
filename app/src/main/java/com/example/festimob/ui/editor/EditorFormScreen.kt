@@ -29,16 +29,48 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.festimob.FestiMobApplication
+
+@Composable
+fun EditorFormScreen(
+    navigateBack: () -> Unit,
+    uiState: EditorFormUiState
+) {
+    val context = LocalContext.current.applicationContext as FestiMobApplication
+
+    // 2. On crée des extras manuellement et on y injecte l'APPLICATION_KEY
+    val extras = MutableCreationExtras().apply {
+        set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+    }
+
+    var viewModel : EditorFormViewModel = viewModel(
+        factory = com.example.festimob.ui.editor.EditorFormViewModel.Factory,
+        extras = extras
+    )
+
+    EditorAddForm(
+        navigateBack = navigateBack,
+        viewModel = viewModel,
+        onSave = {},
+        editorDetails = uiState.editorDetails,
+        onValueChange = viewModel::updateUiState
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditorAddForm(
     editorDetails : EditorDetails,
-    onValueChange: (String) -> Unit,
+    onValueChange: (EditorDetails) -> Unit,
     navigateBack: () -> Unit,
-    viewModel: EditorViewModel,
+    viewModel: EditorFormViewModel,
     onSave: () -> Unit
 ) {
     Column(

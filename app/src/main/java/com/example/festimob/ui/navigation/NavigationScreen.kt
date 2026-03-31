@@ -35,6 +35,9 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.example.festimob.FestiMobApplication
 import com.example.festimob.ui.editor.EditorAddForm
+import com.example.festimob.ui.editor.EditorDetails
+import com.example.festimob.ui.editor.EditorFormScreen
+import com.example.festimob.ui.editor.EditorFormUiState
 import com.example.festimob.ui.editor.EditorScreen
 import com.example.festimob.ui.editor.EditorViewModel
 
@@ -125,20 +128,11 @@ fun SmallNavigation() {
                         )
                     }
                     Destination.EDITORENTRY -> NavEntry(key) {
-                        val context = LocalContext.current.applicationContext as FestiMobApplication
-
-                        // 2. On crée des extras manuellement et on y injecte l'APPLICATION_KEY
-                        val extras = MutableCreationExtras().apply {
-                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
-                        }
-                        EditorAddForm(
+                        EditorFormScreen(
                             navigateBack = { backStack.removeLastOrNull() },
-                            viewModel = viewModel(
-                                factory = com.example.festimob.ui.editor.EditorFormViewModel.Factory,
-                                extras = extras
-                            ),
-                            onSave = {}
+                            uiState = EditorFormUiState(EditorDetails())
                         )
+
                     }
                     Destination.ALBUM -> NavEntry(key) {
                         Box(contentAlignment = Alignment.Center) {
