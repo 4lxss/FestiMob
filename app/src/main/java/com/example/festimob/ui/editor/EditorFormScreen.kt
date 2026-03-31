@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditorAddForm(
+    editorDetails : EditorDetails,
+    onValueChange: (String) -> Unit,
     navigateBack: () -> Unit,
     viewModel: EditorViewModel,
     onSave: () -> Unit
@@ -67,20 +69,54 @@ fun EditorAddForm(
 
         // --- EDITOR INFO ---
         FormSectionTitle("Information")
-        CustomTextField(label = "Editor name", placeholder = "")
+        CustomTextField(
+            label = "Editor name",
+            placeholder = "",
+            value = editorDetails.name,
+            onValueChange = {onValueChange(editorDetails.copy(name = it).toString())}
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // --- EDITOR CONTACT ---
         FormSectionTitle("Main Contact")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CustomTextField(modifier = Modifier.weight(1f), label = "Name", placeholder = "Add Name")
-            CustomTextField(modifier = Modifier.weight(1f), label = "Firstname", placeholder = "Add Firstname")
+            CustomTextField(
+                modifier = Modifier.weight(1f),
+                label = "Name",
+                placeholder = "Add Name",
+                value = editorDetails.contactName,
+                onValueChange = {onValueChange(editorDetails.copy(contactName = it).toString())}
+            )
+            CustomTextField(
+                modifier = Modifier.weight(1f),
+                label = "Firstname",
+                placeholder = "Add Firstname",
+                value = editorDetails.contactFirstname,
+                onValueChange = {onValueChange(editorDetails.copy(contactFirstname = it).toString())}
+                )
         }
-        CustomTextField(label = "Job", placeholder = "Add Job")
+        CustomTextField(
+            label = "Job",
+            placeholder = "Add Job",
+            value = editorDetails.contactJob,
+            onValueChange = {onValueChange(editorDetails.copy(contactJob = it).toString())}
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CustomTextField(modifier = Modifier.weight(1f), label = "Email", placeholder = "Add Email")
-            CustomTextField(modifier = Modifier.weight(1f), label = "Phone", placeholder = "Add Phone number")
+            CustomTextField(
+                modifier = Modifier.weight(1f),
+                label = "Email",
+                placeholder = "Add Email",
+                value = editorDetails.contactEmail,
+                onValueChange = {onValueChange(editorDetails.copy(contactEmail = it).toString())}
+                )
+            CustomTextField(
+                modifier = Modifier.weight(1f),
+                label = "Phone",
+                placeholder = "Add Phone number",
+                value = editorDetails.contactPhone,
+                onValueChange = {onValueChange(editorDetails.copy(contactPhone = it).toString())}
+                )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -88,12 +124,36 @@ fun EditorAddForm(
         // --- Editor ADDRESS ---
         FormSectionTitle("Billing Address")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CustomTextField(modifier = Modifier.weight(2f), label = "Street", placeholder = "Number & Street Name")
-            CustomTextField(modifier = Modifier.weight(1f), label = "Postcode", placeholder = "Add Postcode")
+            CustomTextField(
+                modifier = Modifier.weight(2f),
+                label = "Street",
+                placeholder = "Number & Street Name",
+                value = editorDetails.billingStreet,
+                onValueChange = {onValueChange(editorDetails.copy(billingStreet = it).toString())}
+            )
+            CustomTextField(
+                modifier = Modifier.weight(1f),
+                label = "Postcode",
+                placeholder = "Add Postcode",
+                value = editorDetails.billingPostcode,
+                onValueChange = {onValueChange(editorDetails.copy(billingPostcode = it).toString())}
+            )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CustomTextField(modifier = Modifier.weight(1f), label = "City", placeholder = "Add City")
-            CustomTextField(modifier = Modifier.weight(1f), label = "Country", placeholder = "Add Country")
+            CustomTextField(
+                modifier = Modifier.weight(1f),
+                label = "City",
+                placeholder = "Add City",
+                value = editorDetails.billingCity,
+                onValueChange = {onValueChange(editorDetails.copy(billingCity = it).toString())}
+            )
+            CustomTextField(
+                modifier = Modifier.weight(1f),
+                label = "Country",
+                placeholder = "Add Country",
+                value = editorDetails.billingCountry,
+                onValueChange = {onValueChange(editorDetails.copy(billingCountry = it).toString())}
+            )
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -137,14 +197,16 @@ fun FormSectionTitle(title: String) {
 fun CustomTextField(
     label: String,
     placeholder: String,
+    value: String,
+    onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(bottom = 12.dp)) {
         Text(text = label, color = Color.White, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(4.dp))
         TextField(
-            value = "", // Link to your state here
-            onValueChange = {},
+            value = value, // Link to your state here
+            onValueChange = onValueChange,
             placeholder = { Text(placeholder, color = Color.Gray.copy(alpha = 0.6f)) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp),
@@ -157,3 +219,16 @@ fun CustomTextField(
         )
     }
 }
+
+data class EditorDetails(
+    val name : String = "",
+    val contactName : String = "",
+    val contactFirstname : String = "",
+    val contactJob : String = "",
+    val contactEmail : String = "",
+    val contactPhone : String = "",
+    val billingStreet : String = "",
+    val billingPostcode : String = "",
+    val billingCity : String = "",
+    val billingCountry : String = "",
+)
