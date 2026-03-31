@@ -11,7 +11,7 @@ class OfflinePlaceholderEditorsRepository : EditorsRepository {
         return flowOf(LocalDataPlaceholder.editorsPlaceholderData)
     }
 
-    override fun insertEditor(editor: Editor) {
+    override suspend fun insertEditor(editor: Editor) {
         LocalDataPlaceholder.editorsPlaceholderData += editor // Adds into the local list
     }
 }

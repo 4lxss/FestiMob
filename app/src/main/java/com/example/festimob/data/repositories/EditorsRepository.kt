@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface EditorsRepository {
     fun getEditorsStream(): Flow<List<Editor>>
 
-    fun insertEditor(editor: Editor) : Unit
+    suspend fun insertEditor(editor: Editor) : Unit
 }
