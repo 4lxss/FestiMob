@@ -1,6 +1,5 @@
 package com.example.festimob.data.api
 
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
 
 class OfflineUserRepository(
@@ -12,13 +11,8 @@ class OfflineUserRepository(
     override fun getUserByID(id_u: Int): Flow<User?> = userDao.getUserByID(id_u)
 
     suspend fun refreshUsers() {
-        try {
-            val UsersFromNetwork = apiService.getUsers()
-            userDao.insertAll(UsersFromNetwork)
-
-        } catch (e: Exception) {
-            Log.e("NetworkRepository", "Erreur réseau, utilisation du mode offline", e)
-        }
+        val usersFromNetwork = apiService.getUsers().users
+        userDao.insertAll(usersFromNetwork)
     }
 
     override suspend fun insert(user: User) = userDao.insert(user)

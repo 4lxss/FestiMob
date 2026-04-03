@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlaylistAddCircle
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,13 +19,19 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
@@ -36,11 +43,17 @@ import com.example.festimob.ui.festival.FestivalDetailsViewModel
 import com.example.festimob.ui.festival.FestivalEntryScreen
 import com.example.festimob.ui.festival.FestivalListScreen
 import com.example.festimob.ui.navigation.NavigationDestination
+import com.example.festimob.ui.auth.LoginScreen
+import com.example.festimob.ui.auth.LoginViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallNavigation() {
     val backStack = rememberSaveable { mutableStateListOf<Destination>(Destination.Accueil) }
+    var isLoggedIn by rememberSaveable { mutableStateOf(false) }
+    var logoutError by rememberSaveable { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
     val bottomNavItems = listOf(Destination.Accueil, Destination.FestivalList, Destination.Admin)
     Scaffold (
         topBar = {
@@ -51,6 +64,34 @@ fun SmallNavigation() {
                 ),
                 title = {
                     Text("FestiJeux")
+                },
+                actions = {
+                    if (!isLoggedIn) {
+                        TextButton(onClick = { backStack.add(Destination.Login) }) {
+                            Text("Connexion")
+                        }
+                    } else {
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    try {
+                                        com.example.festimob.data.api.RetrofitInstance.api.logout()
+                                        isLoggedIn = false
+                                        logoutError = null
+                                        backStack.clear()
+                                        backStack.add(Destination.Accueil)
+                                    } catch (e: Exception) {
+                                        logoutError = e.message ?: "Erreur lors de la déconnexion"
+                                    }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Logout,
+                                contentDescription = "Déconnexion"
+                            )
+                        }
+                    }
                 },
                 navigationIcon = {
                     if (backStack.size > 1) {
@@ -101,86 +142,115 @@ fun SmallNavigation() {
     )
     {
             innerPadding ->
-        NavDisplay (
-            backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
-            modifier = Modifier.padding(innerPadding),
-            entryProvider = { key ->
-                when(key) {
-                    is Destination.Accueil -> NavEntry(key) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text("PLAYLISTS")
+        androidx.compose.foundation.layout.Column {
+            logoutError?.let { error ->
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+            NavDisplay (
+                backStack = backStack,
+                onBack = { backStack.removeLastOrNull() },
+                modifier = Modifier.padding(innerPadding),
+                entryProvider = { key ->
+                    when(key) {
+                        is Destination.Accueil -> NavEntry(key) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text("PLAYLISTS")
+                            }
                         }
-                    }
-                    is Destination.FestivalList -> NavEntry(key) {
-                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
-                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
-                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
-                        }
+                        is Destination.FestivalList -> NavEntry(key) {
+                            val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+                            val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                                set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                            }
 
-                        FestivalListScreen(
-                            navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry) },
-                            navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) },
-                            // Si ton FestivalListScreen prend un viewModel en paramètre :
-                            // viewModel = viewModel(factory = AppViewModelProvider.Factory, extras = extras)
-                        )
-                    }
-                    is Destination.Admin -> NavEntry(key) {
-                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
-                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
-                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                            FestivalListScreen(
+                                navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry) },
+                                navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) },
+                                // Si ton FestivalListScreen prend un viewModel en paramètre :
+                                // viewModel = viewModel(factory = AppViewModelProvider.Factory, extras = extras)
+                            )
                         }
+                        is Destination.Admin -> NavEntry(key) {
+                            val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+                            val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                                set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                            }
 
-                        com.example.festimob.ui.user.UserListScreen(
-                            viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                            com.example.festimob.ui.user.UserListScreen(
+                                viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                    factory = com.example.festimob.ui.AppViewModelProvider.Factory,
+                                    extras = extras
+                                )
+                            )
+                        }
+                        is Destination.Login -> NavEntry(key) {
+                            val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+                            val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                                set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                            }
+
+                            val loginViewModel: LoginViewModel = viewModel(
+                                factory = AppViewModelProvider.Factory,
+                                extras = extras
+                            )
+                            LoginScreen(
+                                viewModel = loginViewModel,
+                                onLoginSuccess = {
+                                    isLoggedIn = true
+                                    logoutError = null
+                                    backStack.clear()
+                                    backStack.add(Destination.Accueil)
+                                }
+                            )
+                        }
+                        is Destination.FestivalEntry -> NavEntry(key) {
+                            val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+
+                            // 2. On crée des extras manuellement et on y injecte l'APPLICATION_KEY
+                            val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                                set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                            }
+
+                            FestivalEntryScreen(
+                                navigateBack = { backStack.removeLastOrNull() },
+                                // 3. On passe la factory ET les extras qu'on vient de fabriquer
+                                viewModel = viewModel(
+                                    factory = com.example.festimob.ui.AppViewModelProvider.Factory,
+                                    extras = extras
+                                )
+                            )
+
+                        }
+                        is Destination.FestivalDetails -> NavEntry(key) {
+                            val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+
+                            // 2. Créer les extras en mettant les DEUX clés nécessaires
+                            val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                                // Clé pour l'application (nécessaire pour le container/DB)
+                                set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                                // Clé pour l'ID du festival (nécessaire pour charger les données)
+                                set(com.example.festimob.ui.AppViewModelProvider.FestivalIdKey, key.id)
+                            }
+
+                            val viewModel: FestivalDetailsViewModel = viewModel(
                                 factory = com.example.festimob.ui.AppViewModelProvider.Factory,
                                 extras = extras
                             )
-                        )
-                    }
-                    is Destination.FestivalEntry -> NavEntry(key) {
-                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
 
-                        // 2. On crée des extras manuellement et on y injecte l'APPLICATION_KEY
-                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
-                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
-                        }
-
-                        FestivalEntryScreen(
-                            navigateBack = { backStack.removeLastOrNull() },
-                            // 3. On passe la factory ET les extras qu'on vient de fabriquer
-                            viewModel = viewModel(
-                                factory = com.example.festimob.ui.AppViewModelProvider.Factory,
-                                extras = extras
+                            FestivalDetailsScreen(
+                                navigateBack = { backStack.removeLastOrNull() },
+                                navigateToEditItem = { id -> /* Ta logique d'édition */ },
+                                viewModel = viewModel
                             )
-                        )
-
-                    }
-                    is Destination.FestivalDetails -> NavEntry(key) {
-                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
-
-                        // 2. Créer les extras en mettant les DEUX clés nécessaires
-                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
-                            // Clé pour l'application (nécessaire pour le container/DB)
-                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
-                            // Clé pour l'ID du festival (nécessaire pour charger les données)
-                            set(com.example.festimob.ui.AppViewModelProvider.FestivalIdKey, key.id)
                         }
-
-                        val viewModel: FestivalDetailsViewModel = viewModel(
-                            factory = com.example.festimob.ui.AppViewModelProvider.Factory,
-                            extras = extras
-                        )
-
-                        FestivalDetailsScreen(
-                            navigateBack = { backStack.removeLastOrNull() },
-                            navigateToEditItem = { id -> /* Ta logique d'édition */ },
-                            viewModel = viewModel
-                        )
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
@@ -194,6 +264,7 @@ sealed class Destination(
     object FestivalList : Destination("Festivals", Icons.Default.PlaylistAddCircle, "festivals", R.string.festivals_title)
     object FestivalEntry : Destination("Ajout", Icons.Default.Add, "entry", R.string.item_entry_title)
     object Admin : Destination("Admin", Icons.Default.AdminPanelSettings, "admin", R.string.item_entry_title)
+    object Login : Destination("Connexion", Icons.Default.AdminPanelSettings, "login", R.string.item_entry_title)
 
     data class FestivalDetails(val id: Int) : Destination("Détails", Icons.Default.AdminPanelSettings, "details", R.string.details_title)
 }

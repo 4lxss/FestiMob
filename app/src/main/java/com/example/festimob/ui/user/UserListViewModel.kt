@@ -29,7 +29,9 @@ class UserListViewModel(
     private fun fetchUsers() {
         viewModelScope.launch {
             try {
-                (userRepository as? OfflineUserRepository)?.refreshUsers()
+                val offlineRepository = userRepository as? OfflineUserRepository
+                    ?: throw IllegalStateException("UserRepository must be OfflineUserRepository")
+                offlineRepository.refreshUsers()
                 userRepository.getUsers().collect { users ->
                     _state.value = UserListState.Success(users)
                 }
