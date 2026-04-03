@@ -10,7 +10,7 @@ class OfflineUserRepository(
 
     override fun getUserByID(id_u: Int): Flow<User?> = userDao.getUserByID(id_u)
 
-    suspend fun refreshUsers() {
+    override suspend fun refreshUsers() {
         val usersFromNetwork = apiService.getUsers().users
         userDao.insertAll(usersFromNetwork)
     }

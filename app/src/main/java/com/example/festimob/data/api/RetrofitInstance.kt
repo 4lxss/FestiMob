@@ -21,15 +21,38 @@ object RetrofitInstance {
         level = HttpLoggingInterceptor.Level.HEADERS
     }
 
-    private val cookieStore = mutableMapOf<String, List<Cookie>>()
+    private val cookieStore = mutableMapOf<String, MutableList<Cookie>>()
 
     private val cookieJar = object : CookieJar {
         override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-            cookieStore[url.host] = cookies
+            val now = System.currentTimeMillis()
+            val hostCookies = cookieStore.getOrPut(url.host) { mutableListOf() }
+
+            hostCookies.removeAll { it.expiresAt <= now }
+            cookies.forEach { newCookie ->
+                hostCookies.removeAll {
+                    it.name == newCookie.name &&
+                        it.domain == newCookie.domain &&
+                        it.path == newCookie.path
+                }
+                if (newCookie.expiresAt > now) {
+                    hostCookies.add(newCookie)
+                }
+            }
+            if (hostCookies.isEmpty()) {
+                cookieStore.remove(url.host)
+            }
         }
 
         override fun loadForRequest(url: HttpUrl): List<Cookie> {
-            return cookieStore[url.host].orEmpty()
+            val now = System.currentTimeMillis()
+            val hostCookies = cookieStore[url.host] ?: return emptyList()
+            hostCookies.removeAll { it.expiresAt <= now }
+            if (hostCookies.isEmpty()) {
+                cookieStore.remove(url.host)
+                return emptyList()
+            }
+            return hostCookies.filter { it.matches(url) }
         }
     }
 

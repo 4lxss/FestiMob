@@ -10,6 +10,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,6 +27,9 @@ fun UserListScreen(
     viewModel: UserListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.state.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.refreshUsers()
+    }
 
     when (state) {
         is UserListState.Loading -> LoadingView()

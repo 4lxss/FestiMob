@@ -27,7 +27,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val userRepository: UserRepository by lazy {
-        OfflineUserRepository(database.userDao(), RetrofitInstance.api)
+        OnlineUserRepository(RetrofitInstance.api)
     }
 
     override val userPreferencesRepository: UserPreferencesRepository by lazy {
