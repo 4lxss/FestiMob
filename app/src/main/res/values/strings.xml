@@ -5,4 +5,6 @@
     <string name="linear_layout">Switch to list view</string>
     <string name="editors_top_bar_name">Editors</string>
     <string name="editor_entry_title">Add new Editor</string>
+    <string name="editor_title">Editors</string>
+    <string name="details_title">Editor Details</string>
 </resources>

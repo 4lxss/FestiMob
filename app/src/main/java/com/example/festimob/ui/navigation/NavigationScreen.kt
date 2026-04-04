@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.example.festimob.FestiMobApplication
+import com.example.festimob.R
 import com.example.festimob.ui.editor.EditorAddForm
 import com.example.festimob.ui.editor.EditorDetails
 import com.example.festimob.ui.editor.EditorDetailsScreen
@@ -46,7 +47,8 @@ import com.example.festimob.ui.editor.EditorViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallNavigation() {
-    val backStack = rememberSaveable { mutableStateListOf<Destination>(Destination.ACCUEIL) }
+    val backStack = rememberSaveable { mutableStateListOf<Destination>(Destination.Accueil) }
+    val bottomNavItems = listOf(Destination.Accueil, Destination.EditorList, Destination.Album)
     Scaffold (
         topBar = {
             CenterAlignedTopAppBar(
@@ -78,32 +80,28 @@ fun SmallNavigation() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary,
                 ) {
-                    Destination.entries
-                        .filter {
-                            it != Destination.EDITORENTRY
-                        }
-                        .forEach { destination ->
-                            NavigationBarItem(
-                                selected = backStack.lastOrNull() == destination,
-                                onClick = {
-                                    if (backStack.lastOrNull() != destination) {
-                                        if (destination == Destination.ACCUEIL) {
+                    bottomNavItems.forEach { destination ->
+                        NavigationBarItem(
+                            selected = backStack.lastOrNull() == destination,
+                            onClick = {
+                                if (backStack.lastOrNull() != destination) {
+                                    if (destination == Destination.Accueil) {
+                                        backStack.clear()
+                                        backStack.add(Destination.Accueil)
+                                    } else {
+                                        if (backStack.isEmpty() || backStack[0] != Destination.Accueil) {
                                             backStack.clear()
-                                            backStack.add(Destination.ACCUEIL)
-                                        } else {
-                                            if (backStack.isEmpty() || backStack[0] != Destination.ACCUEIL) {
-                                                backStack.clear()
-                                                backStack.add(Destination.ACCUEIL)
-                                            }
-                                            backStack.remove(destination)
-                                            backStack.add(destination)
+                                            backStack.add(Destination.Accueil)
                                         }
+                                        backStack.remove(destination)
+                                        backStack.add(destination)
                                     }
-                                },
-                                icon = { Icon(destination.icon, contentDescription = destination.contentDescription) },
-                                label = { Text(destination.label) }
-                            )
-                        }
+                                }
+                            },
+                            icon = { Icon(destination.icon, contentDescription = destination.label) },
+                            label = { Text(destination.label) }
+                        )
+                    }
                 }
             }
         }
@@ -116,30 +114,30 @@ fun SmallNavigation() {
             modifier = Modifier.padding(innerPadding),
             entryProvider = { key ->
                 when(key) {
-                    Destination.ACCUEIL -> NavEntry(key) {
+                    is Destination.Accueil -> NavEntry(key) {
                         Box(contentAlignment = Alignment.Center) {
                             Text("PLAYLISTS")
                         }
                     }
-                    Destination.EDITORLIST -> NavEntry(key) {
+                    is Destination.EditorList -> NavEntry(key) {
                         EditorScreen(
                             modifier = Modifier.padding(innerPadding),
                             viewModel = viewModel(factory = EditorViewModel.Factory),
-                            navigateToAddForm = { backStack.add(Destination.EDITORENTRY)},
+                            navigateToAddForm = { backStack.add(Destination.EditorEntry())},
                             navigateToUpdateForm = {}
                         )
                     }
-                    Destination.EDITORENTRY -> NavEntry(key) {
+                    is Destination.EditorEntry -> NavEntry(key) {
                         EditorFormScreen(
                             navigateBack = { backStack.removeLastOrNull() }
                         )
 
                     }
-                    Destination.EDITORDETAILS -> NavEntry(key) {
+                    is Destination.EditorDetails -> NavEntry(key) {
                         EditorDetailsScreen(1) //1 for print test
 
                     }
-                    Destination.ALBUM -> NavEntry(key) {
+                    is Destination.Album -> NavEntry(key) {
                         Box(contentAlignment = Alignment.Center) {
                             Text("ALBUM")
                         }
@@ -150,15 +148,17 @@ fun SmallNavigation() {
     }
 }
 
-enum class Destination(
-    val route: String,
+
+sealed class Destination(
     val label: String,
     val icon: ImageVector,
-    val contentDescription: String
-) {
-    ALBUM("album", "Album", Icons.Default.Album, "Album"),
-    ACCUEIL("accueil", "Accueil", Icons.Default.Home, "Accueil"),
-    EDITORLIST("editors", "Editors", Icons.Default.List, "Editors List"),
-    EDITORENTRY("editors/add", "New Editor", Icons.Default.Add, "Editor Entry Form"),
-    EDITORDETAILS("editors/:id","Editor Details",Icons.Default.Details,"Editor Details"),
+    override val route: String,
+    override val titleRes: Int
+) : NavigationDestination {
+    object Accueil : Destination("Accueil", Icons.Default.Home, "accueil", R.string.app_name)
+    object EditorList : Destination("Editors", Icons.Default.List, "editors", R.string.editor_title)
+    data class EditorEntry(val id: Int = 0) : Destination("Add Editor", Icons.Default.Add, "entry", R.string.editor_entry_title)
+    object Album : Destination("Album", Icons.Default.Album, "album", R.string.editor_entry_title)
+
+    data class EditorDetails(val id: Int) : Destination("Editor Details", Icons.Default.Details, "details", R.string.details_title)
 }
