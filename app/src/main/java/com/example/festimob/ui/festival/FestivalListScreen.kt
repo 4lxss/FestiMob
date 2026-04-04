@@ -1,6 +1,8 @@
 package com.example.festimob.ui.festival
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,8 +17,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,15 +31,20 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,14 +59,14 @@ import com.example.festimob.data.api.Festival
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.theme.FestiMobTheme
 import com.example.festimob.ui.viewmodels.UiState
-
+import androidx.compose.material3.CenterAlignedTopAppBar
 @Composable
 fun FestivalListScreen(
     navigateToFestivalEntry: () -> Unit,
     navigateToFestivalDetails: (Int) -> Unit,
     viewModel: FestivalListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    androidx.compose.runtime.LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = true) {
         viewModel.refreshData()
     }
     val uiState by viewModel.uiState.collectAsState()
@@ -67,7 +79,8 @@ fun FestivalListScreen(
         uiState = uiState,
         selectLayout = viewModel::selectLayout,
         onFestivalClick = navigateToFestivalDetails,
-        onAddClick = navigateToFestivalEntry
+        onAddClick = navigateToFestivalEntry,
+        viewModel = viewModel,
     )
 }
 
@@ -80,29 +93,98 @@ private fun FestivalListContent(
     selectLayout: (Boolean) -> Unit,
     onFestivalClick: (Int) -> Unit,
     onAddClick: () -> Unit,
+    viewModel: FestivalListViewModel,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.top_bar_name)) },
-                actions = {
-                    // On vérifie si on est en succès pour afficher le bouton de switch
-                    if (state is UiState.Success) {
-                        IconButton(
-                            onClick = { selectLayout(!uiState.isLinearLayout) }
-                        ) {
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.inversePrimary)
+                    .padding(8.dp)
+            ) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "Festivals",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    },
+                    navigationIcon = {
+                        // Bouton Retour à gauche
+                        IconButton(onClick = { /* Ton action navigateBack ici */ }) {
                             Icon(
-                                painter = painterResource(uiState.toggleIcon),
-                                contentDescription = stringResource(uiState.toggleContentDescription)
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Retour"
                             )
                         }
-                    }
-                },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.inversePrimary
+                    },
+                    actions = {
+                        // Tes boutons Refresh et Layout déplacés ici (à droite)
+                        IconButton(onClick = { viewModel.refreshData() }) {
+                            Icon(Icons.Default.Refresh, contentDescription = "Sync")
+                        }
+                        IconButton(onClick = { selectLayout(!uiState.isLinearLayout) }) {
+                            Icon(
+                                painter = painterResource(uiState.toggleIcon),
+                                contentDescription = "Layout"
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.Transparent, // Fond transparent pour voir l'inversePrimary derrière
+                        titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Couleur du titre
+                        navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Couleur flèche
+                        actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant // Couleur icônes droite
+                    )
                 )
-            )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 12.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+
+                        TextField(
+                            value = viewModel.searchQuery.value,
+                            onValueChange = { viewModel.onSearchQueryChange(it) },
+                            modifier = Modifier.weight(1f),
+                            placeholder = { Text("Rechercher...") },
+                            singleLine = true,
+                            colors = TextFieldDefaults.colors(
+                                focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                cursorColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+
+                        if (viewModel.searchQuery.value.isNotEmpty()) {
+                            IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         },
         floatingActionButton = {
             if (state is UiState.Success && isOnline) {

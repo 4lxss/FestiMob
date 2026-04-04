@@ -1,5 +1,7 @@
 package com.example.festimob.ui.utils
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -9,6 +11,8 @@ import androidx.compose.ui.Modifier
 import java.util.Date
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,5 +69,17 @@ fun DatePickerField(
         ) {
             DatePicker(state = datePickerState)
         }
+    }
+}
+
+fun formatIsoToInput(isoString: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.US)
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+
+        val date = inputFormat.parse(isoString)
+        outputFormat.format(date!!)
+    } catch (e: Exception) {
+        isoString.take(10)
     }
 }

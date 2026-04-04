@@ -47,6 +47,10 @@ class FestivalListViewModel(
     private var _isOnline = mutableStateOf(false)
     val isOnline: State<Boolean> = _isOnline
     private var internalState : MutableState<UiState> = mutableStateOf(UiState.Loading)
+
+    private val _searchQuery = mutableStateOf("")
+    val searchQuery: State<String> = _searchQuery
+
     val state : State<UiState> = internalState
     // UI states access for various [FestivalListUiState]
     val uiState: StateFlow<FestivalListUiState> =
@@ -74,6 +78,24 @@ class FestivalListViewModel(
             userPreferencesRepository.saveLayoutPreference(isLinearLayout)
         }
     }
+
+    fun onSearchQueryChange(newQuery: String) {
+        _searchQuery.value = newQuery
+    }
+
+    val filteredFestivals: List<Festival>
+        get() {
+            val currentStats = state.value
+            return if (currentStats is UiState.Success) {
+                if (searchQuery.value.isEmpty()) {
+                    currentStats.festivals
+                } else {
+                    currentStats.festivals.filter {
+                        it.name.contains(searchQuery.value, ignoreCase = true)
+                    }
+                }
+            } else emptyList()
+        }
 
     init {
         observeFestivals()

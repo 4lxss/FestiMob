@@ -1,4 +1,4 @@
-package com.example.festimob.ui.screens
+package com.example.festimob.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -25,17 +25,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
+import com.example.festimob.FestiMobApplication
 import com.example.festimob.R
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.festival.FestivalDetailsScreen
 import com.example.festimob.ui.festival.FestivalDetailsViewModel
 import com.example.festimob.ui.festival.FestivalEntryScreen
 import com.example.festimob.ui.festival.FestivalListScreen
-import com.example.festimob.ui.navigation.NavigationDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,27 +45,6 @@ fun SmallNavigation() {
     val backStack = rememberSaveable { mutableStateListOf<Destination>(Destination.Accueil) }
     val bottomNavItems = listOf(Destination.Accueil, Destination.FestivalList, Destination.Album)
     Scaffold (
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Text("FestiJeux")
-                },
-                navigationIcon = {
-                    if (backStack.size > 1) {
-                        IconButton(onClick = { backStack.removeLastOrNull() }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
-                            )
-                        }
-                    }
-                }
-            )
-        },
         bottomBar = {
             BottomAppBar(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -113,16 +94,14 @@ fun SmallNavigation() {
                         }
                     }
                     is Destination.FestivalList -> NavEntry(key) {
-                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
-                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
-                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                        val context = LocalContext.current.applicationContext as FestiMobApplication
+                        val extras = MutableCreationExtras().apply {
+                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
                         }
 
                         FestivalListScreen(
-                            navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry) },
+                            navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry()) },
                             navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) },
-                            // Si ton FestivalListScreen prend un viewModel en paramètre :
-                            // viewModel = viewModel(factory = AppViewModelProvider.Factory, extras = extras)
                         )
                     }
                     is Destination.Album -> NavEntry(key) {
@@ -131,42 +110,44 @@ fun SmallNavigation() {
                         }
                     }
                     is Destination.FestivalEntry -> NavEntry(key) {
-                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+                        val context = LocalContext.current.applicationContext as FestiMobApplication
 
-                        // 2. On crée des extras manuellement et on y injecte l'APPLICATION_KEY
-                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
-                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                        val extras = MutableCreationExtras().apply {
+                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                            set(AppViewModelProvider.FestivalIdKey, key.id)
                         }
 
                         FestivalEntryScreen(
                             navigateBack = { backStack.removeLastOrNull() },
-                            // 3. On passe la factory ET les extras qu'on vient de fabriquer
+                            isEditMode = key.id != 0,
                             viewModel = viewModel(
-                                factory = com.example.festimob.ui.AppViewModelProvider.Factory,
+                                factory = AppViewModelProvider.Factory,
                                 extras = extras
                             )
                         )
 
                     }
                     is Destination.FestivalDetails -> NavEntry(key) {
-                        val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+                        val context = LocalContext.current.applicationContext as FestiMobApplication
 
                         // 2. Créer les extras en mettant les DEUX clés nécessaires
-                        val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                        val extras = MutableCreationExtras().apply {
                             // Clé pour l'application (nécessaire pour le container/DB)
-                            set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
                             // Clé pour l'ID du festival (nécessaire pour charger les données)
-                            set(com.example.festimob.ui.AppViewModelProvider.FestivalIdKey, key.id)
+                            set(AppViewModelProvider.FestivalIdKey, key.id)
                         }
 
                         val viewModel: FestivalDetailsViewModel = viewModel(
-                            factory = com.example.festimob.ui.AppViewModelProvider.Factory,
+                            factory = AppViewModelProvider.Factory,
                             extras = extras
                         )
 
                         FestivalDetailsScreen(
                             navigateBack = { backStack.removeLastOrNull() },
-                            navigateToEditItem = { id -> /* Ta logique d'édition */ },
+                            navigateToEditItem = { id ->
+                                backStack.add(Destination.FestivalEntry(id = id))
+                            },
                             viewModel = viewModel
                         )
                     }
@@ -184,7 +165,7 @@ sealed class Destination(
 ) : NavigationDestination {
     object Accueil : Destination("Accueil", Icons.Default.Home, "accueil", R.string.app_name)
     object FestivalList : Destination("Festivals", Icons.Default.PlaylistAddCircle, "festivals", R.string.festivals_title)
-    object FestivalEntry : Destination("Ajout", Icons.Default.Add, "entry", R.string.item_entry_title)
+    data class FestivalEntry(val id: Int = 0) : Destination("Ajout", Icons.Default.Add, "entry", R.string.item_entry_title)
     object Album : Destination("Album", Icons.Default.Album, "album", R.string.item_entry_title)
 
     data class FestivalDetails(val id: Int) : Destination("Détails", Icons.Default.Album, "details", R.string.details_title)

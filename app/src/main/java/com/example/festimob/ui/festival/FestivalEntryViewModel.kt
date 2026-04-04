@@ -3,22 +3,63 @@ package com.example.festimob.ui.festival
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.festimob.data.api.Festival
 import com.example.festimob.data.api.FestivalAddRequest
 import com.example.festimob.data.api.FestivalRepository
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
+import com.example.festimob.ui.AppViewModelProvider.FestivalIdKey
+import com.example.festimob.ui.utils.formatIsoToInput
 
 /**
  * ViewModel to validate and insert items in the Room database.
  */
-class FestivalEntryViewModel(private val festivalRepository: FestivalRepository) : ViewModel() {
+class FestivalEntryViewModel(
+    private val festivalId: Int,
+    private val festivalRepository: FestivalRepository) : ViewModel() {
 
     /**
      * Holds current festival ui state
      */
-    var festivalUiState by mutableStateOf(FestivalUiState())
+    var festivalUiState by mutableStateOf(
+        if (festivalId == 0) {
+            FestivalUiState(
+                festivalDetails = FestivalDetails(
+                    name = "Nouveau Festival",
+                    nb_table_big = "10",
+                    nb_table_small = "10",
+                    nb_table_mairie = "5",
+                    nb_chair = "20",
+                    nb_chair_mairie = "10",
+                    price_multi_socket = "15",
+                    start_date = "2026-06-01",
+                    end_date = "2026-06-02"
+                ),
+                isEntryValid = true //
+            )
+        } else {
+            FestivalUiState()
+        }
+    )
         private set
+
+    init {
+        if (festivalId != 0) {
+            viewModelScope.launch {
+                festivalRepository.getFestival(festivalId)
+                    .filterNotNull()
+                    .first()
+                    .let { festival ->
+                        festivalUiState = festival.toFestivalUiState(true)
+                    }
+            }
+        }
+    }
 
     /**
      * Updates the [festivalUiState] with the value provided in the argument. This method also triggers
@@ -28,6 +69,8 @@ class FestivalEntryViewModel(private val festivalRepository: FestivalRepository)
         festivalUiState =
             FestivalUiState(festivalDetails = festivalDetails, isEntryValid = validateInput(festivalDetails))
     }
+
+
 
     private fun validateInput(uiState: FestivalDetails = festivalUiState.festivalDetails): Boolean {
         return with(uiState) {
@@ -48,30 +91,32 @@ class FestivalEntryViewModel(private val festivalRepository: FestivalRepository)
     }
 
     suspend fun saveFestival(): Boolean {
+        if (!validateInput()) {
+            festivalUiState = festivalUiState.copy(errorMessage = "Veuillez remplir tous les champs.")
+            return false
+        }
+
         return try {
-            if (validateInput()) {
+            if (festivalId == 0) {
+                // Mode CREATION
                 festivalRepository.insert(festivalUiState.festivalDetails.toFestivalAddRequest())
-                // Si réussi, on efface l'erreur
-                festivalUiState = festivalUiState.copy(errorMessage = null)
-                true
             } else {
-                festivalUiState = festivalUiState.copy(errorMessage = "Veuillez remplir tous les champs.")
-                false
+                // Mode EDITION (Update)
+                // Assure-toi d'avoir une fonction update dans ton repository
+                festivalRepository.update(festivalUiState.festivalDetails.toFestival())
             }
+            festivalUiState = festivalUiState.copy(errorMessage = null)
+            true
         } catch (e: Exception) {
-            // On traduit l'erreur technique en message utilisateur
             val errorMsg = when {
-                e.message?.contains("404") == true -> "Serveur introuvable (404)."
-                e.message?.contains("500") == true -> "Erreur interne du serveur (500)."
+                e.message?.contains("500") == true -> "Erreur serveur (500)."
                 e is java.net.UnknownHostException -> "Pas de connexion internet."
-                e is java.net.SocketTimeoutException -> "Le serveur met trop de temps à répondre."
-                else -> "Échec de la sauvegarde : ${e.localizedMessage}"
+                else -> "Échec : ${e.localizedMessage}"
             }
             festivalUiState = festivalUiState.copy(errorMessage = errorMsg)
             false
         }
     }
-
 }
 
 /**
@@ -147,8 +192,8 @@ fun Festival.toFestivalUiState(isEntryValid: Boolean = false): FestivalUiState =
 fun Festival.toFestivalDetails(): FestivalDetails = FestivalDetails(
     id_f = id_f,
     name = name,
-    start_date = start_date,
-    end_date = end_date,
+    start_date = formatIsoToInput(start_date),
+    end_date = formatIsoToInput(end_date),
     nb_table_big = nb_table_big.toString(),
     nb_table_small = nb_table_small.toString(),
     nb_table_mairie = nb_table_mairie.toString(),

@@ -71,7 +71,7 @@ fun FestivalDetailsScreen(
         FestivalDetailsBody(
             festivalDetailsUiState = uiState.value,
             onModify = {
-                println("Ouverture de la page modification")
+                navigateToEditItem(uiState.value.festivalDetails.id_f)
             },
             onDelete = {
                 coroutineScope.launch {
