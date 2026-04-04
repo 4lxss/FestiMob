@@ -77,6 +77,7 @@ class FestivalListViewModel(
 
     init {
         observeFestivals()
+        refreshData()
     }
 
     private fun observeFestivals() {

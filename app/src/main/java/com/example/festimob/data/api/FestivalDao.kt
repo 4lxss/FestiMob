@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
@@ -28,4 +29,12 @@ interface FestivalDao {
     @Delete
     suspend fun delete(festival: Festival)
 
+    @Query("DELETE FROM festival")
+    suspend fun deleteAll()
+
+    @Transaction
+    suspend fun resyncAll(festivals: List<Festival>) {
+        deleteAll()
+        insertAll(festivals)
+    }
 }

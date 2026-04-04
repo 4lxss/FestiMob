@@ -11,16 +11,14 @@ class OfflineFestivalRepository(
 
     override fun getFestival(id_f: Int): Flow<Festival> = festivalDao.getFestival(id_f)
 
-    suspend fun refreshFestivals() : Boolean {
-        try {
+    suspend fun refreshFestivals(): Boolean {
+        return try {
             val festivalsFromNetwork = apiService.getFestivals()
-
-            festivalDao.insertAll(festivalsFromNetwork)
-            return true
-
+            festivalDao.resyncAll(festivalsFromNetwork)
+            true
         } catch (e: Exception) {
-            Log.e("NetworkRepository", "Erreur réseau, utilisation du mode offline", e)
-            return false
+            Log.e("NetworkRepository", "Erreur refresh", e)
+            false
         }
     }
 
