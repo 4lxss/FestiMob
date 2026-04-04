@@ -3,6 +3,7 @@ package com.example.festimob.data.repositories
 //import com.example.festimob.data.api.RetrofitInstance
 import com.example.festimob.data.local.LocalDataPlaceholder
 import com.example.festimob.data.models.Editor
+import com.example.festimob.data.models.EditorState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -13,6 +14,15 @@ class OfflinePlaceholderEditorsRepository : EditorsRepository {
 
     override suspend fun insertEditor(editor: Editor) {
         LocalDataPlaceholder.editorsPlaceholderData += editor // Adds into the local list
+    }
+
+    override fun getEditorById(id: Int) : Editor {
+        LocalDataPlaceholder.editorsPlaceholderData.forEach {
+            if (it.id == id) {
+                return it
+            }
+        }
+        return Editor(0,"", EditorState.A,false,"",null,null)
     }
 }
 

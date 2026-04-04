@@ -9,8 +9,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun EditorDetailsScreen(
-    editorId: Int
+    editorId : Int,
+    viewModel: EditorDetailsViewModel
 ) {
+    viewModel.setUiState(editorId)
     Spacer(Modifier.padding(4.dp))
-    Text("Congrats on reaching Editor $editorId Details screen")
+    Text("Congrats on reaching Editor ${viewModel.uiState.editor?.id} Details screen")
 }

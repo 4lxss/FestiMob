@@ -21,7 +21,8 @@ class EditorDetailsViewModel(
 ) : ViewModel() {
     var uiState by mutableStateOf(EditorDetailsUiState(editor = null))
 
-    fun setUiState(editor: Editor) {
+    fun setUiState(editorId: Int) {
+        val editor = editorsRepository.getEditorById(editorId)
         uiState = EditorDetailsUiState(editor)
     }
 

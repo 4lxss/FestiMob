@@ -39,6 +39,7 @@ import com.example.festimob.R
 import com.example.festimob.ui.editor.EditorAddForm
 import com.example.festimob.ui.editor.EditorDetails
 import com.example.festimob.ui.editor.EditorDetailsScreen
+import com.example.festimob.ui.editor.EditorDetailsViewModel
 import com.example.festimob.ui.editor.EditorFormScreen
 import com.example.festimob.ui.editor.EditorFormUiState
 import com.example.festimob.ui.editor.EditorScreen
@@ -135,8 +136,12 @@ fun SmallNavigation() {
 
                     }
                     is Destination.EditorDetails -> NavEntry(key) {
-                        EditorDetailsScreen(1) //1 for print test
+                        val editorId = key.id
+                        EditorDetailsScreen(
+                            editorId = editorId,
+                            viewModel = viewModel(factory = EditorDetailsViewModel.Factory)
 
+                        )
                     }
                     is Destination.Album -> NavEntry(key) {
                         Box(contentAlignment = Alignment.Center) {

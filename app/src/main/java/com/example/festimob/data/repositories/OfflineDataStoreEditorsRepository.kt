@@ -21,4 +21,8 @@ class OfflineDataStoreEditorsRepository(
     override suspend fun insertEditor(editor: Editor) {
         editorDao.insertEditor(editor.toDto())
     }
+
+    override fun getEditorById(id: Int): Editor {
+        TODO("Not yet implemented")
+    }
 }

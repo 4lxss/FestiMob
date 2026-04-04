@@ -8,4 +8,5 @@ interface EditorsRepository {
     fun getEditorsStream(): Flow<List<Editor>>
 
     suspend fun insertEditor(editor: Editor) : Unit
+    fun getEditorById(id: Int) : Editor
 }
