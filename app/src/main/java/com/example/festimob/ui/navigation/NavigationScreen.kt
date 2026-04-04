@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Album
+import androidx.compose.material.icons.filled.Details
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MusicNote
@@ -133,6 +134,12 @@ fun SmallNavigation() {
                         )
 
                     }
+                    Destination.EDITORDETAILS -> NavEntry(key) {
+                        EditorFormScreen(
+                            navigateBack = { backStack.removeLastOrNull() }
+                        )
+
+                    }
                     Destination.ALBUM -> NavEntry(key) {
                         Box(contentAlignment = Alignment.Center) {
                             Text("ALBUM")
@@ -154,4 +161,5 @@ enum class Destination(
     ACCUEIL("accueil", "Accueil", Icons.Default.Home, "Accueil"),
     EDITORLIST("editors", "Editors", Icons.Default.List, "Editors List"),
     EDITORENTRY("editors/add", "New Editor", Icons.Default.Add, "Editor Entry Form"),
+    EDITORDETAILS("editors/:id","Editor Details",Icons.Default.Details,"Editor Details"),
 }
