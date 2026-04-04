@@ -7,6 +7,7 @@ import com.example.festimob.data.api.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 sealed class AdminScreenState {
     object Loading : AdminScreenState()
@@ -38,6 +39,12 @@ class AdminScreenViewModel(
             try {
                 _state.value = AdminScreenState.Loading
                 userRepository.refreshUsers()
+            } catch (e: HttpException) {
+                _state.value = if (e.code() == 401 || e.code() == 403) {
+                    AdminScreenState.Error("Vous n'avez pas les droits nécessaires")
+                } else {
+                    AdminScreenState.Error("Erreur: ${e.message}")
+                }
             } catch (e: Exception) {
                 _state.value = AdminScreenState.Error("Erreur: ${e.message}")
             }
