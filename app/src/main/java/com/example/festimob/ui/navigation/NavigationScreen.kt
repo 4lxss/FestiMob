@@ -102,6 +102,7 @@ fun SmallNavigation() {
                         FestivalListScreen(
                             navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry()) },
                             navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) },
+                            navigateBack = { backStack.removeLastOrNull() },
                         )
                     }
                     is Destination.Album -> NavEntry(key) {

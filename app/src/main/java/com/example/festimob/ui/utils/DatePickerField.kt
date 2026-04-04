@@ -83,3 +83,19 @@ fun formatIsoToInput(isoString: String): String {
         isoString.take(10)
     }
 }
+
+fun formatIsoNative(isoString: String?): String {
+    if (isoString.isNullOrBlank()) return "Date non définie"
+
+    return try {
+        val cleanIso = isoString.substringBefore(".").substringBefore("Z")
+
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+        val outputFormat = SimpleDateFormat("d MMMM yyyy", Locale.FRANCE)
+
+        val date = inputFormat.parse(cleanIso)
+        outputFormat.format(date!!)
+    } catch (e: Exception) {
+        isoString.substringBefore("T")
+    }
+}

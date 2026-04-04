@@ -60,10 +60,14 @@ import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.theme.FestiMobTheme
 import com.example.festimob.ui.viewmodels.UiState
 import androidx.compose.material3.CenterAlignedTopAppBar
+import com.example.festimob.ui.utils.formatIsoNative
+
 @Composable
 fun FestivalListScreen(
     navigateToFestivalEntry: () -> Unit,
     navigateToFestivalDetails: (Int) -> Unit,
+
+    navigateBack: () -> Unit,
     viewModel: FestivalListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     LaunchedEffect(key1 = true) {
@@ -80,7 +84,9 @@ fun FestivalListScreen(
         selectLayout = viewModel::selectLayout,
         onFestivalClick = navigateToFestivalDetails,
         onAddClick = navigateToFestivalEntry,
+        navigateBack = navigateBack,
         viewModel = viewModel,
+
     )
 }
 
@@ -94,7 +100,9 @@ private fun FestivalListContent(
     onFestivalClick: (Int) -> Unit,
     onAddClick: () -> Unit,
     viewModel: FestivalListViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateBack: () -> Unit,
+
 ) {
     Scaffold(
         topBar = {
@@ -111,8 +119,7 @@ private fun FestivalListContent(
                         )
                     },
                     navigationIcon = {
-                        // Bouton Retour à gauche
-                        IconButton(onClick = { /* Ton action navigateBack ici */ }) {
+                        IconButton(onClick = navigateBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Retour"
