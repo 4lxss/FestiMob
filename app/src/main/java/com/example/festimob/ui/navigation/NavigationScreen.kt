@@ -37,6 +37,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.festimob.FestiMobApplication
 import com.example.festimob.ui.editor.EditorAddForm
 import com.example.festimob.ui.editor.EditorDetails
+import com.example.festimob.ui.editor.EditorDetailsScreen
 import com.example.festimob.ui.editor.EditorFormScreen
 import com.example.festimob.ui.editor.EditorFormUiState
 import com.example.festimob.ui.editor.EditorScreen
@@ -135,9 +136,7 @@ fun SmallNavigation() {
 
                     }
                     Destination.EDITORDETAILS -> NavEntry(key) {
-                        EditorFormScreen(
-                            navigateBack = { backStack.removeLastOrNull() }
-                        )
+                        EditorDetailsScreen(1) //1 for print test
 
                     }
                     Destination.ALBUM -> NavEntry(key) {
