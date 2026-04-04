@@ -58,7 +58,7 @@ fun EditorScreen(
     // Inject the ViewModel using the Factory we defined
     viewModel: EditorViewModel,
     navigateToAddForm: () -> Unit,
-    navigateToDetails: () -> Unit,
+    navigateToDetails: (Int) -> Unit,
     navigateToUpdateForm: (Int) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -125,7 +125,7 @@ fun EditorScreen(
 fun EditorListGridLayout(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    navigateToDetails: () -> Unit
+    navigateToDetails: (Int) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -144,7 +144,7 @@ fun EditorListGridLayout(
                 ),
                 modifier = Modifier.height(200.dp),
                 shape = MaterialTheme.shapes.medium,
-                onClick = {navigateToDetails()}
+                onClick = {navigateToDetails(editor.id)}
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     // --- CARD IMAGE ---
@@ -194,7 +194,7 @@ fun EditorListGridLayout(
 fun EditorListLinearLayout(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    navigateToDetails: () -> Unit
+    navigateToDetails: (Int) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -210,7 +210,7 @@ fun EditorListLinearLayout(
                     containerColor = CardTeal
                 ),
                 shape = MaterialTheme.shapes.medium,
-                onClick = {navigateToDetails()}
+                onClick = {navigateToDetails(editor.id)}
             ) {
                 Text(
                     text = editor.name,

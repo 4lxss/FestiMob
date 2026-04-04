@@ -126,7 +126,7 @@ fun SmallNavigation() {
                             viewModel = viewModel(factory = EditorViewModel.Factory),
                             navigateToAddForm = { backStack.add(Destination.EditorEntry())},
                             navigateToUpdateForm = {},
-                            navigateToDetails = {backStack.add(Destination.EditorDetails(1))}
+                            navigateToDetails = {id -> backStack.add(Destination.EditorDetails(id))}
                         )
                     }
                     is Destination.EditorEntry -> NavEntry(key) {
