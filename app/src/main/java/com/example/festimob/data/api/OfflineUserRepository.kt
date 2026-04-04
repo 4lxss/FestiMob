@@ -15,6 +15,16 @@ class OfflineUserRepository(
         userDao.insertAll(usersFromNetwork)
     }
 
+    override suspend fun updateUserRole(userId: Int, newRole: String) {
+        apiService.updateUserRole(userId, UpdateUserRoleRequest(newRole))
+        refreshUsers()
+    }
+
+    override suspend fun deleteUser(userId: Int) {
+        apiService.deleteUser(userId)
+        refreshUsers()
+    }
+
     override suspend fun insert(user: User) = userDao.insert(user)
 
     override suspend fun update(user: User) = userDao.update(user)

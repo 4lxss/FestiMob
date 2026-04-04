@@ -20,6 +20,16 @@ class OnlineUserRepository(
         usersState.value = apiService.getUsers().users
     }
 
+    override suspend fun updateUserRole(userId: Int, newRole: String) {
+        apiService.updateUserRole(userId, UpdateUserRoleRequest(newRole))
+        refreshUsers()
+    }
+
+    override suspend fun deleteUser(userId: Int) {
+        apiService.deleteUser(userId)
+        refreshUsers()
+    }
+
     override suspend fun insert(user: User) {
         // Not used in admin network-only flow.
     }

@@ -2,7 +2,10 @@ package com.example.festimob.data.api
 
 import kotlinx.serialization.Serializable
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.Path
 import retrofit2.http.POST
 
 interface APIService {
@@ -20,6 +23,17 @@ interface APIService {
 
     @POST("api/auth/register")
     suspend fun register(@Body request: RegisterRequest): RegisterResponse
+
+    @PATCH("api/admin/users/{id}/role")
+    suspend fun updateUserRole(
+        @Path("id") userId: Int,
+        @Body request: UpdateUserRoleRequest
+    ): UpdateUserRoleResponse
+
+    @DELETE("api/admin/users/{id}")
+    suspend fun deleteUser(
+        @Path("id") userId: Int
+    ): DeleteUserResponse
 }
 
 @Serializable
@@ -59,5 +73,20 @@ data class RegisterRequest(
 
 @Serializable
 data class RegisterResponse(
+    val message: String
+)
+
+@Serializable
+data class UpdateUserRoleRequest(
+    val role: String
+)
+
+@Serializable
+data class UpdateUserRoleResponse(
+    val message: String
+)
+
+@Serializable
+data class DeleteUserResponse(
     val message: String
 )

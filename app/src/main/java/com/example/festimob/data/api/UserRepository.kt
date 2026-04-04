@@ -8,6 +8,8 @@ interface UserRepository {
     fun getUserByID(id_u: Int): Flow<User?>
 
     suspend fun refreshUsers()
+    suspend fun updateUserRole(userId: Int, newRole: String)
+    suspend fun deleteUser(userId: Int)
 
     suspend fun insert(user: User)
 
