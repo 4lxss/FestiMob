@@ -58,6 +58,7 @@ fun EditorScreen(
     // Inject the ViewModel using the Factory we defined
     viewModel: EditorViewModel,
     navigateToAddForm: () -> Unit,
+    navigateToDetails: () -> Unit,
     navigateToUpdateForm: (Int) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -107,12 +108,14 @@ fun EditorScreen(
         if (isLinearLayout) {
             EditorListLinearLayout(
                 modifier = hereModifier.fillMaxWidth(),
-                contentPadding = innerPadding
+                contentPadding = innerPadding,
+                navigateToDetails = navigateToDetails
             )
         } else {
             EditorListGridLayout(
                 modifier = hereModifier,
                 contentPadding = innerPadding,
+                navigateToDetails = navigateToDetails
             )
         }
     }
@@ -122,6 +125,7 @@ fun EditorScreen(
 fun EditorListGridLayout(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    navigateToDetails: () -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -139,7 +143,8 @@ fun EditorListGridLayout(
                     containerColor = CardTeal
                 ),
                 modifier = Modifier.height(200.dp),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.medium,
+                onClick = {navigateToDetails()}
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     // --- CARD IMAGE ---
@@ -188,7 +193,8 @@ fun EditorListGridLayout(
 @Composable
 fun EditorListLinearLayout(
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    navigateToDetails: () -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -203,7 +209,8 @@ fun EditorListLinearLayout(
                 colors = CardDefaults.cardColors(
                     containerColor = CardTeal
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.medium,
+                onClick = {navigateToDetails()}
             ) {
                 Text(
                     text = editor.name,
