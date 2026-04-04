@@ -17,6 +17,9 @@ interface APIService {
 
     @POST("api/auth/logout")
     suspend fun logout(): LogoutResponse
+
+    @POST("api/auth/register")
+    suspend fun register(@Body request: RegisterRequest): RegisterResponse
 }
 
 @Serializable
@@ -45,4 +48,16 @@ data class LogoutResponse(
 @Serializable
 data class UsersResponse(
     val users: List<User>
+)
+
+@Serializable
+data class RegisterRequest(
+    val username: String,
+    val password: String,
+    val role: String
+)
+
+@Serializable
+data class RegisterResponse(
+    val message: String
 )

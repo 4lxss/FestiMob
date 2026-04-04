@@ -1,4 +1,4 @@
-package com.example.festimob.ui.user
+package com.example.festimob.ui.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,18 +8,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-sealed class UserListState {
-    object Loading : UserListState()
-    data class Success(val users: List<User>) : UserListState()
-    data class Error(val message: String) : UserListState()
+sealed class AdminScreenState {
+    object Loading : AdminScreenState()
+    data class Success(val users: List<User>) : AdminScreenState()
+    data class Error(val message: String) : AdminScreenState()
 }
 
-class UserListViewModel(
+class AdminScreenViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<UserListState> = MutableStateFlow(UserListState.Loading)
-    val state: StateFlow<UserListState> = _state
+    private val _state: MutableStateFlow<AdminScreenState> = MutableStateFlow(AdminScreenState.Loading)
+    val state: StateFlow<AdminScreenState> = _state
 
     init {
         observeUsers()
@@ -28,7 +28,7 @@ class UserListViewModel(
     private fun observeUsers() {
         viewModelScope.launch {
             userRepository.getUsers().collect { users ->
-                _state.value = UserListState.Success(users)
+                _state.value = AdminScreenState.Success(users)
             }
         }
     }
@@ -36,10 +36,10 @@ class UserListViewModel(
     fun refreshUsers() {
         viewModelScope.launch {
             try {
-                _state.value = UserListState.Loading
+                _state.value = AdminScreenState.Loading
                 userRepository.refreshUsers()
             } catch (e: Exception) {
-                _state.value = UserListState.Error("Erreur: ${e.message}")
+                _state.value = AdminScreenState.Error("Erreur: ${e.message}")
             }
         }
     }

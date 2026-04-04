@@ -1,4 +1,4 @@
-package com.example.festimob.ui.user
+package com.example.festimob.ui.admin
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,8 +23,8 @@ import com.example.festimob.ui.festival.ErrorView
 import com.example.festimob.ui.festival.LoadingView
 
 @Composable
-fun UserListScreen(
-    viewModel: UserListViewModel = viewModel(factory = AppViewModelProvider.Factory)
+fun AdminScreen(
+    viewModel: AdminScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
@@ -32,14 +32,14 @@ fun UserListScreen(
     }
 
     when (state) {
-        is UserListState.Loading -> LoadingView()
-        is UserListState.Error -> ErrorView(message = (state as UserListState.Error).message)
-        is UserListState.Success -> UserList(users = (state as UserListState.Success).users)
+        is AdminScreenState.Loading -> LoadingView()
+        is AdminScreenState.Error -> ErrorView(message = (state as AdminScreenState.Error).message)
+        is AdminScreenState.Success -> AdminUsersList(users = (state as AdminScreenState.Success).users)
     }
 }
 
 @Composable
-private fun UserList(users: List<User>) {
+private fun AdminUsersList(users: List<User>) {
     LazyColumn {
         items(items = users, key = { user -> user.id_u }) { user ->
             Card(

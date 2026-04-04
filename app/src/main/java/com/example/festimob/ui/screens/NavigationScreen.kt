@@ -43,8 +43,11 @@ import com.example.festimob.ui.festival.FestivalDetailsViewModel
 import com.example.festimob.ui.festival.FestivalEntryScreen
 import com.example.festimob.ui.festival.FestivalListScreen
 import com.example.festimob.ui.navigation.NavigationDestination
+import com.example.festimob.ui.admin.AdminScreen
 import com.example.festimob.ui.auth.LoginScreen
 import com.example.festimob.ui.auth.LoginViewModel
+import com.example.festimob.ui.auth.RegisterScreen
+import com.example.festimob.ui.auth.RegisterViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -180,7 +183,7 @@ fun SmallNavigation() {
                                 set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
                             }
 
-                            com.example.festimob.ui.user.UserListScreen(
+                            AdminScreen(
                                 viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
                                     factory = com.example.festimob.ui.AppViewModelProvider.Factory,
                                     extras = extras
@@ -204,6 +207,24 @@ fun SmallNavigation() {
                                     logoutError = null
                                     backStack.clear()
                                     backStack.add(Destination.Accueil)
+                                },
+                                onRegisterClick = { backStack.add(Destination.Register) }
+                            )
+                        }
+                        is Destination.Register -> NavEntry(key) {
+                            val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication
+                            val extras = androidx.lifecycle.viewmodel.MutableCreationExtras().apply {
+                                set(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                            }
+
+                            val registerViewModel: RegisterViewModel = viewModel(
+                                factory = AppViewModelProvider.Factory,
+                                extras = extras
+                            )
+                            RegisterScreen(
+                                viewModel = registerViewModel,
+                                onRegisterSuccess = {
+                                    backStack.removeLastOrNull()
                                 }
                             )
                         }
@@ -265,6 +286,7 @@ sealed class Destination(
     object FestivalEntry : Destination("Ajout", Icons.Default.Add, "entry", R.string.item_entry_title)
     object Admin : Destination("Admin", Icons.Default.AdminPanelSettings, "admin", R.string.item_entry_title)
     object Login : Destination("Connexion", Icons.Default.AdminPanelSettings, "login", R.string.item_entry_title)
+    object Register : Destination("Inscription", Icons.Default.AdminPanelSettings, "register", R.string.item_entry_title)
 
     data class FestivalDetails(val id: Int) : Destination("Détails", Icons.Default.AdminPanelSettings, "details", R.string.details_title)
 }

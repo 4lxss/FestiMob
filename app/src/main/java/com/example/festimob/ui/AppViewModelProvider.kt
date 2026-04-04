@@ -9,8 +9,9 @@ import com.example.festimob.FestiMobApplication
 import com.example.festimob.ui.festival.FestivalDetailsViewModel
 import com.example.festimob.ui.festival.FestivalEntryViewModel
 import com.example.festimob.ui.festival.FestivalListViewModel
-import com.example.festimob.ui.user.UserListViewModel
+import com.example.festimob.ui.admin.AdminScreenViewModel
 import com.example.festimob.ui.auth.LoginViewModel
+import com.example.festimob.ui.auth.RegisterViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 
@@ -35,12 +36,17 @@ object AppViewModelProvider {
             )
         }
         initializer {
-            UserListViewModel(
+            AdminScreenViewModel(
                 userRepository = festimobApplication().container.userRepository
             )
         }
         initializer {
             LoginViewModel(
+                apiService = com.example.festimob.data.api.RetrofitInstance.api
+            )
+        }
+        initializer {
+            RegisterViewModel(
                 apiService = com.example.festimob.data.api.RetrofitInstance.api
             )
         }
