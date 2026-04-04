@@ -15,8 +15,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -29,6 +33,7 @@ import com.example.festimob.R
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.navigation.NavigationDestination
 import com.example.festimob.ui.theme.FestiMobTheme
+import com.example.festimob.ui.utils.DatePickerField
 import kotlinx.coroutines.launch
 import java.util.Currency
 import java.util.Locale
@@ -40,15 +45,32 @@ fun FestivalEntryScreen(
     viewModel: FestivalEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val uiState = viewModel.festivalUiState
+
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { message ->
+            snackbarHostState.showSnackbar(
+                message = message,
+                actionLabel = "OK"
+            )
+            viewModel.resetErrorMessage()
+        }
+    }
+
+
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         FestivalEntryBody(
             festivalUiState = viewModel.festivalUiState,
             onFestivalValueChange = viewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.saveFestival()
-                    navigateBack()
+                    val isSuccess = viewModel.saveFestival()
+                    if (isSuccess) {
+                        navigateBack()
+                    }
                 }
             },
             modifier = Modifier
@@ -114,6 +136,19 @@ fun FestivalInputForm(
             enabled = enabled,
             singleLine = true
         )
+
+        DatePickerField(
+            label = "Date de début",
+            selectedDate = festivalDetails.start_date,
+            onDateSelected = { onValueChange(festivalDetails.copy(start_date = it)) }
+        )
+
+        DatePickerField(
+            label = "Date de fin",
+            selectedDate = festivalDetails.end_date,
+            onDateSelected = { onValueChange(festivalDetails.copy(end_date = it)) }
+        )
+
         OutlinedTextField(
             value = festivalDetails.price_multi_socket,
             onValueChange = { onValueChange(festivalDetails.copy(price_multi_socket = it)) },
