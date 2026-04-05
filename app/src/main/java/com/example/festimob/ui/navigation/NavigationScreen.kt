@@ -77,6 +77,8 @@ fun SmallNavigation() {
     val canAccessAdmin = isLoggedIn && hasMinimumRole(currentUserRole, Role.ADMIN)
     val bottomNavItems = listOf(Destination.Accueil, Destination.FestivalList)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val currentDestination = backStack.lastOrNull() ?: Destination.Accueil
+    val topBarTitle = if (currentDestination == Destination.Accueil) "FestiJeux" else currentDestination.label
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -134,7 +136,7 @@ fun SmallNavigation() {
                         navigationIconContentColor = Color.White
                     ),
                     title = {
-                        Text("FestiJeux")
+                        Text(topBarTitle)
                     },
                     actions = {
                         if (!isLoggedIn) {
@@ -231,7 +233,6 @@ fun SmallNavigation() {
                         FestivalListScreen(
                             navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry()) },
                             navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) },
-                            navigateBack = { backStack.removeLastOrNull() },
                             // Si ton FestivalListScreen prend un viewModel en paramètre :
                             // viewModel = viewModel(factory = AppViewModelProvider.Factory, extras = extras)
                         )
