@@ -73,6 +73,7 @@ fun FestivalListScreen(
     LaunchedEffect(key1 = true) {
         viewModel.refreshData()
     }
+    val filteredList = viewModel.filteredFestivals
     val uiState by viewModel.uiState.collectAsState()
     val state by viewModel.state
     val isOnline by viewModel.isOnline
@@ -81,6 +82,7 @@ fun FestivalListScreen(
         state = state,
         isOnline = isOnline,
         uiState = uiState,
+        festivals = filteredList,
         selectLayout = viewModel::selectLayout,
         onFestivalClick = navigateToFestivalDetails,
         onAddClick = navigateToFestivalEntry,
@@ -96,6 +98,7 @@ private fun FestivalListContent(
     state: UiState,
     isOnline: Boolean,
     uiState: FestivalListUiState,
+    festivals: List<Festival>,
     selectLayout: (Boolean) -> Unit,
     onFestivalClick: (Int) -> Unit,
     onAddClick: () -> Unit,
@@ -127,7 +130,6 @@ private fun FestivalListContent(
                         }
                     },
                     actions = {
-                        // Tes boutons Refresh et Layout déplacés ici (à droite)
                         IconButton(onClick = { viewModel.refreshData() }) {
                             Icon(Icons.Default.Refresh, contentDescription = "Sync")
                         }
@@ -196,7 +198,7 @@ private fun FestivalListContent(
         floatingActionButton = {
             if (state is UiState.Success && isOnline) {
                 FloatingActionButton(
-                    onClick = onAddClick, // Correction : on utilise le paramètre onAddClick
+                    onClick = onAddClick,
                     shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
                 ) {
@@ -212,9 +214,6 @@ private fun FestivalListContent(
             is UiState.Loading -> LoadingView()
             is UiState.Error -> ErrorView(message = state.message)
             is UiState.Success -> {
-                val festivals = state.festivals
-
-                // On choisit le bon composant selon uiState.isLinearLayout
                 if (uiState.isLinearLayout) {
                     FestivalListLinearLayout(
                         festivals = festivals,
