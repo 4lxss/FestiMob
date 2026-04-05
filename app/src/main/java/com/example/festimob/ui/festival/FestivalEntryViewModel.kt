@@ -1,20 +1,24 @@
 package com.example.festimob.ui.festival
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.festimob.data.api.Festival
 import com.example.festimob.data.api.FestivalAddRequest
 import com.example.festimob.data.api.FestivalRepository
+import com.example.festimob.data.api.FestivalUpdateRequest
+import com.example.festimob.data.api.ZoneTarif
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
-import com.example.festimob.ui.AppViewModelProvider.FestivalIdKey
 import com.example.festimob.ui.utils.formatIsoToInput
+import java.net.UnknownHostException
+import kotlin.collections.set
+import kotlin.compareTo
 
 /**
  * ViewModel to validate and insert items in the Room database.
@@ -26,39 +30,26 @@ class FestivalEntryViewModel(
     /**
      * Holds current festival ui state
      */
-    var festivalUiState by mutableStateOf(
-        if (festivalId == 0) {
-            FestivalUiState(
-                festivalDetails = FestivalDetails(
-                    name = "Nouveau Festival",
-                    nb_table_big = "10",
-                    nb_table_small = "10",
-                    nb_table_mairie = "5",
-                    nb_chair = "20",
-                    nb_chair_mairie = "10",
-                    price_multi_socket = "15",
-                    start_date = "2026-06-01",
-                    end_date = "2026-06-02"
-                ),
-                isEntryValid = true //
-            )
-        } else {
-            FestivalUiState()
-        }
-    )
+    var festivalUiState by mutableStateOf(FestivalUiState())
         private set
 
-    init {
-        if (festivalId != 0) {
-            viewModelScope.launch {
-                festivalRepository.getFestival(festivalId)
-                    .filterNotNull()
-                    .first()
-                    .let { festival ->
-                        festivalUiState = festival.toFestivalUiState(true)
-                    }
-            }
+    fun loadFestivalData(id: Int) {
+        viewModelScope.launch {
+            festivalRepository.getFestival(id)
+                .filterNotNull()
+                .first()
+                .let { festival ->
+                    Log.d("DEBUG", "Chargement du festival ID: ${festival.id_f}")
+                    festivalUiState = festival.toFestivalUiState(true)
+                }
         }
+    }
+
+    fun resetToDefault() {
+        festivalUiState = FestivalUiState(
+            festivalDetails = FestivalDetails(),
+            isEntryValid = false
+        )
     }
 
     /**
@@ -70,9 +61,8 @@ class FestivalEntryViewModel(
             FestivalUiState(festivalDetails = festivalDetails, isEntryValid = validateInput(festivalDetails))
     }
 
-
-
     private fun validateInput(uiState: FestivalDetails = festivalUiState.festivalDetails): Boolean {
+        val areZonesValid = uiState.zones.isNotEmpty() && uiState.zones.all { it.name.isNotBlank() }
         return with(uiState) {
             name.isNotBlank() &&
                     price_multi_socket.isNotBlank() &&
@@ -82,7 +72,8 @@ class FestivalEntryViewModel(
                     nb_chair.isNotBlank() &&
                     nb_chair_mairie.isNotBlank() &&
                     start_date.isNotBlank() &&
-                    end_date.isNotBlank()
+                    end_date.isNotBlank() &&
+                    areZonesValid
         }
     }
 
@@ -98,24 +89,41 @@ class FestivalEntryViewModel(
 
         return try {
             if (festivalId == 0) {
-                // Mode CREATION
                 festivalRepository.insert(festivalUiState.festivalDetails.toFestivalAddRequest())
             } else {
-                // Mode EDITION (Update)
-                // Assure-toi d'avoir une fonction update dans ton repository
-                festivalRepository.update(festivalUiState.festivalDetails.toFestival())
+                festivalRepository.update(festivalUiState.festivalDetails.toFestivalUpdateRequest())
             }
             festivalUiState = festivalUiState.copy(errorMessage = null)
             true
         } catch (e: Exception) {
             val errorMsg = when {
                 e.message?.contains("500") == true -> "Erreur serveur (500)."
-                e is java.net.UnknownHostException -> "Pas de connexion internet."
+                e is UnknownHostException -> "Pas de connexion internet."
                 else -> "Échec : ${e.localizedMessage}"
             }
             festivalUiState = festivalUiState.copy(errorMessage = errorMsg)
             false
         }
+    }
+
+    fun addZone() {
+        val currentZones = festivalUiState.festivalDetails.zones.toMutableList()
+        currentZones.add(ZoneTarif(name = "Nouvelle Zone", nb_table = 1, price_table = 5.00, price_m2 = 1.00))
+        updateUiState(festivalUiState.festivalDetails.copy(zones = currentZones))
+    }
+
+    fun removeZone(index: Int) {
+        val currentZones = festivalUiState.festivalDetails.zones.toMutableList()
+        if (currentZones.size > 1) { // On garde au moins une zone comme sur le Web
+            currentZones.removeAt(index)
+            updateUiState(festivalUiState.festivalDetails.copy(zones = currentZones))
+        }
+    }
+
+    fun updateZone(index: Int, updatedZone: ZoneTarif) {
+        val currentZones = festivalUiState.festivalDetails.zones.toMutableList()
+        currentZones[index] = updatedZone
+        updateUiState(festivalUiState.festivalDetails.copy(zones = currentZones))
     }
 }
 
@@ -139,7 +147,8 @@ data class FestivalDetails(
     val nb_chair: String = "",
     val nb_chair_mairie: String = "",
     val public:	Boolean = false,
-    val price_multi_socket: String = ""
+    val price_multi_socket: String = "",
+    val zones: List<ZoneTarif> = listOf(ZoneTarif(id_zt = 0, name = "Zone A", nb_table = 0, price_table = 0.00, price_m2 = 0.00))
 )
 
 /**
@@ -200,5 +209,24 @@ fun Festival.toFestivalDetails(): FestivalDetails = FestivalDetails(
     nb_chair = nb_chair.toString(),
     nb_chair_mairie = nb_chair_mairie.toString(),
     public = public,
-    price_multi_socket = price_multi_socket.toString()
+    price_multi_socket = price_multi_socket.toString(),
+    zones = this.zones
 )
+
+fun FestivalDetails.toFestivalUpdateRequest(): FestivalUpdateRequest = FestivalUpdateRequest(
+    id_f = id_f,
+    name = name,
+    start_date = if (start_date.contains("T")) start_date else "${start_date}T00:00:00.000Z",
+    end_date = if (end_date.contains("T")) end_date else "${end_date}T00:00:00.000Z",
+    nb_table_big = nb_table_big.toIntOrNull() ?: 0,
+    nb_table_small = nb_table_small.toIntOrNull() ?: 0,
+    nb_table_mairie = nb_table_mairie.toIntOrNull() ?: 0,
+    nb_chair = nb_chair.toIntOrNull() ?: 0,
+    nb_chair_mairie = nb_chair_mairie.toIntOrNull() ?: 0,
+    price_multi_socket = price_multi_socket.toIntOrNull() ?: 0,
+    zones = zones
+)
+
+
+
+

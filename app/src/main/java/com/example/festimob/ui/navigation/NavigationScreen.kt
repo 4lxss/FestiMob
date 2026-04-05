@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -37,6 +38,7 @@ import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.festival.FestivalDetailsScreen
 import com.example.festimob.ui.festival.FestivalDetailsViewModel
 import com.example.festimob.ui.festival.FestivalEntryScreen
+import com.example.festimob.ui.festival.FestivalEntryViewModel
 import com.example.festimob.ui.festival.FestivalListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -112,45 +114,48 @@ fun SmallNavigation() {
                     }
                     is Destination.FestivalEntry -> NavEntry(key) {
                         val context = LocalContext.current.applicationContext as FestiMobApplication
-
                         val extras = MutableCreationExtras().apply {
                             set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
                             set(AppViewModelProvider.FestivalIdKey, key.id)
                         }
 
-                        FestivalEntryScreen(
-                            navigateBack = { backStack.removeLastOrNull() },
-                            isEditMode = key.id != 0,
-                            viewModel = viewModel(
+                        key(key.id) {
+                            val viewModel: FestivalEntryViewModel = viewModel(
+                                key = "festival_entry_${key.id}",
                                 factory = AppViewModelProvider.Factory,
                                 extras = extras
                             )
-                        )
 
+                            FestivalEntryScreen(
+                                navigateBack = { backStack.removeLastOrNull() },
+                                isEditMode = key.id != 0,
+                                festivalId = key.id,
+                                viewModel = viewModel
+                            )
+                        }
                     }
                     is Destination.FestivalDetails -> NavEntry(key) {
                         val context = LocalContext.current.applicationContext as FestiMobApplication
-
-                        // 2. Créer les extras en mettant les DEUX clés nécessaires
                         val extras = MutableCreationExtras().apply {
-                            // Clé pour l'application (nécessaire pour le container/DB)
                             set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
-                            // Clé pour l'ID du festival (nécessaire pour charger les données)
                             set(AppViewModelProvider.FestivalIdKey, key.id)
                         }
 
-                        val viewModel: FestivalDetailsViewModel = viewModel(
-                            factory = AppViewModelProvider.Factory,
-                            extras = extras
-                        )
+                        key(key.id) {
+                            val viewModel: FestivalDetailsViewModel = viewModel(
+                                factory = AppViewModelProvider.Factory,
+                                key = "festival_details_${key.id}",
+                                extras = extras
+                            )
 
-                        FestivalDetailsScreen(
-                            navigateBack = { backStack.removeLastOrNull() },
-                            navigateToEditItem = { id ->
-                                backStack.add(Destination.FestivalEntry(id = id))
-                            },
-                            viewModel = viewModel
-                        )
+                            FestivalDetailsScreen(
+                                navigateBack = { backStack.removeLastOrNull() },
+                                navigateToEditItem = { id ->
+                                    backStack.add(Destination.FestivalEntry(id = id))
+                                },
+                                viewModel = viewModel
+                            )
+                        }
                     }
                 }
             }

@@ -27,15 +27,14 @@ object AppViewModelProvider {
             )
         }
         // Initializer for FestivalEntryViewModel
-        initializer {
+        initializer<FestivalEntryViewModel> {
             val festivalId = this[FestivalIdKey] ?: 0
-
             FestivalEntryViewModel(
                 festivalId = festivalId,
                 festivalRepository = festiMobApplication().container.festivalRepository,
             )
         }
-        initializer {
+        initializer<FestivalDetailsViewModel> {
             val festivalId = this[FestivalIdKey] ?: 0
             FestivalDetailsViewModel(
                 festivalId = festivalId,
@@ -48,7 +47,7 @@ object AppViewModelProvider {
 
 /**
  * Extension function to queries for [Application] object and returns an instance of
- * [InventoryApplication].
+ * [Application].
  */
 // Dans AppViewModelProvider.kt
 fun CreationExtras.festiMobApplication(): FestiMobApplication {

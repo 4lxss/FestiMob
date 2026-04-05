@@ -1,5 +1,6 @@
 package com.example.festimob.ui.festival
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -105,6 +106,9 @@ class FestivalListViewModel(
     private fun observeFestivals() {
         viewModelScope.launch {
             festivalRepository.getFestivals().collect { festivals ->
+                festivals.forEach { f ->
+                    Log.d("CHECK_DATA", "Festival: ${f.name}, Nb Zones: ${f.zones.size}")
+                }
                 internalState.value = UiState.Success(festivals)
             }
         }

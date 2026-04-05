@@ -9,7 +9,7 @@ interface FestivalRepository {
 
     suspend fun insert(festival: FestivalAddRequest) {}
 
-    suspend fun update(festival: Festival)
+    suspend fun update(festival: FestivalUpdateRequest) {}
 
     suspend fun delete(festival: Festival)
 
