@@ -14,7 +14,8 @@ data class LoginUiState(
     val password: String = "",
     val isLoading: Boolean = false,
     val message: String? = null,
-    val isSuccess: Boolean = false
+    val isSuccess: Boolean = false,
+    val loggedUserRole: String? = null
 )
 
 class LoginViewModel(
@@ -56,7 +57,8 @@ class LoginViewModel(
                     it.copy(
                         isLoading = false,
                         message = response.message,
-                        isSuccess = true
+                        isSuccess = true,
+                        loggedUserRole = response.user?.role
                     )
                 }
             } catch (e: Exception) {
@@ -64,7 +66,8 @@ class LoginViewModel(
                     it.copy(
                         isLoading = false,
                         isSuccess = false,
-                        message = e.message ?: "Erreur de connexion"
+                        message = e.message ?: "Erreur de connexion",
+                        loggedUserRole = null
                     )
                 }
             }

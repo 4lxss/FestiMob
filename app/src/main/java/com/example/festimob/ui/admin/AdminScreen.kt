@@ -26,8 +26,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.data.api.User
 import com.example.festimob.ui.AppViewModelProvider
@@ -36,8 +39,18 @@ import com.example.festimob.ui.festival.LoadingView
 
 @Composable
 fun AdminScreen(
-    viewModel: AdminScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: AdminScreenViewModel? = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    if (viewModel == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Vous n'avez pas les droits nécessaires")
+        }
+        return
+    }
+
     val state by viewModel.state.collectAsState()
     var selectedUserForRole by remember { mutableStateOf<User?>(null) }
     var selectedUserForDelete by remember { mutableStateOf<User?>(null) }

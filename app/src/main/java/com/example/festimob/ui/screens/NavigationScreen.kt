@@ -37,6 +37,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.example.festimob.R
+import com.example.festimob.data.api.Role
+import com.example.festimob.data.api.hasMinimumRole
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.festival.FestivalDetailsScreen
 import com.example.festimob.ui.festival.FestivalDetailsViewModel
@@ -55,9 +57,15 @@ import kotlinx.coroutines.launch
 fun SmallNavigation() {
     val backStack = rememberSaveable { mutableStateListOf<Destination>(Destination.Accueil) }
     var isLoggedIn by rememberSaveable { mutableStateOf(false) }
+    var currentUserRole by rememberSaveable { mutableStateOf<String?>(null) }
     var logoutError by rememberSaveable { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
-    val bottomNavItems = listOf(Destination.Accueil, Destination.FestivalList, Destination.Admin)
+    val canAccessAdmin = isLoggedIn && hasMinimumRole(currentUserRole, Role.ADMIN)
+    val bottomNavItems = buildList {
+        add(Destination.Accueil)
+        add(Destination.FestivalList)
+        if (canAccessAdmin) add(Destination.Admin)
+    }
     Scaffold (
         topBar = {
             CenterAlignedTopAppBar(
@@ -80,6 +88,7 @@ fun SmallNavigation() {
                                     try {
                                         com.example.festimob.data.api.RetrofitInstance.api.logout()
                                         isLoggedIn = false
+                                        currentUserRole = null
                                         logoutError = null
                                         backStack.clear()
                                         backStack.add(Destination.Accueil)
@@ -184,10 +193,14 @@ fun SmallNavigation() {
                             }
 
                             AdminScreen(
-                                viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-                                    factory = com.example.festimob.ui.AppViewModelProvider.Factory,
-                                    extras = extras
-                                )
+                                if (canAccessAdmin) {
+                                    androidx.lifecycle.viewmodel.compose.viewModel(
+                                        factory = com.example.festimob.ui.AppViewModelProvider.Factory,
+                                        extras = extras
+                                    )
+                                } else {
+                                    null
+                                }
                             )
                         }
                         is Destination.Login -> NavEntry(key) {
@@ -202,8 +215,9 @@ fun SmallNavigation() {
                             )
                             LoginScreen(
                                 viewModel = loginViewModel,
-                                onLoginSuccess = {
+                                onLoginSuccess = { role ->
                                     isLoggedIn = true
+                                    currentUserRole = role
                                     logoutError = null
                                     backStack.clear()
                                     backStack.add(Destination.Accueil)

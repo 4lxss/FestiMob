@@ -44,7 +44,9 @@ class AdminScreenViewModel(
     fun refreshUsers() {
         viewModelScope.launch {
             try {
-                _state.value = AdminScreenState.Loading
+                if (_state.value !is AdminScreenState.Success) {
+                    _state.value = AdminScreenState.Loading
+                }
                 userRepository.refreshUsers()
             } catch (e: HttpException) {
                 _state.value = if (e.code() == 401 || e.code() == 403) {
