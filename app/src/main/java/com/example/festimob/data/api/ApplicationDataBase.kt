@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(entities = [Festival::class, User::class], version = 2, exportSchema = false)
+@TypeConverters(FestivalConverters::class)
 abstract class ApplicationDatabase : RoomDatabase() {
 
     abstract fun festivalDao(): FestivalDao

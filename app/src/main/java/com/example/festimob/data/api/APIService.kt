@@ -1,7 +1,19 @@
 package com.example.festimob.data.api
 
+import com.example.festimob.data.api.models.admin.login.LoginRequest
+import com.example.festimob.data.api.models.admin.login.LoginResponse
+import com.example.festimob.data.api.models.admin.logout.LogoutResponse
+import com.example.festimob.data.api.models.admin.register.RegisterRequest
+import com.example.festimob.data.api.models.admin.register.RegisterResponse
+import com.example.festimob.data.api.models.admin.user.DeleteUserResponse
+import com.example.festimob.data.api.models.admin.user.UpdateUserRoleRequest
+import com.example.festimob.data.api.models.admin.user.UpdateUserRoleResponse
+import com.example.festimob.data.api.models.admin.user.UsersResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.Path
 import retrofit2.http.POST
 import retrofit2.http.PUT
 

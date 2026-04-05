@@ -26,6 +26,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -59,7 +60,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallNavigation() {
-    val backStack = rememberSaveable { mutableStateListOf<Destination>(Destination.Accueil) }
+    val backStack = remember { mutableStateListOf<Destination>(Destination.Accueil) }
     var isLoggedIn by rememberSaveable { mutableStateOf(false) }
     var currentUserRole by rememberSaveable { mutableStateOf<String?>(null) }
     var logoutError by rememberSaveable { mutableStateOf<String?>(null) }
@@ -176,17 +177,68 @@ fun SmallNavigation() {
                         }
 
                         FestivalListScreen(
-                            navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry) },
+                            navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry()) },
                             navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) },
                             navigateBack = { backStack.removeLastOrNull() },
                             // Si ton FestivalListScreen prend un viewModel en paramètre :
                             // viewModel = viewModel(factory = AppViewModelProvider.Factory, extras = extras)
                         )
                     }
-                    is Destination.Album -> NavEntry(key) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text("ALBUM")
+                    is Destination.Admin -> NavEntry(key) {
+                        val context = LocalContext.current.applicationContext as FestiMobApplication
+                        val extras = MutableCreationExtras().apply {
+                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
                         }
+
+                        AdminScreen(
+                            viewModel = if (canAccessAdmin) {
+                                viewModel(
+                                    factory = AppViewModelProvider.Factory,
+                                    extras = extras
+                                )
+                            } else {
+                                null
+                            }
+                        )
+                    }
+                    is Destination.Login -> NavEntry(key) {
+                        val context = LocalContext.current.applicationContext as FestiMobApplication
+                        val extras = MutableCreationExtras().apply {
+                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                        }
+
+                        val loginViewModel: LoginViewModel = viewModel(
+                            factory = AppViewModelProvider.Factory,
+                            extras = extras
+                        )
+
+                        LoginScreen(
+                            viewModel = loginViewModel,
+                            onLoginSuccess = { role ->
+                                isLoggedIn = true
+                                currentUserRole = role
+                                logoutError = null
+                                backStack.clear()
+                                backStack.add(Destination.Accueil)
+                            },
+                            onRegisterClick = { backStack.add(Destination.Register) }
+                        )
+                    }
+                    is Destination.Register -> NavEntry(key) {
+                        val context = LocalContext.current.applicationContext as FestiMobApplication
+                        val extras = MutableCreationExtras().apply {
+                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                        }
+
+                        val registerViewModel: RegisterViewModel = viewModel(
+                            factory = AppViewModelProvider.Factory,
+                            extras = extras
+                        )
+
+                        RegisterScreen(
+                            viewModel = registerViewModel,
+                            onRegisterSuccess = { backStack.removeLastOrNull() }
+                        )
                     }
                     is Destination.FestivalEntry -> NavEntry(key) {
                         val context = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.example.festimob.FestiMobApplication

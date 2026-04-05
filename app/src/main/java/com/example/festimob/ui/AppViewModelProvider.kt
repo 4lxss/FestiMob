@@ -39,7 +39,7 @@ object AppViewModelProvider {
         }
         initializer {
             AdminScreenViewModel(
-                userRepository = festimobApplication().container.userRepository
+                userRepository = festiMobApplication().container.userRepository
             )
         }
         initializer {
