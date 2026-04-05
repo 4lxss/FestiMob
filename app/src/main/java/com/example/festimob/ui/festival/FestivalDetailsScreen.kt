@@ -258,6 +258,50 @@ fun FestivalDetails(
                     horizontal = dimensionResource(id = R.dimen.padding_medium)
                 )
             )
+            if (festival.zones.isNotEmpty()) {
+                androidx.compose.material3.HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+                Text(
+                    text = "Zones et Tarifs",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                festival.zones.forEach { zone ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
+                            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small))
+                        ) {
+                            Text(
+                                text = zone.name,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Text("Tables")
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = zone.nb_table.toString(), fontWeight = FontWeight.Bold)
+                            }
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Text("Prix table")
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = "${zone.price_table} €", fontWeight = FontWeight.Bold)
+                            }
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Text("Prix m²")
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = "${zone.price_m2} €", fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

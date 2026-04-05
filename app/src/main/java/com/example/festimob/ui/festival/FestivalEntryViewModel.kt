@@ -180,7 +180,8 @@ fun FestivalDetails.toFestival(): Festival = Festival(
     nb_chair = nb_chair.toIntOrNull() ?: 0,
     nb_chair_mairie = nb_chair_mairie.toIntOrNull() ?: 0,
     public = public,
-    price_multi_socket = price_multi_socket.toIntOrNull() ?: 0
+    price_multi_socket = price_multi_socket.toIntOrNull() ?: 0,
+    zones = zones,
 )
 
 fun Festival.formatedPrice(): String {
