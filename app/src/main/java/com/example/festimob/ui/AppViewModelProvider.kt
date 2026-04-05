@@ -9,6 +9,9 @@ import com.example.festimob.FestiMobApplication
 import com.example.festimob.ui.festival.FestivalDetailsViewModel
 import com.example.festimob.ui.festival.FestivalEntryViewModel
 import com.example.festimob.ui.festival.FestivalListViewModel
+import com.example.festimob.ui.admin.AdminScreenViewModel
+import com.example.festimob.ui.auth.LoginViewModel
+import com.example.festimob.ui.auth.RegisterViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 
@@ -34,7 +37,23 @@ object AppViewModelProvider {
                 festivalRepository = festiMobApplication().container.festivalRepository,
             )
         }
-        initializer<FestivalDetailsViewModel> {
+        initializer {
+            AdminScreenViewModel(
+                userRepository = festiMobApplication().container.userRepository
+            )
+        }
+        initializer {
+            LoginViewModel(
+                apiService = com.example.festimob.data.api.RetrofitInstance.api
+            )
+        }
+        initializer {
+            RegisterViewModel(
+                apiService = com.example.festimob.data.api.RetrofitInstance.api
+            )
+        }
+        initializer {
+            // On récupère l'ID depuis une clé personnalisée ou on le passe manuellement
             val festivalId = this[FestivalIdKey] ?: 0
             FestivalDetailsViewModel(
                 festivalId = festivalId,

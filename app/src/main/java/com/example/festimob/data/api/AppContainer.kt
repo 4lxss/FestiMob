@@ -7,6 +7,7 @@ import com.example.festimob.dataStore
 interface AppContainer {
     val festivalRepository: FestivalRepository
     val userPreferencesRepository: UserPreferencesRepository
+    val userRepository : UserRepository
 }
 
 /**
@@ -22,6 +23,10 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val festivalRepository: FestivalRepository by lazy {
         OfflineFestivalRepository(database.festivalDao(), RetrofitInstance.api)
+    }
+
+    override val userRepository: UserRepository by lazy {
+        OnlineUserRepository(RetrofitInstance.api)
     }
 
     override val userPreferencesRepository: UserPreferencesRepository by lazy {

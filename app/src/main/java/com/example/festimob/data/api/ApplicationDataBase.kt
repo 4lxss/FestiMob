@@ -6,11 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Festival::class], version = 1, exportSchema = false)
+@Database(entities = [Festival::class, User::class], version = 2, exportSchema = false)
 @TypeConverters(FestivalConverters::class)
 abstract class ApplicationDatabase : RoomDatabase() {
 
     abstract fun festivalDao(): FestivalDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
