@@ -1,5 +1,6 @@
 package com.example.festimob.ui.festival
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +45,13 @@ class FestivalListViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val festivalRepository: FestivalRepository
 ) : ViewModel() {
+    private var _isOnline = mutableStateOf(false)
+    val isOnline: State<Boolean> = _isOnline
     private var internalState : MutableState<UiState> = mutableStateOf(UiState.Loading)
+
+    private val _searchQuery = mutableStateOf("")
+    val searchQuery: State<String> = _searchQuery
+
     val state : State<UiState> = internalState
     // UI states access for various [FestivalListUiState]
     val uiState: StateFlow<FestivalListUiState> =
@@ -73,23 +80,52 @@ class FestivalListViewModel(
         }
     }
 
-    init {
-        fetchFestivals()
+    fun onSearchQueryChange(newQuery: String) {
+        _searchQuery.value = newQuery
     }
 
-    private fun fetchFestivals() {
+    val filteredFestivals: List<Festival>
+        get() {
+            val currentStats = state.value
+            return if (currentStats is UiState.Success) {
+                if (searchQuery.value.isEmpty()) {
+                    currentStats.festivals
+                } else {
+                    currentStats.festivals.filter {
+                        it.name.contains(searchQuery.value, ignoreCase = true)
+                    }
+                }
+            } else emptyList()
+        }
+
+    init {
+        observeFestivals()
+        refreshData()
+    }
+
+    private fun observeFestivals() {
+        viewModelScope.launch {
+            festivalRepository.getFestivals().collect { festivals ->
+                festivals.forEach { f ->
+                    Log.d("CHECK_DATA", "Festival: ${f.name}, Nb Zones: ${f.zones.size}")
+                }
+                internalState.value = UiState.Success(festivals)
+            }
+        }
+    }
+
+    fun refreshData() {
         viewModelScope.launch {
             try {
-                // On lance le rafraîchissement réseau (via la méthode qu'on a créée dans NetworkRepository)
-                // Si tu as gardé le nom "refreshFestivals"
-                (festivalRepository as? OfflineFestivalRepository)?.refreshFestivals()
+                if (state.value !is UiState.Success) internalState.value = UiState.Loading
 
-                // On observe les données qui viennent de Room
-                festivalRepository.getFestivals().collect { festivals ->
-                    internalState.value = UiState.Success(festivals)
-                }
+                val repo = (festivalRepository as? OfflineFestivalRepository)
+                val success = repo?.refreshFestivals() ?: false
+                _isOnline.value = success
             } catch (e: Exception) {
-                internalState.value = UiState.Error("Erreur: ${e.message}")
+                if (state.value !is UiState.Success) {
+                    internalState.value = UiState.Error("Erreur: ${e.message}")
+                }
             }
         }
     }

@@ -22,22 +22,23 @@ object AppViewModelProvider {
         // Initializer for ItemEditViewModel
         initializer {
             FestivalListViewModel(
-                userPreferencesRepository = festimobApplication().container.userPreferencesRepository,
-                festivalRepository = festimobApplication().container.festivalRepository
+                userPreferencesRepository = festiMobApplication().container.userPreferencesRepository,
+                festivalRepository = festiMobApplication().container.festivalRepository
             )
         }
-        // Initializer for ItemEntryViewModel
-        initializer {
+        // Initializer for FestivalEntryViewModel
+        initializer<FestivalEntryViewModel> {
+            val festivalId = this[FestivalIdKey] ?: 0
             FestivalEntryViewModel(
-                festivalRepository = festimobApplication().container.festivalRepository
+                festivalId = festivalId,
+                festivalRepository = festiMobApplication().container.festivalRepository,
             )
         }
-        initializer {
-            // On récupère l'ID depuis une clé personnalisée ou on le passe manuellement
+        initializer<FestivalDetailsViewModel> {
             val festivalId = this[FestivalIdKey] ?: 0
             FestivalDetailsViewModel(
                 festivalId = festivalId,
-                festivalRepository = festimobApplication().container.festivalRepository
+                festivalRepository = festiMobApplication().container.festivalRepository
             )
         }
 
@@ -46,18 +47,18 @@ object AppViewModelProvider {
 
 /**
  * Extension function to queries for [Application] object and returns an instance of
- * [InventoryApplication].
+ * [Application].
  */
 // Dans AppViewModelProvider.kt
-fun CreationExtras.festimobApplication(): FestiMobApplication {
+fun CreationExtras.festiMobApplication(): FestiMobApplication {
     // On récupère ce que le système nous donne pour APPLICATION_KEY
-    val appObject = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]
+    val appObject = this[APPLICATION_KEY]
 
     // Tentative 1 : Cast direct
     if (appObject is FestiMobApplication) return appObject
 
     // Tentative 2 : Si c'est une Application standard, on check son context
-    if (appObject is android.app.Application) {
+    if (appObject is Application) {
         return appObject as? FestiMobApplication
             ?: throw IllegalStateException("L'application n'est pas de type FestiMobApplication")
     }
