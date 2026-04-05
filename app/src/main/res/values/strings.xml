@@ -39,4 +39,6 @@
     <string name="public_f"> Public </string>
     <string name="start_date"> Date de début </string>
     <string name="end_date"> Date de fin </string>
+    <string name="edit_festival_title">Modification de festival</string>
+    <string name="add_festival_title">Ajout de festival</string>
 </resources>

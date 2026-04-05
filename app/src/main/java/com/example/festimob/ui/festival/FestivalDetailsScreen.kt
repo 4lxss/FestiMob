@@ -5,6 +5,7 @@ import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.theme.FestiMobTheme
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,19 +17,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,13 +43,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.data.api.Festival
+import com.example.festimob.ui.utils.formatIsoNative
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -60,25 +70,48 @@ fun FestivalDetailsScreen(
     val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navigateToEditItem(uiState.value.festivalDetails.id_f) },
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
+    androidx.compose.runtime.LaunchedEffect(key1 = true) {
+        viewModel.checkConnection()
+    }
 
+    val isOnline by viewModel.isOnline
+
+    Scaffold(
+        topBar = {
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.inversePrimary)
+                    .padding(8.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = stringResource(R.string.edit_item_title),
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = "Détails",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = navigateBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Retour"
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.Transparent, // Fond transparent pour voir l'inversePrimary derrière
+                        titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Couleur du titre
+                        navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Couleur flèche
+                        actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant // Couleur icônes droite
+                    )
                 )
             }
-        }, modifier = modifier
+        },
     ) { innerPadding ->
         FestivalDetailsBody(
             festivalDetailsUiState = uiState.value,
             onModify = {
-                println("Ouverture de la page modification")
+                navigateToEditItem(uiState.value.festivalDetails.id_f)
             },
             onDelete = {
                 coroutineScope.launch {
@@ -92,7 +125,8 @@ fun FestivalDetailsScreen(
                     end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
                     top = innerPadding.calculateTopPadding()
                 )
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            isOnline = isOnline
         )
     }
 }
@@ -102,7 +136,8 @@ private fun FestivalDetailsBody(
     festivalDetailsUiState: FestivalDetailsUiState,
     onModify: () -> Unit,
     onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isOnline: Boolean,
 ) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
@@ -114,20 +149,23 @@ private fun FestivalDetailsBody(
             festival = festivalDetailsUiState.festivalDetails.toFestival(),
             modifier = Modifier.fillMaxWidth()
         )
-        Button(
-            onClick = onModify,
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.small,
-            enabled = true
-        ) {
-            Text(stringResource(R.string.modify))
-        }
-        OutlinedButton(
-            onClick = { deleteConfirmationRequired = true },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.delete))
+        if (isOnline) {
+            Button(
+                onClick = onModify,
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.small,
+                enabled = true
+            ) {
+                Text(stringResource(R.string.modify))
+            }
+
+            OutlinedButton(
+                onClick = { deleteConfirmationRequired = true },
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.delete))
+            }
         }
         if (deleteConfirmationRequired) {
             DeleteConfirmationDialog(
@@ -162,7 +200,6 @@ fun FestivalDetails(
             )
         ) {
             Text(festival.name)
-            // Dates
             FestivalDetailsRow(
                 labelResID = R.string.start_date,
                 festivalDetail = formatIsoNative(festival.start_date),
@@ -221,6 +258,50 @@ fun FestivalDetails(
                     horizontal = dimensionResource(id = R.dimen.padding_medium)
                 )
             )
+            if (festival.zones.isNotEmpty()) {
+                androidx.compose.material3.HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+                Text(
+                    text = "Zones et Tarifs",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                festival.zones.forEach { zone ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
+                            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small))
+                        ) {
+                            Text(
+                                text = zone.name,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Text("Tables")
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = zone.nb_table.toString(), fontWeight = FontWeight.Bold)
+                            }
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Text("Prix table")
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = "${zone.price_table} €", fontWeight = FontWeight.Bold)
+                            }
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Text("Prix m²")
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = "${zone.price_m2} €", fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -268,20 +349,8 @@ fun FestivalDetailsScreenPreview() {
                 festivalDetails = FestivalDetails()
             ),
             onModify = {},
-            onDelete = {}
+            onDelete = {},
+            isOnline = false
         )
-    }
-}
-
-fun formatIsoNative(isoString: String): String {
-    return try {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.US)
-
-        val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale.FRANCE)
-
-        val date = inputFormat.parse(isoString)
-        outputFormat.format(date!!)
-    } catch (e: Exception) {
-        "Erreur date"
     }
 }

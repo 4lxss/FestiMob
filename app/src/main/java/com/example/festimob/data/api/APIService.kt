@@ -1,25 +1,38 @@
 package com.example.festimob.data.api
 
-import com.example.festimob.data.api.models.admin.login.LoginRequest
-import com.example.festimob.data.api.models.admin.login.LoginResponse
-import com.example.festimob.data.api.models.admin.logout.LogoutResponse
-import com.example.festimob.data.api.models.admin.register.RegisterRequest
-import com.example.festimob.data.api.models.admin.register.RegisterResponse
-import com.example.festimob.data.api.models.admin.user.DeleteUserResponse
-import com.example.festimob.data.api.models.admin.user.UpdateUserRoleRequest
-import com.example.festimob.data.api.models.admin.user.UpdateUserRoleResponse
-import com.example.festimob.data.api.models.admin.user.UsersResponse
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.Path
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface APIService {
+    // Festivals
     @GET("api/festivals/all")
-    suspend fun getFestivals() : List<Festival>
+    suspend fun getFestivalsRaw(): List<FestivalNetwork>
 
+    @POST("api/festivals/add")
+    suspend fun addFestival(@Body wrapper: FestivalAddWrapper): retrofit2.Response<FestivalAddResponse>
+
+    @POST("api/festivals/deleteone")
+    suspend fun deleteFestival(@Body body: FestivalDeleteRequest): retrofit2.Response<Unit>
+
+    // Festivals + zones
+    @PUT("api/festivals/update-full")
+    suspend fun updateFestival(@Body festival: FestivalUpdateRequest): retrofit2.Response<Unit>
+
+
+
+    // Zones
+    @GET("api/zoneTarif/getzones")
+    suspend fun getAllZones(): List<ZoneTarif>
+
+    @POST("api/ZoneTarif/add")
+    suspend fun addZone(@Body wrapper: ZoneTarifAddWrapper): retrofit2.Response<Unit>
+
+    @POST("api/zoneTarif/delete")
+    suspend fun deleteZonesByFestival(@Body body: ZoneDeleteRequest): retrofit2.Response<Unit>
+
+    // Admin
     @GET("api/admin/users")
     suspend fun getUsers(): UsersResponse
 
@@ -42,4 +55,5 @@ interface APIService {
     suspend fun deleteUser(
         @Path("id") userId: Int
     ): DeleteUserResponse
+
 }
