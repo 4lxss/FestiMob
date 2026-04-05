@@ -1,26 +1,33 @@
 package com.example.festimob.ui.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlaylistAddCircle
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
@@ -35,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
@@ -55,6 +61,8 @@ import com.example.festimob.ui.auth.LoginScreen
 import com.example.festimob.ui.auth.LoginViewModel
 import com.example.festimob.ui.auth.RegisterScreen
 import com.example.festimob.ui.auth.RegisterViewModel
+import com.example.festimob.ui.zoneplan.ZonePlanListScreen
+import com.example.festimob.ui.zoneplan.ZonePlanListViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,99 +74,140 @@ fun SmallNavigation() {
     var logoutError by rememberSaveable { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
     val canAccessAdmin = isLoggedIn && hasMinimumRole(currentUserRole, Role.ADMIN)
-    val bottomNavItems = buildList {
-        add(Destination.Accueil)
-        add(Destination.FestivalList)
-        if (canAccessAdmin) add(Destination.Admin)
-    }
-    Scaffold (
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Text("FestiJeux")
-                },
-                actions = {
-                    if (!isLoggedIn) {
-                        TextButton(onClick = { backStack.add(Destination.Login) }) {
-                            Text("Connexion")
+    val bottomNavItems = listOf(Destination.Accueil, Destination.FestivalList)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet(
+                modifier = Modifier.fillMaxWidth(2f / 3f),
+                drawerContainerColor = MaterialTheme.colorScheme.primaryContainer
+            ) {
+                NavigationDrawerItem(
+                    label = { Text("Admin") },
+                    selected = backStack.lastOrNull() == Destination.Admin,
+                    onClick = {
+                        if (backStack.lastOrNull() != Destination.Admin) {
+                            backStack.remove(Destination.Admin)
+                            backStack.add(Destination.Admin)
                         }
-                    } else {
-                        IconButton(
-                            onClick = {
-                                scope.launch {
-                                    try {
-                                        com.example.festimob.data.api.RetrofitInstance.api.logout()
-                                        isLoggedIn = false
-                                        currentUserRole = null
-                                        logoutError = null
-                                        backStack.clear()
-                                        backStack.add(Destination.Accueil)
-                                    } catch (e: Exception) {
-                                        logoutError = e.message ?: "Erreur lors de la déconnexion"
+                        scope.launch { drawerState.close() }
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.AdminPanelSettings,
+                            contentDescription = "Admin"
+                        )
+                    },
+                    colors = NavigationDrawerItemDefaults.colors()
+                )
+                NavigationDrawerItem(
+                    label = { Text("Zones") },
+                    selected = backStack.lastOrNull() == Destination.ZonePlans,
+                    onClick = {
+                        if (backStack.lastOrNull() != Destination.ZonePlans) {
+                            backStack.remove(Destination.ZonePlans)
+                            backStack.add(Destination.ZonePlans)
+                        }
+                        scope.launch { drawerState.close() }
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.AdminPanelSettings,
+                            contentDescription = "Zones"
+                        )
+                    },
+                    colors = NavigationDrawerItemDefaults.colors()
+                )
+            }
+        }
+    ) {
+        Scaffold (
+            topBar = {
+                CenterAlignedTopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = {
+                        Text("FestiJeux")
+                    },
+                    actions = {
+                        if (!isLoggedIn) {
+                            TextButton(onClick = { backStack.add(Destination.Login) }) {
+                                Text("Connexion")
+                            }
+                        } else {
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        try {
+                                            com.example.festimob.data.api.RetrofitInstance.api.logout()
+                                            isLoggedIn = false
+                                            currentUserRole = null
+                                            logoutError = null
+                                            backStack.clear()
+                                            backStack.add(Destination.Accueil)
+                                        } catch (e: Exception) {
+                                            logoutError = e.message ?: "Erreur lors de la déconnexion"
+                                        }
                                     }
                                 }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Logout,
+                                    contentDescription = "Déconnexion"
+                                )
                             }
-                        ) {
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(
-                                imageVector = Icons.Default.Logout,
-                                contentDescription = "Déconnexion"
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu"
                             )
                         }
                     }
-                },
-                navigationIcon = {
-                    if (backStack.size > 1) {
-                        IconButton(onClick = { backStack.removeLastOrNull() }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
-                            )
-                        }
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.primary,
-            ) {
-                NavigationBar (
+                )
+            },
+            bottomBar = {
+                BottomAppBar(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary,
                 ) {
-                    bottomNavItems.forEach { destination ->
-                        NavigationBarItem(
-                            selected = backStack.lastOrNull() == destination,
-                            onClick = {
-                                if (backStack.lastOrNull() != destination) {
-                                    if (destination == Destination.Accueil) {
-                                        backStack.clear()
-                                        backStack.add(Destination.Accueil)
-                                    } else {
-                                        if (backStack.isEmpty() || backStack[0] != Destination.Accueil) {
+                    NavigationBar (
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.primary,
+                    ) {
+                        bottomNavItems.forEach { destination ->
+                            NavigationBarItem(
+                                selected = backStack.lastOrNull() == destination,
+                                onClick = {
+                                    if (backStack.lastOrNull() != destination) {
+                                        if (destination == Destination.Accueil) {
                                             backStack.clear()
                                             backStack.add(Destination.Accueil)
+                                        } else {
+                                            if (backStack.isEmpty() || backStack[0] != Destination.Accueil) {
+                                                backStack.clear()
+                                                backStack.add(Destination.Accueil)
+                                            }
+                                            backStack.remove(destination)
+                                            backStack.add(destination)
                                         }
-                                        backStack.remove(destination)
-                                        backStack.add(destination)
                                     }
-                                }
-                            },
-                            icon = { Icon(destination.icon, contentDescription = destination.label) },
-                            label = { Text(destination.label) }
-                        )
+                                },
+                                icon = { Icon(destination.icon, contentDescription = destination.label) },
+                                label = { Text(destination.label) }
+                            )
+                        }
                     }
                 }
             }
-        }
-    )
-    {
-            innerPadding ->
+        ) {
+                innerPadding ->
         NavDisplay (
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
@@ -285,9 +334,24 @@ fun SmallNavigation() {
                             )
                         }
                     }
+                    is Destination.ZonePlans -> NavEntry(key) {
+                        val context = LocalContext.current.applicationContext as FestiMobApplication
+                        val extras = MutableCreationExtras().apply {
+                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                        }
+
+                        val viewModel: ZonePlanListViewModel = viewModel(
+                            factory = AppViewModelProvider.Factory,
+                            key = "zoneplans_all",
+                            extras = extras
+                        )
+
+                        ZonePlanListScreen(viewModel = viewModel)
+                    }
                 }
             }
         )
+        }
     }
 }
 
@@ -305,4 +369,5 @@ sealed class Destination(
     object Register : Destination("Inscription", Icons.Default.AdminPanelSettings, "register", R.string.item_entry_title)
 
     data class FestivalDetails(val id: Int) : Destination("Détails", Icons.Default.AdminPanelSettings, "details", R.string.details_title)
+    object ZonePlans : Destination("Zones", Icons.Default.AdminPanelSettings, "zone_plans", R.string.details_title)
 }
