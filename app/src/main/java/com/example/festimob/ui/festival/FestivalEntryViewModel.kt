@@ -89,7 +89,10 @@ class FestivalEntryViewModel(
 
         return try {
             if (festivalId == 0) {
-                festivalRepository.insert(festivalUiState.festivalDetails.toFestivalAddRequest())
+                festivalRepository.insert(
+                    festival = festivalUiState.festivalDetails.toFestivalAddRequest(),
+                    zones = festivalUiState.festivalDetails.zones
+                )
             } else {
                 festivalRepository.update(festivalUiState.festivalDetails.toFestivalUpdateRequest())
             }
@@ -98,7 +101,7 @@ class FestivalEntryViewModel(
         } catch (e: Exception) {
             val errorMsg = when {
                 e.message?.contains("500") == true -> "Erreur serveur (500)."
-                e is UnknownHostException -> "Pas de connexion internet."
+                e is java.net.UnknownHostException -> "Pas de connexion internet."
                 else -> "Échec : ${e.localizedMessage}"
             }
             festivalUiState = festivalUiState.copy(errorMessage = errorMsg)

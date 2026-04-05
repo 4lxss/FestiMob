@@ -56,7 +56,7 @@ class OfflineFestivalRepository(
         }
     }
 
-    override suspend fun insert(festival: FestivalAddRequest) {
+    override suspend fun insert(festival: FestivalAddRequest, zones: List<ZoneTarif>) {
         try {
             val wrapper = FestivalAddWrapper(festival)
             val response = apiService.addFestival(wrapper)
@@ -64,8 +64,28 @@ class OfflineFestivalRepository(
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null) {
+                    val festivalId = body.id_f
+
+                    zones.forEach { zone ->
+                        val zoneRequest = ZoneTarifAddRequest(
+                            name = zone.name,
+                            nb_table = zone.nb_table,
+                            price_table = zone.price_table,
+                            price_m2 = zone.price_m2
+                        )
+                        val zoneWrapper = ZoneTarifAddWrapper(zone = zoneRequest, id = festivalId)
+                        val zoneResponse = apiService.addZone(zoneWrapper)
+
+                        if (!zoneResponse.isSuccessful) {
+                            Log.e("API_DEBUG", "Erreur ajout zone '${zone.name}': ${zoneResponse.code()}")
+                        } else {
+                            Log.d("API_DEBUG", "Zone '${zone.name}' ajoutée avec succès")
+                        }
+                    }
+
+                    // 3. Sauvegarder le festival en local avec ses zones
                     val festivalToSave = Festival(
-                        id_f = body.id_f,
+                        id_f = festivalId,
                         name = festival.name,
                         start_date = festival.start_date,
                         end_date = festival.end_date,
@@ -75,7 +95,8 @@ class OfflineFestivalRepository(
                         nb_chair = festival.nb_chair,
                         nb_chair_mairie = festival.nb_chair_mairie,
                         public = festival.public,
-                        price_multi_socket = festival.price_multi_socket
+                        price_multi_socket = festival.price_multi_socket,
+                        zones = zones
                     )
 
                     festivalDao.insert(festivalToSave)
@@ -123,5 +144,32 @@ class OfflineFestivalRepository(
         }
     }
 
-    override suspend fun delete(festival: Festival) = festivalDao.delete(festival)
+    override suspend fun delete(festival: Festival) {
+        try {
+            val zoneResponse = apiService.deleteZonesByFestival(
+                ZoneDeleteRequest(festivalId = festival.id_f)
+            )
+            if (!zoneResponse.isSuccessful) {
+                Log.e("API_DEBUG", "Erreur suppression zones: ${zoneResponse.code()}")
+                throw Exception("Erreur suppression zones : ${zoneResponse.code()}")
+            }
+            Log.d("API_DEBUG", "Zones du festival ${festival.id_f} supprimées")
+
+            val festivalResponse = apiService.deleteFestival(
+                FestivalDeleteRequest(id = festival.id_f)
+            )
+            if (!festivalResponse.isSuccessful) {
+                Log.e("API_DEBUG", "Erreur suppression festival: ${festivalResponse.code()}")
+                throw Exception("Erreur suppression festival : ${festivalResponse.code()}")
+            }
+            Log.d("API_DEBUG", "Festival ${festival.id_f} supprimé du serveur")
+
+            festivalDao.delete(festival)
+            Log.d("API_DEBUG", "Festival ${festival.id_f} supprimé localement")
+
+        } catch (e: Exception) {
+            Log.e("API_DEBUG", "Erreur lors de la suppression: ${e.message}")
+            throw e
+        }
+    }
 }
