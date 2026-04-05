@@ -16,3 +16,10 @@ fun EditorDetailsScreen(
     Spacer(Modifier.padding(4.dp))
     Text("Congrats on reaching Editor ${viewModel.uiState.editor?.id} Details screen")
 }
+
+enum class EditorTab(val title: String) {
+    Contacts("Contacts"),
+    Games("Games"),
+    Reservations("Reservations"),
+    Other("Other")
+}
