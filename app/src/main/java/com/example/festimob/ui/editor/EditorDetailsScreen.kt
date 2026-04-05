@@ -2,12 +2,16 @@ package com.example.festimob.ui.editor
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.room.util.TableInfo
 import com.example.festimob.R
 import com.example.festimob.ui.theme.AccentTurquoise
+import com.example.festimob.ui.theme.CardTeal
 import com.example.festimob.ui.theme.DarkTealBackground
 import com.example.festimob.ui.theme.TextWhite
 
@@ -34,10 +39,8 @@ fun EditorDetailsScreen(
     viewModel: EditorDetailsViewModel
 ) {
     viewModel.setUiState(editorId)
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
     val editor = viewModel.uiState.editor
-
     val title = editor?.name ?: "Unknown editor"
 
     Scaffold(
@@ -72,9 +75,34 @@ fun EditorDetailsScreen(
                 start = dimensionResource(R.dimen.padding_medium),
                 end = dimensionResource(R.dimen.padding_medium),
             )
+
+        var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+        val tabs = EditorTab.entries
         Column(
             modifier = hereModifier
         ) {
+
+            PrimaryTabRow(
+                selectedTabIndex,
+                containerColor = CardTeal,
+                contentColor = TextWhite
+            ) { 
+                tabs.forEachIndexed { index, tab ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = {
+                            // 3. Update state on click
+                            selectedTabIndex = index
+                        },
+                        text = {
+                            Text(
+                                text = tab.name,
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        },
+                    )
+                }
+            }
             Spacer(hereModifier.padding(innerPadding))
             Text("Congrats on reaching Editor ${viewModel.uiState.editor?.id} Details screen", color = TextWhite)
         }
