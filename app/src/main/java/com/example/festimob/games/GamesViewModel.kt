@@ -7,13 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel = holds screen data (games list) and loads it.
- *
- * Later, when you have an API, you keep the same ViewModel and just swap the repository.
- */
+/** Holds games list state; loads via [GamesRepository] ([OnlineGamesRepository] until REST is implemented). */
 class GamesViewModel(
-    private val repository: GamesRepository = FakeGamesRepository()
+    private val repository: GamesRepository = OnlineGamesRepository()
 ) : ViewModel() {
 
     var isLoading by mutableStateOf(false)
