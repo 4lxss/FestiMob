@@ -1,5 +1,6 @@
 package com.example.festimob.data.api
 
+import com.example.festimob.data.api.models.admin.user.UpdateUserRoleRequest
 import kotlinx.coroutines.flow.Flow
 
 class OfflineUserRepository(

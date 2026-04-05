@@ -1,6 +1,14 @@
 package com.example.festimob.data.api
 
-import kotlinx.serialization.Serializable
+import com.example.festimob.data.api.models.admin.login.LoginRequest
+import com.example.festimob.data.api.models.admin.login.LoginResponse
+import com.example.festimob.data.api.models.admin.logout.LogoutResponse
+import com.example.festimob.data.api.models.admin.register.RegisterRequest
+import com.example.festimob.data.api.models.admin.register.RegisterResponse
+import com.example.festimob.data.api.models.admin.user.DeleteUserResponse
+import com.example.festimob.data.api.models.admin.user.UpdateUserRoleRequest
+import com.example.festimob.data.api.models.admin.user.UpdateUserRoleResponse
+import com.example.festimob.data.api.models.admin.user.UsersResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -35,58 +43,3 @@ interface APIService {
         @Path("id") userId: Int
     ): DeleteUserResponse
 }
-
-@Serializable
-data class LoginRequest(
-    val username: String,
-    val password: String
-)
-
-@Serializable
-data class LoginUser(
-    val username: String,
-    val role: String
-)
-
-@Serializable
-data class LoginResponse(
-    val message: String,
-    val user: LoginUser? = null
-)
-
-@Serializable
-data class LogoutResponse(
-    val message: String
-)
-
-@Serializable
-data class UsersResponse(
-    val users: List<User>
-)
-
-@Serializable
-data class RegisterRequest(
-    val username: String,
-    val password: String,
-    val role: String
-)
-
-@Serializable
-data class RegisterResponse(
-    val message: String
-)
-
-@Serializable
-data class UpdateUserRoleRequest(
-    val role: String
-)
-
-@Serializable
-data class UpdateUserRoleResponse(
-    val message: String
-)
-
-@Serializable
-data class DeleteUserResponse(
-    val message: String
-)

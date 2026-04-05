@@ -3,7 +3,7 @@ package com.example.festimob.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.festimob.data.api.APIService
-import com.example.festimob.data.api.RegisterRequest
+import com.example.festimob.data.api.models.admin.register.RegisterRequest
 import retrofit2.HttpException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
