@@ -43,6 +43,9 @@ fun EditorDetailsScreen(
     val editor = viewModel.uiState.editor
     val title = editor?.name ?: "Unknown editor"
 
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+    val tabs = EditorTab.entries
+
     Scaffold(
         containerColor = DarkTealBackground,
         topBar = {
@@ -76,16 +79,16 @@ fun EditorDetailsScreen(
                 end = dimensionResource(R.dimen.padding_medium),
             )
 
-        var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
-        val tabs = EditorTab.entries
         Column(
-            modifier = hereModifier
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
 
             PrimaryTabRow(
                 selectedTabIndex,
-                containerColor = CardTeal,
-                contentColor = TextWhite
+                containerColor = AccentTurquoise,
+                contentColor = CardTeal
             ) { 
                 tabs.forEachIndexed { index, tab ->
                     Tab(
@@ -96,14 +99,19 @@ fun EditorDetailsScreen(
                         },
                         text = {
                             Text(
-                                text = tab.name,
+                                text = tab.title,
                                 style = MaterialTheme.typography.titleSmall
                             )
                         },
                     )
                 }
             }
-            Spacer(hereModifier.padding(innerPadding))
+            Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))) {
+                Text(
+                    text = "Current Tab: ${tabs[selectedTabIndex].title}",
+                    color = TextWhite
+                )
+            }
             Text("Congrats on reaching Editor ${viewModel.uiState.editor?.id} Details screen", color = TextWhite)
         }
     }
