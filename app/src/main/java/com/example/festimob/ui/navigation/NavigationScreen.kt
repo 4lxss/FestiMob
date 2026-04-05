@@ -39,6 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
@@ -128,7 +129,9 @@ fun SmallNavigation() {
                 CenterAlignedTopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = Color.White,
+                        actionIconContentColor = Color.White,
+                        navigationIconContentColor = Color.White
                     ),
                     title = {
                         Text("FestiJeux")
@@ -136,7 +139,7 @@ fun SmallNavigation() {
                     actions = {
                         if (!isLoggedIn) {
                             TextButton(onClick = { backStack.add(Destination.Login) }) {
-                                Text("Connexion")
+                                Text("Connexion", color = Color.White)
                             }
                         } else {
                             IconButton(
