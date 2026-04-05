@@ -9,8 +9,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -85,16 +87,15 @@ fun EditorDetailsScreen(
                 .padding(innerPadding)
         ) {
 
-            PrimaryTabRow(
+            PrimaryScrollableTabRow(
                 selectedTabIndex,
-                containerColor = AccentTurquoise,
-                contentColor = CardTeal
+                containerColor = DarkTealBackground,
+                contentColor = AccentTurquoise
             ) { 
                 tabs.forEachIndexed { index, tab ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = {
-                            // 3. Update state on click
                             selectedTabIndex = index
                         },
                         text = {
