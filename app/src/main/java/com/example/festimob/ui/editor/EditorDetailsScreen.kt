@@ -157,56 +157,42 @@ fun EditorDetailsScreen(
                     Spacer(modifier = Modifier.weight(1f))
                     when(tabs[selectedTabIndex]) {
                         EditorTab.Contacts -> {
-                            OutlinedButton(
+                            Button(
                                 onClick = {
                                     // TODO : add contact add form nav here
                                 },
-                                modifier = Modifier
-                                    .height(34.dp),
-                                shape = RoundedCornerShape(10.dp),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
-                                border = BorderStroke(1.dp, BrandTeal),
+                                modifier = Modifier.size(34.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                contentPadding = PaddingValues(0.dp),
                                 colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = BrandTeal,
+                                    containerColor = BrandTeal,
+                                    contentColor = TextWhite,
                                 )
                             ) {
                                 Icon(
                                     Icons.Default.Add,
                                     contentDescription = "Add Contact",
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(Modifier.width(4.dp))
-                                Text(
-                                    text = "Add",
-                                    fontSize = 14.sp,
-                                    style = MaterialTheme.typography.labelLarge
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                         }
                         EditorTab.Games -> {
-                            OutlinedButton(
+                            Button(
                                 onClick = {
                                     // TODO : add game add form nav here
                                 },
-                                modifier = Modifier
-                                    .height(34.dp),
-                                shape = RoundedCornerShape(10.dp),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
-                                border = BorderStroke(1.dp, BrandTeal),
+                                modifier = Modifier.size(34.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                contentPadding = PaddingValues(0.dp),
                                 colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = BrandTeal,
+                                    containerColor = BrandTeal,
+                                    contentColor = TextWhite,
                                 )
                             ) {
                                 Icon(
                                     Icons.Default.Add,
                                     contentDescription = "Add Game",
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(Modifier.width(4.dp))
-                                Text(
-                                    text = "Add",
-                                    fontSize = 14.sp,
-                                    style = MaterialTheme.typography.labelLarge
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                         }
