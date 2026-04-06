@@ -29,6 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -75,36 +76,67 @@ fun SmallNavigation() {
     var logoutError by rememberSaveable { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
     val canAccessAdmin = isLoggedIn && hasMinimumRole(currentUserRole, Role.ADMIN)
-    val bottomNavItems = listOf(Destination.Accueil, Destination.FestivalList)
+    val canAccessFestivals = isLoggedIn && hasMinimumRole(currentUserRole, Role.SUPER_ORGANIZER)
+    val canAccessDrawer = isLoggedIn && hasMinimumRole(currentUserRole, Role.VOLUNTEER)
+    val bottomNavItems = listOf(Destination.Accueil)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val currentDestination = backStack.lastOrNull() ?: Destination.Accueil
     val topBarTitle = if (currentDestination == Destination.Accueil) "FestiJeux" else currentDestination.label
 
+    LaunchedEffect(canAccessDrawer) {
+        if (!canAccessDrawer && drawerState.isOpen) {
+            drawerState.close()
+        }
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = canAccessDrawer,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier.fillMaxWidth(2f / 3f),
                 drawerContainerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
-                NavigationDrawerItem(
-                    label = { Text("Admin") },
-                    selected = backStack.lastOrNull() == Destination.Admin,
-                    onClick = {
-                        if (backStack.lastOrNull() != Destination.Admin) {
-                            backStack.remove(Destination.Admin)
-                            backStack.add(Destination.Admin)
-                        }
-                        scope.launch { drawerState.close() }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.AdminPanelSettings,
-                            contentDescription = "Admin"
-                        )
-                    },
-                    colors = NavigationDrawerItemDefaults.colors()
-                )
+                if (canAccessFestivals) {
+                    NavigationDrawerItem(
+                        label = { Text("Festivals") },
+                        selected = backStack.lastOrNull() == Destination.FestivalList,
+                        onClick = {
+                            if (backStack.lastOrNull() != Destination.FestivalList) {
+                                backStack.remove(Destination.FestivalList)
+                                backStack.add(Destination.FestivalList)
+                            }
+                            scope.launch { drawerState.close() }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.PlaylistAddCircle,
+                                contentDescription = "Festivals"
+                            )
+                        },
+                        colors = NavigationDrawerItemDefaults.colors()
+                    )
+                }
+                if (canAccessAdmin) {
+                    NavigationDrawerItem(
+                        label = { Text("Admin") },
+                        selected = backStack.lastOrNull() == Destination.Admin,
+                        onClick = {
+                            if (backStack.lastOrNull() != Destination.Admin) {
+                                backStack.remove(Destination.Admin)
+                                backStack.add(Destination.Admin)
+                            }
+                            scope.launch { drawerState.close() }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.AdminPanelSettings,
+                                contentDescription = "Admin"
+                            )
+                        },
+                        colors = NavigationDrawerItemDefaults.colors()
+                    )
+                }
                 NavigationDrawerItem(
                     label = { Text("Zones") },
                     selected = backStack.lastOrNull() == Destination.ZonePlans,
@@ -168,11 +200,13 @@ fun SmallNavigation() {
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Menu"
-                            )
+                        if (canAccessDrawer) {
+                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "Menu"
+                                )
+                            }
                         }
                     }
                 )
@@ -182,31 +216,27 @@ fun SmallNavigation() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary,
                 ) {
-                    NavigationBar (
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.primary,
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        bottomNavItems.forEach { destination ->
-                            NavigationBarItem(
-                                selected = backStack.lastOrNull() == destination,
-                                onClick = {
-                                    if (backStack.lastOrNull() != destination) {
-                                        if (destination == Destination.Accueil) {
+                        NavigationBar (
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.primary,
+                        ) {
+                            bottomNavItems.forEach { destination ->
+                                NavigationBarItem(
+                                    selected = backStack.lastOrNull() == destination,
+                                    onClick = {
+                                        if (backStack.lastOrNull() != destination) {
                                             backStack.clear()
                                             backStack.add(Destination.Accueil)
-                                        } else {
-                                            if (backStack.isEmpty() || backStack[0] != Destination.Accueil) {
-                                                backStack.clear()
-                                                backStack.add(Destination.Accueil)
-                                            }
-                                            backStack.remove(destination)
-                                            backStack.add(destination)
                                         }
-                                    }
-                                },
-                                icon = { Icon(destination.icon, contentDescription = destination.label) },
-                                label = { Text(destination.label) }
-                            )
+                                    },
+                                    icon = { Icon(destination.icon, contentDescription = destination.label) },
+                                    label = { Text(destination.label) }
+                                )
+                            }
                         }
                     }
                 }
@@ -225,17 +255,16 @@ fun SmallNavigation() {
                         }
                     }
                     is Destination.FestivalList -> NavEntry(key) {
-                        val context = LocalContext.current.applicationContext as FestiMobApplication
-                        val extras = MutableCreationExtras().apply {
-                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                        if (canAccessFestivals) {
+                            FestivalListScreen(
+                                navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry()) },
+                                navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) },
+                            )
+                        } else {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text("Accès refusé")
+                            }
                         }
-
-                        FestivalListScreen(
-                            navigateToFestivalEntry = { backStack.add(Destination.FestivalEntry()) },
-                            navigateToFestivalDetails = { id -> backStack.add(Destination.FestivalDetails(id)) },
-                            // Si ton FestivalListScreen prend un viewModel en paramètre :
-                            // viewModel = viewModel(factory = AppViewModelProvider.Factory, extras = extras)
-                        )
                     }
                     is Destination.Admin -> NavEntry(key) {
                         val context = LocalContext.current.applicationContext as FestiMobApplication
@@ -243,16 +272,18 @@ fun SmallNavigation() {
                             set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
                         }
 
-                        AdminScreen(
-                            viewModel = if (canAccessAdmin) {
-                                viewModel(
+                        if (canAccessAdmin) {
+                            AdminScreen(
+                                viewModel = viewModel(
                                     factory = AppViewModelProvider.Factory,
                                     extras = extras
                                 )
-                            } else {
-                                null
+                            )
+                        } else {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text("Accès refusé")
                             }
-                        )
+                        }
                     }
                     is Destination.Login -> NavEntry(key) {
                         val context = LocalContext.current.applicationContext as FestiMobApplication
