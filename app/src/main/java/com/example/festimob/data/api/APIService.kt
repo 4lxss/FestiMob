@@ -13,6 +13,7 @@ import com.example.festimob.data.api.models.editor.AddEditorRequest
 import com.example.festimob.data.api.models.editor.AddEditorResponse
 import com.example.festimob.data.api.models.editor.EditorResponse
 import com.example.festimob.data.api.models.zoneplan.ZonePlanResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -32,17 +33,29 @@ interface APIService {
     @GET("api/editeurs/{id}")
     suspend fun getEditor(@Path("id") id: Int): EditorResponse
 
+    // Games (used in app)
+    @GET("api/jeux/all")
+    suspend fun getJeux(): List<JeuDto>
+
+    @GET("api/mecanisms/all")
+    suspend fun getMecanisms(): List<MecanismDto>
+
+    @POST("api/editeurs/{editeurId}/jeux")
+    suspend fun createJeuForEditeur(
+        @Path("editeurId") editeurId: Int,
+        @Body body: CreateJeuRequest
+    ): JeuDto
+
     // Festivals
     @GET("api/festivals/all")
     suspend fun getFestivalsRaw(): List<FestivalNetwork>
 
     @POST("api/festivals/add")
-    suspend fun addFestival(@Body wrapper: FestivalAddWrapper): retrofit2.Response<FestivalAddResponse>
+    suspend fun addFestival(@Body wrapper: FestivalAddWrapper): Response<FestivalAddResponse>
 
     @POST("api/festivals/deleteone")
-    suspend fun deleteFestival(@Body body: FestivalDeleteRequest): retrofit2.Response<Unit>
+    suspend fun deleteFestival(@Body body: FestivalDeleteRequest): Response<Unit>
 
-    // Festivals + zones
     @PUT("api/festivals/update-full")
     suspend fun updateFestival(@Body festival: FestivalUpdateRequest): retrofit2.Response<Unit>
 
@@ -51,15 +64,15 @@ interface APIService {
     suspend fun getAllZones(): List<ZoneTarif>
 
     @POST("api/ZoneTarif/add")
-    suspend fun addZone(@Body wrapper: ZoneTarifAddWrapper): retrofit2.Response<Unit>
+    suspend fun addZone(@Body wrapper: ZoneTarifAddWrapper): Response<Unit>
 
     @POST("api/zoneTarif/delete")
-    suspend fun deleteZonesByFestival(@Body body: ZoneDeleteRequest): retrofit2.Response<Unit>
+    suspend fun deleteZonesByFestival(@Body body: ZoneDeleteRequest): Response<Unit>
 
     @GET("api/zonePlan/all")
     suspend fun getAllZonePlans(): List<ZonePlanResponse>
 
-    // Admin
+    // Admin/auth
     @GET("api/admin/users")
     suspend fun getUsers(): UsersResponse
 
@@ -79,8 +92,5 @@ interface APIService {
     ): UpdateUserRoleResponse
 
     @DELETE("api/admin/users/{id}")
-    suspend fun deleteUser(
-        @Path("id") userId: Int
-    ): DeleteUserResponse
-
+    suspend fun deleteUser(@Path("id") userId: Int): DeleteUserResponse
 }

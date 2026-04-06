@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Logout
@@ -53,6 +54,7 @@ import com.example.festimob.FestiMobApplication
 import com.example.festimob.R
 import com.example.festimob.data.api.Role
 import com.example.festimob.data.api.hasMinimumRole
+import com.example.festimob.games.GamesScreen
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.admin.AdminScreen
 import com.example.festimob.ui.auth.LoginScreen
@@ -82,6 +84,7 @@ fun SmallNavigation() {
     val scope = rememberCoroutineScope()
     val canAccessAdmin = isLoggedIn && hasMinimumRole(currentUserRole, Role.ADMIN)
     val canAccessFestivals = isLoggedIn && hasMinimumRole(currentUserRole, Role.SUPER_ORGANIZER)
+    val canAccessGames = isLoggedIn && hasMinimumRole(currentUserRole, Role.VOLUNTEER)
     val canAccessEditors = isLoggedIn && hasMinimumRole(currentUserRole, Role.VOLUNTEER)
     val canAccessDrawer = isLoggedIn && hasMinimumRole(currentUserRole, Role.VOLUNTEER)
     val bottomNavItems = listOf(Destination.Accueil)
@@ -138,6 +141,26 @@ fun SmallNavigation() {
                             Icon(
                                 imageVector = Icons.Default.PlaylistAddCircle,
                                 contentDescription = "Festivals"
+                            )
+                        },
+                        colors = NavigationDrawerItemDefaults.colors()
+                    )
+                }
+                if (canAccessGames) {
+                    NavigationDrawerItem(
+                        label = { Text("Jeux") },
+                        selected = backStack.lastOrNull() == Destination.Games,
+                        onClick = {
+                            if (backStack.lastOrNull() != Destination.Games) {
+                                backStack.remove(Destination.Games)
+                                backStack.add(Destination.Games)
+                            }
+                            scope.launch { drawerState.close() }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.SportsEsports,
+                                contentDescription = "Jeux"
                             )
                         },
                         colors = NavigationDrawerItemDefaults.colors()
@@ -396,6 +419,20 @@ fun SmallNavigation() {
                                 )
                             )
                         }
+                    }
+                    is Destination.Games -> NavEntry(key) {
+                        if (canAccessGames) {
+                            GamesScreen()
+                        } else {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text("Accès refusé")
+                            }
+                        }
+                    }
+                    is Destination.ZonePlans -> NavEntry(key) {
+                        val context = LocalContext.current.applicationContext as FestiMobApplication
+                        val extras = MutableCreationExtras().apply {
+                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
 
                         is Destination.FestivalDetails -> NavEntry(key) {
                             val context = LocalContext.current.applicationContext as FestiMobApplication
@@ -453,6 +490,7 @@ sealed class Destination(
     data class EditorEntry(val id: Int = 0) : Destination("Ajout éditeur", Icons.Default.Add, "editor_entry", R.string.editor_entry_title)
     data class EditorDetails(val id: Int) : Destination("Détails éditeur", Icons.Default.AdminPanelSettings, "editor_details", R.string.details_title)
     object FestivalList : Destination("Festivals", Icons.Default.PlaylistAddCircle, "festivals", R.string.festivals_title)
+    object Games : Destination("Jeux", Icons.Default.SportsEsports, "games", R.string.details_title)
     data class FestivalEntry(val id: Int = 0) : Destination("Ajout", Icons.Default.Add, "entry", R.string.item_entry_title)
     object Admin : Destination("Admin", Icons.Default.AdminPanelSettings, "admin", R.string.item_entry_title)
     object Login : Destination("Connexion", Icons.Default.AdminPanelSettings, "login", R.string.item_entry_title)
