@@ -29,6 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -76,13 +77,21 @@ fun SmallNavigation() {
     val scope = rememberCoroutineScope()
     val canAccessAdmin = isLoggedIn && hasMinimumRole(currentUserRole, Role.ADMIN)
     val canAccessFestivals = isLoggedIn && hasMinimumRole(currentUserRole, Role.SUPER_ORGANIZER)
+    val canAccessDrawer = isLoggedIn && hasMinimumRole(currentUserRole, Role.VOLUNTEER)
     val bottomNavItems = listOf(Destination.Accueil)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val currentDestination = backStack.lastOrNull() ?: Destination.Accueil
     val topBarTitle = if (currentDestination == Destination.Accueil) "FestiJeux" else currentDestination.label
 
+    LaunchedEffect(canAccessDrawer) {
+        if (!canAccessDrawer && drawerState.isOpen) {
+            drawerState.close()
+        }
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = canAccessDrawer,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier.fillMaxWidth(2f / 3f),
@@ -189,11 +198,13 @@ fun SmallNavigation() {
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Menu"
-                            )
+                        if (canAccessDrawer) {
+                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "Menu"
+                                )
+                            }
                         }
                     }
                 )
