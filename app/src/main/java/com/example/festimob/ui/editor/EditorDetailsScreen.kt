@@ -1,10 +1,15 @@
 package com.example.festimob.ui.editor
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -13,6 +18,7 @@ import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -22,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -93,16 +100,40 @@ fun EditorDetailsScreen(
                 contentColor = AccentTurquoise
             ) { 
                 tabs.forEachIndexed { index, tab ->
+                    val isSelected = (selectedTabIndex == index)
                     Tab(
-                        selected = selectedTabIndex == index,
+                        selected = isSelected,
                         onClick = {
                             selectedTabIndex = index
                         },
                         text = {
-                            Text(
-                                text = tab.title,
-                                style = MaterialTheme.typography.titleSmall
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            ) {
+                                Text(
+                                    text = tab.title,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = if (isSelected) AccentTurquoise else TextWhite.copy(alpha = 0.7f)
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                // The "Badge" (The little circle with the number)
+                                Surface(
+                                    shape = CircleShape,
+                                    color = if (isSelected) AccentTurquoise.copy(alpha = 0.15f) else CardTeal.copy(alpha = 0.5f),
+                                    modifier = Modifier.size(24.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            text = "0", // Placeholder TODO : link to real viewmodel data
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = if (isSelected) AccentTurquoise else TextWhite.copy(alpha = 0.5f)
+                                        )
+                                    }
+                                }
+                            }
                         },
                     )
                 }
