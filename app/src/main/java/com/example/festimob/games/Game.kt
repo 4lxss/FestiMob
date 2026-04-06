@@ -1,6 +1,6 @@
 package com.example.festimob.games
 
-/** One cell in the games grid. Filled from the REST API later; [imageUrl] may be empty for placeholders. */
+// Lightweight model for the UI: what we show in the grid and in the detail popup (comes from JeuDto after mapping).
 data class Game(
     val id: String,
     val name: String,

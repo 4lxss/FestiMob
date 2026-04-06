@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
-/** Holds games list state; loads via [GamesRepository] ([OnlineGamesRepository]). */
+// Talks to GamesRepository: keeps the list loading spinner, errors, and the filter dropdown options in sync for the UI.
 class GamesViewModel(
     private val repository: GamesRepository = OnlineGamesRepository()
 ) : ViewModel() {
@@ -25,10 +25,10 @@ class GamesViewModel(
     var isSavingGame by mutableStateOf(false)
         private set
 
-    /** Dropdown: All, Kids, Teenagers, Adults — see [GameAgeCategory]. */
+    // Age filter labels (Kids / Teenagers / Adults rules live in GameAgeCategory).
     val ageCategoryFilterOptions = GameAgeCategory.allOptions
 
-    /** Dropdown: `All` + mechanism names from `GET /api/mecanisms/all`. */
+    // Mechanism filter: "All" plus names we got from the API.
     var mechanismFilterOptions by mutableStateOf(listOf("All"))
         private set
 
@@ -36,7 +36,7 @@ class GamesViewModel(
         errorMessage = null
     }
 
-    /** Loads mechanism names for the filter dropdown. */
+    // Fetches mechanism names once so the second dropdown has real options (falls back to just "All" if it fails).
     fun loadMechanismFilterOptions() {
         viewModelScope.launch {
             mechanismFilterOptions = try {
@@ -47,6 +47,7 @@ class GamesViewModel(
         }
     }
 
+    // Pulls games from the repo with optional age + mechanism filters; shows loading + sets errorMessage on failure.
     fun loadGames(
         editionId: String,
         category: String? = null,
@@ -70,6 +71,7 @@ class GamesViewModel(
         }
     }
 
+    // Saves a new jeu via the API, then reloads the list with the same filters you had; onSuccess closes the dialog.
     fun createGame(
         name: String,
         description: String?,

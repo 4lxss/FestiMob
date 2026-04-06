@@ -5,9 +5,7 @@ import com.example.festimob.data.api.CreateJeuRequest
 import com.example.festimob.data.api.JeuDto
 import com.example.festimob.data.api.RetrofitInstance
 
-/**
- * Loads games from the backend via [APIService] and maps them to UI [Game] models.
- */
+// This class actually calls Retrofit: GET all jeux, filter in memory, map DTO → Game for Compose.
 class OnlineGamesRepository(
     private val api: APIService = RetrofitInstance.api
 ) : GamesRepository {
@@ -19,17 +17,20 @@ class OnlineGamesRepository(
     ): List<Game> {
         var rows = api.getJeux()
 
+        // Optional: only games tied to this edition (id_e), unless we're in the "show everything" mode.
         val editionInt = editionId.toIntOrNull()
         if (editionId.isNotBlank() && editionId != "default" && editionInt != null) {
             rows = rows.filter { it.id_e == editionInt }
         }
 
+        // Drop-in filter: keep jeux whose mechanism list contains this name (case-insensitive).
         if (!mechanism.isNullOrBlank()) {
             rows = rows.filter { jeu ->
                 jeu.mecanisms.any { it.name.equals(mechanism, ignoreCase = true) }
             }
         }
 
+        // Age group filter uses API age_min vs our Kids / Teenagers / Adults buckets.
         if (!category.isNullOrBlank()) {
             rows = rows.filter { jeu ->
                 GameAgeCategory.matches(jeu.age_min, category)
@@ -61,10 +62,12 @@ class OnlineGamesRepository(
             description = description?.trim()?.takeIf { it.isNotEmpty() },
             id_e = idE
         )
+        // Backend wants POST under a specific publisher id, not a generic /jeux URL.
         return api.createJeuForEditeur(editeurId, body).toGame()
     }
 }
 
+// Turn one API row into what the grid + detail dialog need.
 private fun JeuDto.toGame(): Game {
     return Game(
         id = id_j.toString(),
@@ -74,6 +77,7 @@ private fun JeuDto.toGame(): Game {
     )
 }
 
+// Builds the long text under the game: description first, then a one-line meta (players, age, time, mechanisms…).
 private fun JeuDto.buildUserFacingDescription(): String {
     val main = description?.trim()?.takeIf { it.isNotEmpty() }
 

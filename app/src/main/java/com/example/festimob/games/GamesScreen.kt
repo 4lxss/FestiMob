@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 
+// Main Games tab: loads games from the API, filters by age + mechanism, tap a card for details, + to add a game.
 @Composable
 fun GamesScreen(
     viewModel: GamesViewModel = viewModel()
@@ -69,11 +70,13 @@ fun GamesScreen(
 
     val tabs = listOf("Contact", "Games", "Resa", "Other")
 
+    // Which edition we filter on: "default" = show all; a number string = only games with that id_e.
     val gamesScopeId = "default"
 
     var detailGame by remember { mutableStateOf<Game?>(null) }
     var showAddGameDialog by remember { mutableStateOf(false) }
 
+    // First time (or when scope changes): fetch mechanism names for the dropdown, then load the grid.
     LaunchedEffect(gamesScopeId) {
         viewModel.loadMechanismFilterOptions()
         viewModel.loadGames(editionId = gamesScopeId)
@@ -82,6 +85,7 @@ fun GamesScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
+            // Opens the form that POSTs a new jeu under an éditeur id (API requirement).
             FloatingActionButton(
                 onClick = {
                     viewModel.clearError()
@@ -174,6 +178,7 @@ fun GamesScreen(
                         )
                     }
 
+                    // Same filters, just re-fetch from the network (handy if data changed).
                     FilledTonalIconButton(
                         onClick = {
                             viewModel.loadGames(
@@ -233,6 +238,7 @@ fun GamesScreen(
         }
     }
 
+    // Popup with full description when you tap a game card.
     detailGame?.let { game ->
         GameDetailDialog(
             game = game,
@@ -241,6 +247,7 @@ fun GamesScreen(
     }
 
     if (showAddGameDialog) {
+        // Form dialog; calls the ViewModel which hits POST …/editeurs/{id}/jeux.
         AddGameDialog(
             isSaving = viewModel.isSavingGame,
             errorMessage = viewModel.errorMessage,
@@ -269,6 +276,7 @@ fun GamesScreen(
     }
 }
 
+// Popup to create a game: name + optional text, must type a real éditeur id, optional id_e for the API row.
 @Composable
 private fun AddGameDialog(
     isSaving: Boolean,
@@ -376,6 +384,7 @@ private fun AddGameDialog(
     )
 }
 
+// Read-only popup: title + description (and whatever we stuffed into description from the DTO).
 @Composable
 private fun GameDetailDialog(
     game: Game,
@@ -407,6 +416,7 @@ private fun GameDetailDialog(
     )
 }
 
+// Simple header row; back arrow is placeholder for now.
 @Composable
 private fun TopBar() {
     Row(
@@ -429,6 +439,7 @@ private fun TopBar() {
     }
 }
 
+// Bottom nav (Home / Editions / Profile) — local selection only, not wired to real navigation yet.
 @Composable
 private fun BottomMenuBar() {
     var selected by remember { mutableIntStateOf(0) }
@@ -449,6 +460,7 @@ private fun BottomMenuBar() {
     }
 }
 
+// A read-only text field that opens a dropdown; used for Age group and Mechanisms filters.
 @Composable
 private fun RealDropdownFilterBox(
     label: String,
@@ -486,6 +498,7 @@ private fun RealDropdownFilterBox(
     }
 }
 
+// One square in the grid: cover image (or placeholder) + game name; click opens a detail dialog.
 @Composable
 private fun GameCard(
     game: Game,

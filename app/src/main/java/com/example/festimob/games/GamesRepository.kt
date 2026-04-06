@@ -1,10 +1,6 @@
 package com.example.festimob.games
 
-/**
- * Repository = "the place we ask for data".
- *
- * [OnlineGamesRepository] is wired by default; it loads games from the REST API.
- */
+// Small interface: the app asks here for games list, mechanism names, and creating a game. OnlineGamesRepository does the real HTTP.
 interface GamesRepository {
     suspend fun getGames(
         editionId: String,
@@ -12,7 +8,7 @@ interface GamesRepository {
         mechanism: String? = null
     ): List<Game>
 
-    /** Sorted mechanism names from `GET /api/mecanisms/all` (for filter dropdown). */
+    // Names for the mechanism filter dropdown.
     suspend fun getMechanismNames(): List<String>
 
     suspend fun createGame(
