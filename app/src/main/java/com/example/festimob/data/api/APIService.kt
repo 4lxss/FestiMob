@@ -23,7 +23,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 
 interface APIService {
-    // Editors (used in app)
+    // Editors
     @GET("api/editeurs/all")
     suspend fun getEditors(): List<EditorResponse>
 
@@ -57,7 +57,7 @@ interface APIService {
     suspend fun deleteFestival(@Body body: FestivalDeleteRequest): Response<Unit>
 
     @PUT("api/festivals/update-full")
-    suspend fun updateFestival(@Body festival: FestivalUpdateRequest): Response<Unit>
+    suspend fun updateFestival(@Body festival: FestivalUpdateRequest): retrofit2.Response<Unit>
 
     // Zones
     @GET("api/zoneTarif/getzones")
