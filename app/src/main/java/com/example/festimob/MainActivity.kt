@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.festimob.ui.navigation.SmallNavigation
 import com.example.festimob.ui.theme.FestiMobTheme
+import com.example.festimob.ui.navigation.SmallNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
