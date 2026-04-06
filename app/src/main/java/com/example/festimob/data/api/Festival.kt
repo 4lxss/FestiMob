@@ -2,6 +2,7 @@ package com.example.festimob.data.api
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.festimob.data.api.zone.ZoneTarif
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -36,16 +36,15 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.filled.Delete
 import com.example.festimob.R
-import com.example.festimob.data.api.ZoneTarif
-import com.example.festimob.ui.AppViewModelProvider
+import com.example.festimob.data.api.zone.ZoneTarif
 import com.example.festimob.ui.theme.FestiMobTheme
 import com.example.festimob.ui.utils.DatePickerField
 import kotlinx.coroutines.launch
 import java.util.Currency
 import java.util.Locale
+import kotlin.collections.forEachIndexed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

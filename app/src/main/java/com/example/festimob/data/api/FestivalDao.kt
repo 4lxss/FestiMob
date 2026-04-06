@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.example.festimob.data.api.zone.ZoneTarif
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -37,4 +38,10 @@ interface FestivalDao {
         deleteAll()
         insertAll(festivals)
     }
+
+    @Query("SELECT * FROM zonetarif WHERE id_f = :id_f")
+    suspend fun getZonesByFestivalId(id_f: Int): List<ZoneTarif>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllZones(zones: List<ZoneTarif>)
 }

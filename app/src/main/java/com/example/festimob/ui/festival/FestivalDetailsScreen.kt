@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.BookOnline
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
@@ -57,6 +58,7 @@ import com.example.festimob.ui.utils.formatIsoNative
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.collections.isNotEmpty
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,6 +66,7 @@ import java.util.Locale
 fun FestivalDetailsScreen(
     navigateToEditItem: (Int) -> Unit,
     navigateBack: () -> Unit,
+    navigateToReservations: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FestivalDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -78,35 +81,19 @@ fun FestivalDetailsScreen(
 
     Scaffold(
         topBar = {
-            Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.inversePrimary)
-                    .padding(8.dp)
+            IconButton(
+                onClick = {
+                    val id = uiState.value.festivalDetails.id_f
+                    if (id != 0) {
+                        navigateToReservations(id)
+                    } else {
+                        println("Erreur: ID du festival est 0")
+                    }
+                }
             ) {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = "Détails",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = navigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Retour"
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent, // Fond transparent pour voir l'inversePrimary derrière
-                        titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Couleur du titre
-                        navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Couleur flèche
-                        actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant // Couleur icônes droite
-                    )
-                )
+                Icon(Icons.Default.BookOnline, contentDescription = "Voir Réservations")
             }
-        },
+        }
     ) { innerPadding ->
         FestivalDetailsBody(
             festivalDetailsUiState = uiState.value,
