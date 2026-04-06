@@ -1,44 +1,75 @@
 package com.example.festimob.ui.theme
 
+import android.app.Activity
+import android.os.Build
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 
-/** Editor teal palette — used for the whole app in light and dark system modes. */
 private val DarkColorScheme = darkColorScheme(
-    primary = BrandTeal,
-    onPrimary = DarkTealBackground,
-    primaryContainer = Color(0xFF00695C),
-    onPrimaryContainer = Color(0xFFA7FFEB),
-    secondary = PurpleGrey80,
-    onSecondary = Color(0xFF1C1B1F),
-    secondaryContainer = CardTeal,
-    onSecondaryContainer = PurpleGrey80,
-    tertiary = Pink80,
-    onTertiary = Color(0xFF31111D),
-    tertiaryContainer = TagContact,
-    onTertiaryContainer = TextWhite,
-    error = Color(0xFFFFB4AB),
-    onError = Color(0xFF690005),
-    errorContainer = Color(0xFF93000A),
-    onErrorContainer = Color(0xFFFFDAD6),
-    background = DarkTealBackground,
-    onBackground = TextWhite,
-    surface = CardTeal,
-    onSurface = TextWhite,
-    surfaceVariant = Color(0xFF0E564C),
-    onSurfaceVariant = Color(0xFFB2DFDB),
-    outline = AccentTurquoise,
-    outlineVariant = Color(0xFF1E5C52)
+    primary = TealVeryLight,
+    onPrimary = TealOnLight,
+    primaryContainer = TealDark,
+    onPrimaryContainer = TealOnDark,
+    secondary = TealLight,
+    onSecondary = TealOnLight,
+    secondaryContainer = TealMidDark,
+    onSecondaryContainer = TealOnDark,
+    tertiary = Teal,
+    onTertiary = TealOnDark,
+    background = TealSurfaceDark,
+    onBackground = TealOnDark,
+    surface = Color(0xFF102825),
+    onSurface = TealOnDark,
+    surfaceVariant = TealSurfaceVariantDark,
+    onSurfaceVariant = TealOnDark,
+    outline = TealLight
+)
+
+private val LightColorScheme = lightColorScheme(
+    primary = TealMidDark,
+    onPrimary = Color.White,
+    primaryContainer = TealLight,
+    onPrimaryContainer = Color.White,
+    secondary = Teal,
+    onSecondary = Color.White,
+    secondaryContainer = TealSurfaceVariantLight,
+    onSecondaryContainer = TealOnLight,
+    tertiary = Teal,
+    onTertiary = Color.White,
+    background = TealSurfaceLight,
+    onBackground = TealOnLight,
+    surface = Color.White,
+    onSurface = TealOnLight,
+    surfaceVariant = TealSurfaceVariantLight,
+    onSurfaceVariant = TealOnLight,
+    outline = TealMidDark
 )
 
 @Composable
 fun FestiMobTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
+
     MaterialTheme(
-        colorScheme = DarkColorScheme,
+        colorScheme = colorScheme,
         typography = Typography,
         content = content
     )

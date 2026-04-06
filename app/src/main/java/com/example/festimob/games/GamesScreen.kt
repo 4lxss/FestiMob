@@ -2,12 +2,10 @@
 
 package com.example.festimob.games
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,11 +19,10 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,19 +32,14 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,11 +56,8 @@ import coil.compose.AsyncImage
 fun GamesScreen(
     viewModel: GamesViewModel = viewModel()
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(1) }
     var selectedCategory by remember { mutableStateOf("All") }
     var selectedMechanism by remember { mutableStateOf("All") }
-
-    val tabs = listOf("Contact", "Games", "Resa", "Other")
 
     // Which edition we filter on: "default" = show all; a number string = only games with that id_e.
     val gamesScopeId = "default"
@@ -94,9 +83,6 @@ fun GamesScreen(
             ) {
                 Text(text = "+", fontSize = 24.sp)
             }
-        },
-        bottomBar = {
-            BottomMenuBar()
         }
     ) { innerPadding ->
         Column(
@@ -104,26 +90,6 @@ fun GamesScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            TopBar()
-
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = {
-                            Text(
-                                text = title,
-                                fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal
-                            )
-                        }
-                    )
-                }
-            }
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -219,7 +185,7 @@ fun GamesScreen(
 
                     else -> {
                         LazyVerticalGrid(
-                            columns = GridCells.Fixed(4),
+                            columns = GridCells.Fixed(3),
                             contentPadding = PaddingValues(bottom = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -416,50 +382,6 @@ private fun GameDetailDialog(
     )
 }
 
-// Simple header row; back arrow is placeholder for now.
-@Composable
-private fun TopBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "←",
-            modifier = Modifier.clickable { },
-            fontSize = 20.sp
-        )
-        Text(
-            text = "FestiMob",
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-// Bottom nav (Home / Editions / Profile) — local selection only, not wired to real navigation yet.
-@Composable
-private fun BottomMenuBar() {
-    var selected by remember { mutableIntStateOf(0) }
-    val items = listOf(
-        Triple("Home", Icons.Default.Home, 0),
-        Triple("Editions", Icons.Default.Album, 1),
-        Triple("Profile", Icons.Default.Person, 2)
-    )
-    NavigationBar(modifier = Modifier.fillMaxWidth()) {
-        items.forEach { (label, icon, index) ->
-            NavigationBarItem(
-                selected = selected == index,
-                onClick = { selected = index },
-                icon = { Icon(icon, contentDescription = label) },
-                label = { Text(label) }
-            )
-        }
-    }
-}
-
 // A read-only text field that opens a dropdown; used for Age group and Mechanisms filters.
 @Composable
 private fun RealDropdownFilterBox(
@@ -504,42 +426,50 @@ private fun GameCard(
     game: Game,
     onClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        ),
+        shape = MaterialTheme.shapes.medium,
+        onClick = onClick
     ) {
-        Surface(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surfaceVariant
+                .padding(8.dp)
         ) {
-            if (game.imageUrl.isNotBlank()) {
-                AsyncImage(
-                    model = game.imageUrl,
-                    contentDescription = game.name,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "—",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.surfaceVariant
+            ) {
+                if (game.imageUrl.isNotBlank()) {
+                    AsyncImage(
+                        model = game.imageUrl,
+                        contentDescription = game.name,
+                        modifier = Modifier.fillMaxSize()
                     )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "🎲",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
+            Text(
+                text = game.name,
+                modifier = Modifier.padding(top = 8.dp),
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 2
+            )
         }
-        Text(
-            text = game.name,
-            modifier = Modifier.padding(top = 4.dp),
-            style = MaterialTheme.typography.labelSmall,
-            maxLines = 2
-        )
     }
 }

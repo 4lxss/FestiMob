@@ -7,6 +7,8 @@ import com.example.festimob.dataStore
 interface AppContainer {
     val festivalRepository: FestivalRepository
     val userPreferencesRepository: UserPreferencesRepository
+    val userRepository : UserRepository
+    val zonePlanRepository: ZonePlanRepository
 }
 
 /**
@@ -21,8 +23,15 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val festivalRepository: FestivalRepository by lazy {
-        // Attention : On utilise le NetworkFestivalRepository ici pour avoir le WiFi !
         OfflineFestivalRepository(database.festivalDao(), RetrofitInstance.api)
+    }
+
+    override val userRepository: UserRepository by lazy {
+        OnlineUserRepository(RetrofitInstance.api)
+    }
+
+    override val zonePlanRepository: ZonePlanRepository by lazy {
+        OfflineZonePlanRepository(RetrofitInstance.api)
     }
 
     override val userPreferencesRepository: UserPreferencesRepository by lazy {

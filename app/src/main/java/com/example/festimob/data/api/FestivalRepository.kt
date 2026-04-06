@@ -1,10 +1,5 @@
 package com.example.festimob.data.api
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 interface FestivalRepository {
@@ -12,10 +7,12 @@ interface FestivalRepository {
 
     fun getFestival(id_f: Int): Flow<Festival>
 
-    suspend fun insert(festival: Festival)
+    suspend fun insert(festival: FestivalAddRequest, zones: List<ZoneTarif> = emptyList()) {}
 
-    suspend fun update(festival: Festival)
+    suspend fun update(festival: FestivalUpdateRequest) {}
 
     suspend fun delete(festival: Festival)
+
+    suspend fun addZone(zone: ZoneTarifAddRequest, festivalId: Int) {}
 
 }
