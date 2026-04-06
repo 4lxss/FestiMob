@@ -29,3 +29,15 @@ data class MecanismDto(
     val name: String,
     val description: String? = null
 )
+
+/**
+ * Body for `POST /api/editeurs/{id}/jeux`.
+ * Expand if your backend requires more fields (e.g. type_game, age_min).
+ */
+@Serializable
+data class CreateJeuRequest(
+    val name: String,
+    val description: String? = null,
+    /** Optional: `id_e` on the jeu row if the API accepts it (e.g. festival/edition link). */
+    val id_e: Int? = null
+)
