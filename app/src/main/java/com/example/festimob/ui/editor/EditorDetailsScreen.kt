@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -61,19 +63,19 @@ fun EditorDetailsScreen(
             TopAppBar(
                 title = { Text(title,color = TextWhite) },
                 actions = {
-                    /*
                     IconButton(
                         onClick = {
-                            viewModel.selectLayout(!isLinearLayout)
+                            // TODO : add popup with buttons here
                         }
                     ) {
+
                         Icon(
-                            painter = painterResource(uiState.toggleIcon),
-                            contentDescription = stringResource(uiState.toggleContentDescription),
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "More action button",
                             tint = AccentTurquoise
                         )
+
                     }
-                    */
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
                     containerColor = DarkTealBackground
@@ -119,7 +121,7 @@ fun EditorDetailsScreen(
 
                                 Spacer(modifier = Modifier.width(8.dp))
 
-                                // The "Badge" (The little circle with the number)
+                                // Badge
                                 Surface(
                                     shape = CircleShape,
                                     color = if (isSelected) AccentTurquoise.copy(alpha = 0.15f) else CardTeal.copy(alpha = 0.5f),
@@ -156,3 +158,5 @@ enum class EditorTab(val title: String) {
     Reservations("Reservations"),
     Other("Other")
 }
+
+// TODO : find way to add count to pass to tabs ?
