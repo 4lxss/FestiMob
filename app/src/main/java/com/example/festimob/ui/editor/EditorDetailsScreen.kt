@@ -1,20 +1,29 @@
 package com.example.festimob.ui.editor
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -29,10 +38,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.festimob.R
 import com.example.festimob.ui.theme.AccentTurquoise
+import com.example.festimob.ui.theme.BrandTeal
 import com.example.festimob.ui.theme.CardTeal
 import com.example.festimob.ui.theme.DarkTealBackground
 import com.example.festimob.ui.theme.TextWhite
@@ -137,10 +149,73 @@ fun EditorDetailsScreen(
                 }
             }
             Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))) {
-                Text(
-                    text = "Current Tab: ${tabs[selectedTabIndex].title}",
-                    color = TextWhite
-                )
+                Row() {
+                    Text(
+                        text = "Current Tab: ${tabs[selectedTabIndex].title}",
+                        color = TextWhite,
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    when(tabs[selectedTabIndex]) {
+                        EditorTab.Contacts -> {
+                            OutlinedButton(
+                                onClick = {
+                                    // TODO : add contact add form nav here
+                                },
+                                modifier = Modifier
+                                    .height(34.dp),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                                border = BorderStroke(1.dp, BrandTeal),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = BrandTeal,
+                                )
+                            ) {
+                                Icon(
+                                    Icons.Default.Add,
+                                    contentDescription = "Add Contact",
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(Modifier.width(4.dp))
+                                Text(
+                                    text = "Add",
+                                    fontSize = 14.sp,
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+                        }
+                        EditorTab.Games -> {
+                            OutlinedButton(
+                                onClick = {
+                                    // TODO : add game add form nav here
+                                },
+                                modifier = Modifier
+                                    .height(34.dp),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                                border = BorderStroke(1.dp, BrandTeal),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = BrandTeal,
+                                )
+                            ) {
+                                Icon(
+                                    Icons.Default.Add,
+                                    contentDescription = "Add Game",
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(Modifier.width(4.dp))
+                                Text(
+                                    text = "Add",
+                                    fontSize = 14.sp,
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+                        }
+                        EditorTab.Reservations -> {}
+                        EditorTab.Other -> {}
+                    }
+
+                }
+
             }
             Text("Congrats on reaching Editor ${viewModel.uiState.editor?.id} Details screen", color = TextWhite)
         }
