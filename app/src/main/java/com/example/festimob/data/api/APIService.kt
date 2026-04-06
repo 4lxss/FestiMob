@@ -9,9 +9,6 @@ import com.example.festimob.data.api.models.admin.user.DeleteUserResponse
 import com.example.festimob.data.api.models.admin.user.UpdateUserRoleRequest
 import com.example.festimob.data.api.models.admin.user.UpdateUserRoleResponse
 import com.example.festimob.data.api.models.admin.user.UsersResponse
-import com.example.festimob.data.api.models.editor.AddEditorRequest
-import com.example.festimob.data.api.models.editor.AddEditorResponse
-import com.example.festimob.data.api.models.editor.EditorResponse
 import com.example.festimob.data.api.models.zoneplan.ZonePlanResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -22,16 +19,6 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 
 interface APIService {
-    // Editors
-    @GET("api/editeurs/all")
-    suspend fun getEditors(): List<EditorResponse>
-
-    @POST("api/editeurs/add")
-    suspend fun addEditor(@Body request: AddEditorRequest): AddEditorResponse
-
-    @GET("api/editeurs/{id}")
-    suspend fun getEditor(@Path("id") id: Int): EditorResponse
-
     // Festivals
     @GET("api/festivals/all")
     suspend fun getFestivalsRaw(): List<FestivalNetwork>
@@ -45,6 +32,8 @@ interface APIService {
     // Festivals + zones
     @PUT("api/festivals/update-full")
     suspend fun updateFestival(@Body festival: FestivalUpdateRequest): retrofit2.Response<Unit>
+
+
 
     // Zones
     @GET("api/zoneTarif/getzones")

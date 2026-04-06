@@ -17,11 +17,3 @@ val TealOnLight = Color(0xFF0E2A27)
 val TealSurfaceDark = Color(0xFF0B1F1C)
 val TealSurfaceVariantDark = Color(0xFF17312E)
 val TealOnDark = Color(0xFFE3F3F1)
-
-// Specific colors
-val DarkTealBackground = Color(0xFF00332C)
-val CardTeal = Color(0xFF0A4D44)
-val AccentTurquoise = Color(0xFF00BFA5)
-val BrandTeal = Color(0xFF00BFA5)
-val TextWhite = Color(0xFFFFFFFF)
-val TagContact = Color(0xFF6B5E4A)
