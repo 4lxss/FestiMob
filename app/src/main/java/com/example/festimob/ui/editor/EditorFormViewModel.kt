@@ -15,7 +15,6 @@ import com.example.festimob.FestiMobApplication
 import com.example.festimob.R
 import com.example.festimob.data.models.Editor
 import com.example.festimob.data.repositories.EditorsRepository
-import com.example.festimob.data.repositories.UserPreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

@@ -10,7 +10,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.festimob.FestiMobApplication
 import com.example.festimob.R
-import com.example.festimob.data.repositories.UserPreferencesRepository
+import com.example.festimob.data.UserPreferencesRepository
 import com.example.festimob.data.models.Editor
 import com.example.festimob.data.repositories.EditorsRepository
 import kotlinx.coroutines.flow.SharingStarted

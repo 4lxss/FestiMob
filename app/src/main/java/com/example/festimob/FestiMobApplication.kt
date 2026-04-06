@@ -6,11 +6,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.festimob.data.UserPreferencesRepository
 import com.example.festimob.data.api.AppContainer
 import com.example.festimob.data.api.AppDataContainer
 import com.example.festimob.data.repositories.EditorsRepository
 import com.example.festimob.data.repositories.OfflinePlaceholderEditorsRepository
-import com.example.festimob.data.repositories.UserPreferencesRepository
 
 private const val LAYOUT_PREFERENCE_NAME = "layout_preferences"
 val IS_LINEAR_LAYOUT = booleanPreferencesKey("is_linear_layout")
