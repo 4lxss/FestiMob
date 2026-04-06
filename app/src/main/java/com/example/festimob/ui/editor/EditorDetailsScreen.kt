@@ -60,6 +60,8 @@ fun EditorDetailsScreen(
                     IconButton(
                         onClick = {
                             // TODO : add popup with buttons here
+                            // update form (much smaller, see website)
+                            // delete editor button
                         }
                     ) {
 
@@ -144,6 +146,29 @@ fun EditorDetailsScreen(
         }
     }
 
+}
+
+// TODO : make 1 function for each specific tab like this
+
+@Composable
+fun ContactsTab() {
+    // TODO : A LazyColumn containing cards or rows for contact info.
+}
+
+@Composable
+fun GamesTab() {
+    // TODO : A VerticalGrid or FlowRow to show the game icons/tiles, including the category and mechanism filters.
+}
+
+@Composable
+fun ResTab() {
+    // TODO : A structured list or card showing placement, zones, and pricing details.
+    //go see the website for that
+}
+
+@Composable
+fun OtherTab() {
+    // TODO : A screen with an image uploader (URL/Save) and the paying address section.
 }
 
 enum class EditorTab(val title: String) {
