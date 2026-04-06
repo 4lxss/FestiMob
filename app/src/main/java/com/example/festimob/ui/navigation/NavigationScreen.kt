@@ -117,24 +117,26 @@ fun SmallNavigation() {
                         colors = NavigationDrawerItemDefaults.colors()
                     )
                 }
-                NavigationDrawerItem(
-                    label = { Text("Admin") },
-                    selected = backStack.lastOrNull() == Destination.Admin,
-                    onClick = {
-                        if (backStack.lastOrNull() != Destination.Admin) {
-                            backStack.remove(Destination.Admin)
-                            backStack.add(Destination.Admin)
-                        }
-                        scope.launch { drawerState.close() }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.AdminPanelSettings,
-                            contentDescription = "Admin"
-                        )
-                    },
-                    colors = NavigationDrawerItemDefaults.colors()
-                )
+                if (canAccessAdmin) {
+                    NavigationDrawerItem(
+                        label = { Text("Admin") },
+                        selected = backStack.lastOrNull() == Destination.Admin,
+                        onClick = {
+                            if (backStack.lastOrNull() != Destination.Admin) {
+                                backStack.remove(Destination.Admin)
+                                backStack.add(Destination.Admin)
+                            }
+                            scope.launch { drawerState.close() }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.AdminPanelSettings,
+                                contentDescription = "Admin"
+                            )
+                        },
+                        colors = NavigationDrawerItemDefaults.colors()
+                    )
+                }
                 NavigationDrawerItem(
                     label = { Text("Zones") },
                     selected = backStack.lastOrNull() == Destination.ZonePlans,
@@ -270,16 +272,18 @@ fun SmallNavigation() {
                             set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
                         }
 
-                        AdminScreen(
-                            viewModel = if (canAccessAdmin) {
-                                viewModel(
+                        if (canAccessAdmin) {
+                            AdminScreen(
+                                viewModel = viewModel(
                                     factory = AppViewModelProvider.Factory,
                                     extras = extras
                                 )
-                            } else {
-                                null
+                            )
+                        } else {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text("Accès refusé")
                             }
-                        )
+                        }
                     }
                     is Destination.Login -> NavEntry(key) {
                         val context = LocalContext.current.applicationContext as FestiMobApplication
