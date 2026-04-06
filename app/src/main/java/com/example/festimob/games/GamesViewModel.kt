@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-/** Holds games list state; loads via [GamesRepository] ([OnlineGamesRepository] until REST is implemented). */
+/** Holds games list state; loads via [GamesRepository] ([OnlineGamesRepository]). */
 class GamesViewModel(
     private val repository: GamesRepository = OnlineGamesRepository()
 ) : ViewModel() {
