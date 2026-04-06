@@ -1,13 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-<<<<<<< HEAD
-    alias(libs.plugins.google.devtools.ksp)
-=======
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.android)
->>>>>>> 6f88682d06f4c84edef81514e99810509fe4dc4b
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -46,16 +42,6 @@ android {
 }
 
 dependencies {
-    //Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.compose.foundation.layout)
-    implementation(libs.androidx.room.common.jvm)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging.interceptor)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -68,8 +54,6 @@ dependencies {
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.material3)
-    
-    // Dépendances restaurées
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -80,6 +64,12 @@ dependencies {
     implementation(libs.protolite.well.known.types)
     implementation(libs.androidx.core.i18n)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -88,22 +78,4 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
-
-    implementation(libs.androidx.datastore.preferences)
-
-    implementation(libs.androidx.compose.material.icons.extended)
-
-    implementation(libs.androidx.navigation3.ui)
-
-    implementation("io.coil-kt:coil-compose:2.6.0")
-}
-    
-
-    implementation("androidx.compose.material:material-icons-extended")
-
 }

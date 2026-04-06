@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<<<<<<< HEAD
-    <dimen name="padding_medium">4.dp</dimen>
-    <dimen name="padding_small">1.dp</dimen>
-    <dimen name="padding_large">6</dimen>
-=======
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_small">8dp</dimen>
 
     <dimen name="padding_large">20dp</dimen>
     <dimen name="padding_extra_large">32dp</dimen>
->>>>>>> 6f88682d06f4c84edef81514e99810509fe4dc4b
 </resources>

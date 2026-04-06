@@ -1,17 +1,13 @@
 <resources>
     <string name="app_name">FestiMob</string>
-<<<<<<< HEAD
-    <string name="top_bar_name">FestiMob</string>
+    <string name="top_bar_name">FestiJeux Release</string>
     <string name="grid_layout">Switch to grid view</string>
     <string name="linear_layout">Switch to list view</string>
+    <string name="grid_layout_toggle">Grid layout</string>
+    <string name="linear_layout_toggle">Linear layout</string>
     <string name="editors_top_bar_name">Editors</string>
     <string name="editor_entry_title">Add new Editor</string>
     <string name="editor_title">Editors</string>
-    <string name="details_title">Editor Details</string>
-=======
-    <string name="grid_layout_toggle">Grid layout</string>
-    <string name="linear_layout_toggle">Linear layout</string>
-    <string name="top_bar_name">FestiJeux Release</string>
 
     <string name="attention">Attention</string>
     <string name="back_button">Back</string>
@@ -50,5 +46,4 @@
     <string name="end_date"> Date de fin </string>
     <string name="edit_festival_title">Modification de festival</string>
     <string name="add_festival_title">Ajout de festival</string>
->>>>>>> 6f88682d06f4c84edef81514e99810509fe4dc4b
 </resources>
