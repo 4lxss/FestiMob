@@ -9,6 +9,7 @@ import com.example.festimob.data.api.models.admin.user.DeleteUserResponse
 import com.example.festimob.data.api.models.admin.user.UpdateUserRoleRequest
 import com.example.festimob.data.api.models.admin.user.UpdateUserRoleResponse
 import com.example.festimob.data.api.models.admin.user.UsersResponse
+import com.example.festimob.data.api.models.zoneplan.ZonePlanResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -43,6 +44,9 @@ interface APIService {
 
     @POST("api/zoneTarif/delete")
     suspend fun deleteZonesByFestival(@Body body: ZoneDeleteRequest): retrofit2.Response<Unit>
+
+    @GET("api/zonePlan/all")
+    suspend fun getAllZonePlans(): List<ZonePlanResponse>
 
     // Admin
     @GET("api/admin/users")

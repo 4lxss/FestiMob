@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
@@ -31,13 +31,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -52,22 +49,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.protobuf.LazyStringArrayList.emptyList
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.R
 import com.example.festimob.data.api.Festival
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.theme.FestiMobTheme
 import com.example.festimob.ui.viewmodels.UiState
-import androidx.compose.material3.CenterAlignedTopAppBar
 import com.example.festimob.ui.utils.formatIsoNative
 
 @Composable
 fun FestivalListScreen(
     navigateToFestivalEntry: () -> Unit,
     navigateToFestivalDetails: (Int) -> Unit,
-
-    navigateBack: () -> Unit,
     viewModel: FestivalListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     LaunchedEffect(key1 = true) {
@@ -86,7 +79,6 @@ fun FestivalListScreen(
         selectLayout = viewModel::selectLayout,
         onFestivalClick = navigateToFestivalDetails,
         onAddClick = navigateToFestivalEntry,
-        navigateBack = navigateBack,
         viewModel = viewModel,
 
     )
@@ -104,49 +96,31 @@ private fun FestivalListContent(
     onAddClick: () -> Unit,
     viewModel: FestivalListViewModel,
     modifier: Modifier = Modifier,
-    navigateBack: () -> Unit,
 
 ) {
     Scaffold(
         topBar = {
             Column(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.inversePrimary)
                     .padding(8.dp)
             ) {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = "Festivals",
-                            style = MaterialTheme.typography.titleLarge
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(onClick = { viewModel.refreshData() }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "Sync")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(onClick = { selectLayout(!uiState.isLinearLayout) }) {
+                        Icon(
+                            painter = painterResource(uiState.toggleIcon),
+                            contentDescription = "Layout"
                         )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = navigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Retour"
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { viewModel.refreshData() }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Sync")
-                        }
-                        IconButton(onClick = { selectLayout(!uiState.isLinearLayout) }) {
-                            Icon(
-                                painter = painterResource(uiState.toggleIcon),
-                                contentDescription = "Layout"
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent, // Fond transparent pour voir l'inversePrimary derrière
-                        titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Couleur du titre
-                        navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Couleur flèche
-                        actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant // Couleur icônes droite
-                    )
-                )
+                    }
+                }
 
                 Box(
                     modifier = Modifier
@@ -358,4 +332,3 @@ fun FestivalListScreenPreview() {
         )
     }
 }
-
