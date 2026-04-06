@@ -11,5 +11,15 @@ interface GamesRepository {
         category: String? = null,
         mechanism: String? = null
     ): List<Game>
+
+    /** Sorted mechanism names from `GET /api/mecanisms/all` (for filter dropdown). */
+    suspend fun getMechanismNames(): List<String>
+
+    suspend fun createGame(
+        name: String,
+        description: String?,
+        editeurId: Int,
+        idE: Int?
+    ): Game
 }
 

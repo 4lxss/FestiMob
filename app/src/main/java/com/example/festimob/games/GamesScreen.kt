@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -66,21 +68,26 @@ fun GamesScreen(
     var selectedMechanism by remember { mutableStateOf("All") }
 
     val tabs = listOf("Contact", "Games", "Resa", "Other")
-    val categoryOptions = listOf("All", "Strategy", "Party", "Family", "Cooperative")
-    val mechanismOptions = listOf("All", "Deck Building", "Dice", "Drafting", "Worker Placement")
 
     val gamesScopeId = "default"
 
     var detailGame by remember { mutableStateOf<Game?>(null) }
+    var showAddGameDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(gamesScopeId) {
+        viewModel.loadMechanismFilterOptions()
         viewModel.loadGames(editionId = gamesScopeId)
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = { /* TODO */ }) {
+            FloatingActionButton(
+                onClick = {
+                    viewModel.clearError()
+                    showAddGameDialog = true
+                }
+            ) {
                 Text(text = "+", fontSize = 24.sp)
             }
         },
@@ -132,10 +139,10 @@ fun GamesScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Category", fontSize = 14.sp)
+                        Text(text = "Age group", fontSize = 14.sp)
                         RealDropdownFilterBox(
                             label = selectedCategory,
-                            options = categoryOptions,
+                            options = viewModel.ageCategoryFilterOptions,
                             onSelected = { newCategory ->
                                 selectedCategory = newCategory
                                 viewModel.loadGames(
@@ -155,7 +162,7 @@ fun GamesScreen(
                         Text(text = "Mechanisms", fontSize = 14.sp)
                         RealDropdownFilterBox(
                             label = selectedMechanism,
-                            options = mechanismOptions,
+                            options = viewModel.mechanismFilterOptions,
                             onSelected = { newMechanism ->
                                 selectedMechanism = newMechanism
                                 viewModel.loadGames(
@@ -232,6 +239,141 @@ fun GamesScreen(
             onDismiss = { detailGame = null }
         )
     }
+
+    if (showAddGameDialog) {
+        AddGameDialog(
+            isSaving = viewModel.isSavingGame,
+            errorMessage = viewModel.errorMessage,
+            onDismiss = {
+                showAddGameDialog = false
+                viewModel.clearError()
+            },
+            onSubmit = { name, description, editeurIdRaw, idERaw ->
+                val editeurId = editeurIdRaw.trim().toIntOrNull() ?: 0
+                val idE = idERaw.trim().toIntOrNull()
+                viewModel.createGame(
+                    name = name,
+                    description = description.ifBlank { null },
+                    editeurId = editeurId,
+                    idE = idE,
+                    listingEditionId = gamesScopeId,
+                    category = selectedCategory.takeIf { it != "All" },
+                    mechanism = selectedMechanism.takeIf { it != "All" },
+                    onSuccess = {
+                        showAddGameDialog = false
+                        viewModel.clearError()
+                    }
+                )
+            }
+        )
+    }
+}
+
+@Composable
+private fun AddGameDialog(
+    isSaving: Boolean,
+    errorMessage: String?,
+    onDismiss: () -> Unit,
+    onSubmit: (name: String, description: String, editeurIdRaw: String, idERaw: String) -> Unit
+) {
+    var name by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var editeurIdRaw by remember { mutableStateOf("") }
+    var idERaw by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = {
+            if (!isSaving) onDismiss()
+        },
+        title = {
+            Text(
+                text = "Add game",
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    singleLine = true,
+                    enabled = !isSaving,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Description (optional)") },
+                    minLines = 3,
+                    enabled = !isSaving,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = editeurIdRaw,
+                    onValueChange = { editeurIdRaw = it },
+                    label = { Text("Éditeur id (required)") },
+                    placeholder = { Text("Publisher id for POST …/editeurs/{id}/jeux") },
+                    singleLine = true,
+                    enabled = !isSaving,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = idERaw,
+                    onValueChange = { idERaw = it },
+                    label = { Text("id_e on jeu (optional)") },
+                    placeholder = { Text("Only if API stores id_e — e.g. 138") },
+                    singleLine = true,
+                    enabled = !isSaving,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                errorMessage?.let { msg ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = msg,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val trimmed = name.trim()
+                    val edOk = editeurIdRaw.trim().toIntOrNull()?.let { it > 0 } == true
+                    if (trimmed.isNotEmpty() && edOk) {
+                        onSubmit(trimmed, description, editeurIdRaw, idERaw)
+                    }
+                },
+                enabled = !isSaving &&
+                    name.trim().isNotEmpty() &&
+                    editeurIdRaw.trim().toIntOrNull()?.let { it > 0 } == true
+            ) {
+                if (isSaving) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Add")
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                enabled = !isSaving
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 @Composable

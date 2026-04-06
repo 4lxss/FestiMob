@@ -1,6 +1,7 @@
 package com.example.festimob.games
 
 import com.example.festimob.data.api.APIService
+import com.example.festimob.data.api.CreateJeuRequest
 import com.example.festimob.data.api.JeuDto
 import com.example.festimob.data.api.RetrofitInstance
 
@@ -29,9 +30,38 @@ class OnlineGamesRepository(
             }
         }
 
-        // `category` in the UI does not yet map to API `type_game` codes; reserved for later.
+        if (!category.isNullOrBlank()) {
+            rows = rows.filter { jeu ->
+                GameAgeCategory.matches(jeu.age_min, category)
+            }
+        }
 
         return rows.map { it.toGame() }
+    }
+
+    override suspend fun getMechanismNames(): List<String> {
+        return api.getMecanisms()
+            .map { it.name }
+            .distinct()
+            .sorted()
+    }
+
+    override suspend fun createGame(
+        name: String,
+        description: String?,
+        editeurId: Int,
+        idE: Int?
+    ): Game {
+        val trimmedName = name.trim()
+        require(trimmedName.isNotEmpty()) { "Name is required" }
+        require(editeurId > 0) { "Éditeur id is required (POST api/editeurs/{id}/jeux)" }
+
+        val body = CreateJeuRequest(
+            name = trimmedName,
+            description = description?.trim()?.takeIf { it.isNotEmpty() },
+            id_e = idE
+        )
+        return api.createJeuForEditeur(editeurId, body).toGame()
     }
 }
 
