@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,7 +56,9 @@ fun EditorDetailsScreen(
     editorId : Int,
     viewModel: EditorDetailsViewModel
 ) {
-    viewModel.setUiState(editorId)
+    LaunchedEffect(editorId) {
+        viewModel.setUiState(editorId)
+    }
 
     val editor = viewModel.uiState.editor
     val title = editor?.name ?: "Unknown editor"

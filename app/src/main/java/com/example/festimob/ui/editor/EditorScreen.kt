@@ -45,7 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.festimob.R
-import com.example.festimob.data.local.LocalDataPlaceholder
+import com.example.festimob.data.models.Editor
 import com.example.festimob.ui.theme.AccentTurquoise
 import com.example.festimob.ui.theme.CardTeal
 import com.example.festimob.ui.theme.DarkTealBackground
@@ -63,6 +63,7 @@ fun EditorScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLinearLayout = uiState.isLinearLayout
+    val editors = uiState.editorsList
     Scaffold(
         containerColor = DarkTealBackground,
         topBar = {
@@ -109,13 +110,15 @@ fun EditorScreen(
             EditorListLinearLayout(
                 modifier = hereModifier.fillMaxWidth(),
                 contentPadding = innerPadding,
-                navigateToDetails = navigateToDetails
+                navigateToDetails = navigateToDetails,
+                editors = editors
             )
         } else {
             EditorListGridLayout(
                 modifier = hereModifier,
                 contentPadding = innerPadding,
-                navigateToDetails = navigateToDetails
+                navigateToDetails = navigateToDetails,
+                editors = editors
             )
         }
     }
@@ -125,7 +128,8 @@ fun EditorScreen(
 fun EditorListGridLayout(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    navigateToDetails: (Int) -> Unit
+    navigateToDetails: (Int) -> Unit,
+    editors: List<Editor>
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -135,9 +139,10 @@ fun EditorListGridLayout(
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {
         items(
-            items = LocalDataPlaceholder.editorsPlaceholderData,
+            items = editors,
             key = { editor -> editor.id }
         ) { editor ->
+            val imageModel = editor.imageUrl?.takeIf { it.isNotBlank() }
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = CardTeal
@@ -154,7 +159,7 @@ fun EditorListGridLayout(
                             .weight(1.3f) // Image takes more space than the text
                     ) {
                         AsyncImage(
-                            model = editor.imageUrl,
+                            model = imageModel,
                             contentDescription = null,
                             contentScale = ContentScale.Crop, // Makes it fill the top area
                             modifier = Modifier.fillMaxSize(),
@@ -194,7 +199,8 @@ fun EditorListGridLayout(
 fun EditorListLinearLayout(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    navigateToDetails: (Int) -> Unit
+    navigateToDetails: (Int) -> Unit,
+    editors: List<Editor>
 ) {
     LazyColumn(
         modifier = modifier,
@@ -202,7 +208,7 @@ fun EditorListLinearLayout(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
     ) {
         items(
-            items = LocalDataPlaceholder.editorsPlaceholderData,
+            items = editors,
             key = { editor -> editor.id }
         ) { editor ->
             Card(

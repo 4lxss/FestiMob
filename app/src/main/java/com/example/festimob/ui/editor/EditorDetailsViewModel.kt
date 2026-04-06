@@ -11,6 +11,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.festimob.FestiMobApplication
 import com.example.festimob.data.models.Editor
 import com.example.festimob.data.repositories.EditorsRepository
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 data class EditorDetailsUiState(
     val editor: Editor?
@@ -22,8 +24,10 @@ class EditorDetailsViewModel(
     var uiState by mutableStateOf(EditorDetailsUiState(editor = null))
 
     fun setUiState(editorId: Int) {
-        val editor = editorsRepository.getEditorById(editorId)
-        uiState = EditorDetailsUiState(editor)
+        viewModelScope.launch {
+            val editor = editorsRepository.getEditorById(editorId)
+            uiState = EditorDetailsUiState(editor)
+        }
     }
 
 

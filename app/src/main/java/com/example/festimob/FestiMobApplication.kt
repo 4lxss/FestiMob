@@ -10,7 +10,7 @@ import com.example.festimob.data.UserPreferencesRepository
 import com.example.festimob.data.api.AppContainer
 import com.example.festimob.data.api.AppDataContainer
 import com.example.festimob.data.repositories.EditorsRepository
-import com.example.festimob.data.repositories.OfflinePlaceholderEditorsRepository
+import com.example.festimob.data.repositories.OnlineEditorsRepository
 
 private const val LAYOUT_PREFERENCE_NAME = "layout_preferences"
 val IS_LINEAR_LAYOUT = booleanPreferencesKey("is_linear_layout")
@@ -27,7 +27,7 @@ class FestiMobApplication: Application() {
         super.onCreate()
         android.util.Log.d("DEBUG_APP", "FestiMobApplication a bien démarré !")
         container = AppDataContainer(this)
-        editorsRepository = OfflinePlaceholderEditorsRepository()
+        editorsRepository = OnlineEditorsRepository(com.example.festimob.data.api.RetrofitInstance.api)
         userPreferencesRepository = UserPreferencesRepository(dataStore)
     }
 }

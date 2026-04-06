@@ -2,6 +2,7 @@ package com.example.festimob.data.repositories
 
 //import com.example.festimob.data.api.RetrofitInstance
 import com.example.festimob.data.local.LocalDataPlaceholder
+import com.example.festimob.data.models.EditorCreate
 import com.example.festimob.data.models.Editor
 import com.example.festimob.data.models.EditorState
 import kotlinx.coroutines.flow.Flow
@@ -12,17 +13,26 @@ class OfflinePlaceholderEditorsRepository : EditorsRepository {
         return flowOf(LocalDataPlaceholder.editorsPlaceholderData)
     }
 
-    override suspend fun insertEditor(editor: Editor) {
-        LocalDataPlaceholder.editorsPlaceholderData += editor // Adds into the local list
+    override suspend fun insertEditor(editor: EditorCreate) {
+        val nextId = (LocalDataPlaceholder.editorsPlaceholderData.maxOfOrNull { it.id } ?: 0) + 1
+        LocalDataPlaceholder.editorsPlaceholderData += Editor(
+            id = nextId,
+            name = editor.name,
+            state = EditorState.A,
+            present = false,
+            bill = "",
+            address = com.example.festimob.data.models.Address(
+                street = editor.street,
+                city = editor.city,
+                country = editor.country,
+                postalCode = editor.postalCode
+            ),
+            imageUrl = null
+        )
     }
 
-    override fun getEditorById(id: Int) : Editor {
-        LocalDataPlaceholder.editorsPlaceholderData.forEach {
-            if (it.id == id) {
-                return it
-            }
-        }
-        return Editor(0,"", EditorState.A,false,"",null,null)
+    override suspend fun getEditorById(id: Int): Editor? {
+        return LocalDataPlaceholder.editorsPlaceholderData.firstOrNull { it.id == id }
     }
 }
 

@@ -1,28 +1,16 @@
 package com.example.festimob.ui.editor
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.festimob.FestiMobApplication
-import com.example.festimob.R
-import com.example.festimob.data.models.Editor
+import com.example.festimob.data.models.EditorCreate
 import com.example.festimob.data.repositories.EditorsRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 data class EditorFormUiState(
     val editorDetails : EditorDetails,
@@ -44,7 +32,20 @@ class EditorFormViewModel(
 
     suspend fun saveForm() {
         if (validateInput(uiState.editorDetails)) {
-            editorsRepository.insertEditor(uiState.editorDetails.toEditor())
+            editorsRepository.insertEditor(
+                EditorCreate(
+                    name = uiState.editorDetails.name,
+                    street = uiState.editorDetails.billingStreet,
+                    city = uiState.editorDetails.billingCity,
+                    country = uiState.editorDetails.billingCountry,
+                    postalCode = uiState.editorDetails.billingPostcode,
+                    contactFirstName = uiState.editorDetails.contactFirstname,
+                    contactLastName = uiState.editorDetails.contactName,
+                    contactEmail = uiState.editorDetails.contactEmail,
+                    contactPhone = uiState.editorDetails.contactPhone,
+                    contactProfession = uiState.editorDetails.contactJob
+                )
+            )
         }
     }
 
