@@ -1,46 +1,74 @@
 package com.example.festimob.games
 
-import kotlinx.coroutines.delay
+import com.example.festimob.data.api.APIService
+import com.example.festimob.data.api.JeuDto
+import com.example.festimob.data.api.RetrofitInstance
 
 /**
- * Placeholder until the real REST API exists.
- *
- * TODO: Replace [getGames] with HTTP (Retrofit/Ktor) to:
- *   GET {baseUrl}/editions/{editionId}/games?category=...&mechanism=...
+ * Loads games from the backend via [APIService] and maps them to UI [Game] models.
  */
 class OnlineGamesRepository(
-    private val baseUrl: String = PLACEHOLDER_BASE_URL
+    private val api: APIService = RetrofitInstance.api
 ) : GamesRepository {
-
-    init {
-        require(baseUrl.isNotBlank()) { "baseUrl must not be blank" }
-    }
-
-    companion object {
-        /** Swap this for your team’s real API base URL when ready. */
-        const val PLACEHOLDER_BASE_URL = "https://api.example.com"
-        private const val PLACEHOLDER_GRID_ITEMS = 12
-    }
 
     override suspend fun getGames(
         editionId: String,
         category: String?,
         mechanism: String?
     ): List<Game> {
-        // TODO: remove delay; use real network latency instead
-        delay(300)
+        var rows = api.getJeux()
 
-        // TODO: GET "$baseUrl/.../editions/$editionId/games" with category & mechanism query params
-        val filterKey = listOfNotNull(category, mechanism).joinToString("_").ifEmpty { "all" }
-
-        return List(PLACEHOLDER_GRID_ITEMS) { index ->
-            Game(
-                id = "placeholder_${editionId}_${filterKey}_$index",
-                name = "Placeholder ${index + 1}",
-                imageUrl = "",
-                description = "Full description for this game will come from the API. " +
-                    "This is placeholder text so you can test the detail popup."
-            )
+        val editionInt = editionId.toIntOrNull()
+        if (editionId.isNotBlank() && editionId != "default" && editionInt != null) {
+            rows = rows.filter { it.id_e == editionInt }
         }
+
+        if (!mechanism.isNullOrBlank()) {
+            rows = rows.filter { jeu ->
+                jeu.mecanisms.any { it.name.equals(mechanism, ignoreCase = true) }
+            }
+        }
+
+        // `category` in the UI does not yet map to API `type_game` codes; reserved for later.
+
+        return rows.map { it.toGame() }
+    }
+}
+
+private fun JeuDto.toGame(): Game {
+    return Game(
+        id = id_j.toString(),
+        name = name,
+        imageUrl = image_url.orEmpty(),
+        description = buildUserFacingDescription()
+    )
+}
+
+private fun JeuDto.buildUserFacingDescription(): String {
+    val main = description?.trim()?.takeIf { it.isNotEmpty() }
+
+    val meta = buildList {
+        val playersLine = when {
+            nb_min_players != null && nb_max_players != null ->
+                "$nb_min_players–$nb_max_players players"
+            nb_min_players != null -> "$nb_min_players+ players"
+            else -> null
+        }
+        playersLine?.let { add(it) }
+        age_min?.let { add("Age $it+") }
+        time?.let { add("${it} min") }
+        author?.trim()?.takeIf { it.isNotEmpty() }?.let { add("By $it") }
+        if (mecanisms.isNotEmpty()) {
+            add("Mechanisms: " + mecanisms.joinToString { it.name })
+        }
+        notice?.trim()?.takeIf { it.isNotEmpty() }?.let { add("Notice: $it") }
+        if (prototype == true) add("Prototype")
+    }.joinToString(" · ")
+
+    return when {
+        main != null && meta.isNotEmpty() -> "$main\n\n$meta"
+        main != null -> main
+        meta.isNotEmpty() -> meta
+        else -> "No description yet for this game."
     }
 }
