@@ -2,7 +2,7 @@ package com.example.festimob.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Core teal palette (user-provided tones)
+// Core teal palette
 val TealDark = Color(0xFF004D40)
 val TealMidDark = Color(0xFF00695C)
 val Teal = Color(0xFF00796B)
