@@ -15,7 +15,8 @@ data class LoginUiState(
     val isLoading: Boolean = false,
     val message: String? = null,
     val isSuccess: Boolean = false,
-    val loggedUserRole: String? = null
+    val loggedUserRole: String? = null,
+    val loggedUserId: Int = 0
 )
 
 class LoginViewModel(
@@ -53,12 +54,17 @@ class LoginViewModel(
                         password = current.password
                     )
                 )
+
+                val profileResp = apiService.whoAmI()
+                val userProfile = profileResp.user
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         message = response.message,
                         isSuccess = true,
-                        loggedUserRole = response.user?.role
+                        loggedUserRole = response.user?.role,
+                        loggedUserId = userProfile?.id_u ?: 0
                     )
                 }
             } catch (e: Exception) {

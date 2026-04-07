@@ -66,6 +66,7 @@ fun ReservationFormScreen(
     val existingReservation: Reservation? = reservationId?.let { id ->
         uiState.reservations.find { it.id_r == id }
     }
+    val reservation = uiState.reservations.find { it.id_r == reservationId }
     val isEditMode = existingReservation != null
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -312,6 +313,7 @@ fun ReservationFormScreen(
                         )
                     } else {
                         viewModel.addReservation(
+                            id_u = reservation?.id_u,
                             nameR = nameR,
                             typeReservation = typeReservation,
                             nbChair = nbChair.toIntOrNull() ?: 0,

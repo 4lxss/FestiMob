@@ -45,7 +45,7 @@ data class JeuPlan(
 
 @Serializable
 data class ReservationAddRequest(
-    val id_u: Int,
+    val id_u: Int?,
     val id_reservant: Int?,
     val state: String,
     val nb_chair: Int,

@@ -71,6 +71,7 @@ class ReservationViewModel(
     }
 
     fun addReservation(
+        id_u: Int?,
         nameR: String,
         typeReservation: String,
         nbChair: Int,

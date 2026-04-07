@@ -220,9 +220,10 @@ fun SmallNavigation() {
 
                         LoginScreen(
                             viewModel = loginViewModel,
-                            onLoginSuccess = { role ->
+                            onLoginSuccess = { role, userId ->
                                 isLoggedIn = true
                                 currentUserRole = role
+                                currentUserId = userId
                                 logoutError = null
                                 backStack.clear()
                                 backStack.add(Destination.Accueil)
@@ -328,7 +329,6 @@ fun SmallNavigation() {
                         val context = LocalContext.current.applicationContext as FestiMobApplication
                         val extras = MutableCreationExtras().apply {
                             set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
-                            set(AppViewModelProvider.FestivalIdKey, key.festivalId)
                             set(AppViewModelProvider.UserIdKey, currentUserId)
                         }
 
