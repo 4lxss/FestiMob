@@ -406,9 +406,13 @@ fun SmallNavigation() {
                         }
 
                         is Destination.FestivalEntry -> NavEntry(key) {
-                            val context = LocalContext.current.applicationContext as FestiMobApplication
+                            val context =
+                                LocalContext.current.applicationContext as FestiMobApplication
                             val extras = MutableCreationExtras().apply {
-                                set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
+                                set(
+                                    ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY,
+                                    context
+                                )
                             }
 
                             FestivalEntryScreen(
@@ -419,7 +423,6 @@ fun SmallNavigation() {
                                 )
                             )
                         }
-                    }
                     is Destination.Games -> NavEntry(key) {
                         if (canAccessGames) {
                             GamesScreen()
@@ -429,11 +432,6 @@ fun SmallNavigation() {
                             }
                         }
                     }
-                    is Destination.ZonePlans -> NavEntry(key) {
-                        val context = LocalContext.current.applicationContext as FestiMobApplication
-                        val extras = MutableCreationExtras().apply {
-                            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
-
                         is Destination.FestivalDetails -> NavEntry(key) {
                             val context = LocalContext.current.applicationContext as FestiMobApplication
                             val extras = MutableCreationExtras().apply {
