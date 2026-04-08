@@ -1,5 +1,6 @@
 package com.example.festimob.data.repositories
 
+import com.example.festimob.data.api.models.editor.AddEditorContactPayload
 import com.example.festimob.data.dao.EditorDao
 import com.example.festimob.data.dto.toEditor
 import com.example.festimob.data.models.Editor
@@ -44,5 +45,8 @@ class OfflineDataStoreEditorsRepository(
 
     override suspend fun getEditorById(id: Int): Editor? {
         return editorDao.getAllEditors().firstOrNull()?.firstOrNull { it.id == id }?.toEditor()
+    }
+
+    override suspend fun updateEditor(id: Int, editor: Editor, contact: AddEditorContactPayload) {
     }
 }

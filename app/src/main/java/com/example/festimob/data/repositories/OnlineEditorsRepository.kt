@@ -45,6 +45,20 @@ class OnlineEditorsRepository(
     override suspend fun getEditorById(id: Int): Editor? {
         return apiService.getEditor(id).toDomain()
     }
+
+    override suspend fun updateEditor(id: Int, editor: Editor, contact: AddEditorContactPayload) {
+        val request = AddEditorRequest(
+            editeur = AddEditorPayload(
+                name = editor.name,
+                street = editor.address?.street,
+                city = editor.address?.city,
+                postalCode = editor.address?.postalCode,
+                country = editor.address?.country
+            ),
+            contact = contact
+        )
+        apiService.updateEditor(id, request)
+    }
 }
 
 private fun EditorResponse.toDomain(): Editor {

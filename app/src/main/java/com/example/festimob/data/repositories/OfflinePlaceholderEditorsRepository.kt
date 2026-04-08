@@ -1,6 +1,7 @@
 package com.example.festimob.data.repositories
 
 //import com.example.festimob.data.api.RetrofitInstance
+import com.example.festimob.data.api.models.editor.AddEditorContactPayload
 import com.example.festimob.data.local.LocalDataPlaceholder
 import com.example.festimob.data.models.EditorCreate
 import com.example.festimob.data.models.Editor
@@ -33,6 +34,9 @@ class OfflinePlaceholderEditorsRepository : EditorsRepository {
 
     override suspend fun getEditorById(id: Int): Editor? {
         return LocalDataPlaceholder.editorsPlaceholderData.firstOrNull { it.id == id }
+    }
+
+    override suspend fun updateEditor(id: Int, editor: Editor, contact: AddEditorContactPayload) {
     }
 }
 
