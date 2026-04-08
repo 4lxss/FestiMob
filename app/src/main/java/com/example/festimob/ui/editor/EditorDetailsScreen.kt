@@ -16,7 +16,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
@@ -268,9 +271,60 @@ fun ResTab() {
     //go see the website for that
 }
 
+// Other tab : image and billing address update
 @Composable
-fun OtherTab() {
-    // TODO : A screen with an image uploader (URL/Save) and the paying address section.
+fun OtherTab(
+    uiState: EditorDetailsUiState,
+    onEditClick: () -> Unit,
+    onSaveClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Section Image
+        Surface(
+            modifier = Modifier.size(120.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = CardTeal
+        ) {
+            if (uiState.editor?.imageUrl != null) {
+                // AsyncImage (Coil) recommandé ici
+                Text("Image Editor", color = TextWhite, modifier = Modifier.padding(8.dp))
+            } else {
+                Icon(Icons.Default.Image, contentDescription = null, tint = TextWhite.copy(alpha = 0.3f))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Section Adresse de facturation
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Adresse de facturation", style = MaterialTheme.typography.titleMedium, color = AccentTurquoise)
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = if (uiState.isEditingAddress) onSaveClick else onEditClick) {
+                Icon(
+                    imageVector = if (uiState.isEditingAddress) Icons.Default.Check else Icons.Default.Edit,
+                    contentDescription = null,
+                    tint = AccentTurquoise
+                )
+            }
+        }
+
+        if (uiState.isEditingAddress) {
+            // Champs de texte modifiables (OutlinedTextField stylisé)
+            AddressEditFields(uiState)
+        } else {
+            // Affichage simple
+            Text(uiState.editor?.address?.street ?: "Rue non renseignée", color = TextWhite)
+            Text("${uiState.editor?.address?.postalCode} ${uiState.editor?.address?.city}", color = TextWhite)
+        }
+    }
+}
+
+@Composable
+fun AddressEditFields(uiState: EditorDetailsUiState) {
+    TODO("Not yet implemented")
 }
 
 enum class EditorTab(val title: String) {
