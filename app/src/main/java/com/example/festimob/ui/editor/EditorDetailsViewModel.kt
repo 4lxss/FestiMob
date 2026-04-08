@@ -15,7 +15,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 data class EditorDetailsUiState(
-    val editor: Editor?
+    val editor: Editor?,
+    val isEditingAddress: Boolean = false,
+    // Edition de l'adresse
+    val editStreet: String = "",
+    val editCity: String = "",
+    val editPostalCode: String = ""
 )
 
 class EditorDetailsViewModel(
@@ -30,6 +35,19 @@ class EditorDetailsViewModel(
         }
     }
 
+    // Edit billing address
+    fun toggleEditAddress() {
+        uiState = uiState.copy(
+            isEditingAddress = !uiState.isEditingAddress,
+            editStreet = uiState.editor?.address?.street ?: "",
+            editCity = uiState.editor?.address?.city ?: "",
+            editPostalCode = uiState.editor?.address?.postalCode ?: ""
+        )
+    }
+
+    fun updateEditField(street: String, city: String, zip: String) {
+        uiState = uiState.copy(editStreet = street, editCity = city, editPostalCode = zip)
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
