@@ -2,8 +2,8 @@ package com.example.festimob.ui.zoneplan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.festimob.data.api.ZonePlanCard
-import com.example.festimob.data.api.ZonePlanRepository
+import com.example.festimob.data.api.zone.ZonePlanCard
+import com.example.festimob.data.api.zone.ZonePlanRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

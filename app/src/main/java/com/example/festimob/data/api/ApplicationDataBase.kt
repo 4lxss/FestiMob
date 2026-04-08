@@ -5,8 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.festimob.data.api.reservation.Editeur
+import com.example.festimob.data.api.reservation.Reservation
+import com.example.festimob.data.api.zone.ZoneDao
+import com.example.festimob.data.api.zone.ZoneTarif
 
-@Database(entities = [Festival::class, User::class], version = 2, exportSchema = false)
+@Database(entities = [Festival::class, User::class, ZoneTarif::class, Reservation::class, Editeur::class], version = 2, exportSchema = false)
 @TypeConverters(FestivalConverters::class)
 abstract class ApplicationDatabase : RoomDatabase() {
 

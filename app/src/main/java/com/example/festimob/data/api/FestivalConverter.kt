@@ -2,8 +2,12 @@ package com.example.festimob.data.api
 
 import androidx.room.TypeConverter
 import android.util.Log
+import com.example.festimob.data.api.reservation.JeuPlan
+import com.example.festimob.data.api.reservation.ReservationZone
+import com.example.festimob.data.api.zone.ZoneTarif
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.collections.emptyList
 
 class FestivalConverters {
     private val json = Json {
@@ -31,4 +35,19 @@ class FestivalConverters {
             emptyList()
         }
     }
+
+    @TypeConverter
+    fun fromResZoneList(value: List<ReservationZone>?): String = json.encodeToString(value ?: emptyList())
+
+    @TypeConverter
+    fun toResZoneList(value: String?): List<ReservationZone> =
+        if (value.isNullOrBlank()) emptyList() else json.decodeFromString(value)
+
+    @TypeConverter
+    fun fromJeuPlanList(value: List<JeuPlan>?): String = json.encodeToString(value ?: emptyList())
+
+    @TypeConverter
+    fun toJeuPlanList(value: String?): List<JeuPlan> =
+        if (value.isNullOrBlank()) emptyList() else json.decodeFromString(value)
+
 }

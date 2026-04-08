@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.festimob.data.api.ZonePlanCard
+import com.example.festimob.data.api.zone.ZonePlanCard
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.festival.ErrorView
 import com.example.festimob.ui.festival.LoadingView

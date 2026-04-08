@@ -15,11 +15,13 @@ import com.example.festimob.ui.auth.RegisterViewModel
 import com.example.festimob.ui.zoneplan.ZonePlanListViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import com.example.festimob.ui.zoneplan.ZonePlanListViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app
  */
 object AppViewModelProvider {
+    val UserIdKey = object : CreationExtras.Key<Int> {}
 
     val FestivalIdKey = object : CreationExtras.Key<Int> {}
     val Factory = viewModelFactory {
@@ -54,7 +56,6 @@ object AppViewModelProvider {
             )
         }
         initializer {
-            // On récupère l'ID depuis une clé personnalisée ou on le passe manuellement
             val festivalId = this[FestivalIdKey] ?: 0
             FestivalDetailsViewModel(
                 festivalId = festivalId,
@@ -64,6 +65,17 @@ object AppViewModelProvider {
         initializer<ZonePlanListViewModel> {
             ZonePlanListViewModel(
                 zonePlanRepository = festiMobApplication().container.zonePlanRepository
+            )
+        }
+        initializer {
+            val festivalId = this[FestivalIdKey] ?: 0
+            val userId = this[UserIdKey] ?: 0
+
+            com.example.festimob.ui.reservation.ReservationViewModel(
+                repository = festiMobApplication().container.reservationRepository,
+                festivalRepository = festiMobApplication().container.festivalRepository,
+                festivalId = festivalId,
+                currentUserId = userId
             )
         }
 

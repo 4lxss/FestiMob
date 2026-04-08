@@ -1,11 +1,17 @@
 package com.example.festimob.data.api
 
 import android.util.Log
+import com.example.festimob.data.api.zone.FestivalDeleteRequest
+import com.example.festimob.data.api.zone.ZoneDao
+import com.example.festimob.data.api.zone.ZoneDeleteRequest
+import com.example.festimob.data.api.zone.ZoneTarif
+import com.example.festimob.data.api.zone.ZoneTarifAddRequest
+import com.example.festimob.data.api.zone.ZoneTarifAddWrapper
 import kotlinx.coroutines.flow.Flow
 
 class OfflineFestivalRepository(
     private val festivalDao: FestivalDao,
-    private val apiService: APIService
+    private val apiService: APIService,
 ) : FestivalRepository {
     override fun getFestivals(): Flow<List<Festival>> = festivalDao.getAllFestivals()
 
@@ -170,6 +176,23 @@ class OfflineFestivalRepository(
         } catch (e: Exception) {
             Log.e("API_DEBUG", "Erreur lors de la suppression: ${e.message}")
             throw e
+        }
+    }
+
+    override suspend fun getZonesByFestival(festivalId: Int): List<ZoneTarif> {
+        // On regarde d'abord en local dans la table zone
+        val localZones = festivalDao.getZonesByFestivalId(festivalId)
+
+        return localZones.ifEmpty {
+            // Si vide, on récupère tout via l'API et on filtre
+            try {
+                val allZones = apiService.getAllZones()
+                val filtered = allZones.filter { it.id_f == festivalId }
+                festivalDao.insertAllZones(allZones)
+                filtered
+            } catch (e: Exception) {
+                emptyList()
+            }
         }
     }
 }

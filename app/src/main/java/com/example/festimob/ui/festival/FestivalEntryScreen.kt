@@ -2,6 +2,8 @@ package com.example.festimob.ui.festival
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -9,8 +11,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,26 +25,28 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.filled.Delete
 import com.example.festimob.R
-import com.example.festimob.data.api.ZoneTarif
-import com.example.festimob.ui.AppViewModelProvider
+import com.example.festimob.data.api.zone.ZoneTarif
 import com.example.festimob.ui.theme.FestiMobTheme
 import com.example.festimob.ui.utils.DatePickerField
 import kotlinx.coroutines.launch
 import java.util.Currency
 import java.util.Locale
+import kotlin.collections.forEachIndexed
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FestivalEntryScreen(
     navigateBack: () -> Unit,
@@ -51,6 +57,8 @@ fun FestivalEntryScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val uiState = viewModel.festivalUiState
+    val titleRes = if (isEditMode) R.string.edit_festival_title else R.string.add_festival_title
+
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(
@@ -70,6 +78,13 @@ fun FestivalEntryScreen(
     }
 
     Scaffold(
+        topBar = {
+            FestivalTopAppBar(
+                title = stringResource(titleRes),
+                canNavigateBack = true,
+                navigateUp = navigateBack
+            )
+        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         FestivalEntryBody(
@@ -84,7 +99,11 @@ fun FestivalEntryScreen(
                 }
             },
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(
+                    start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
+                    end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+                    top = innerPadding.calculateTopPadding()
+                )
                 .verticalScroll(rememberScrollState())
                 .fillMaxWidth(),
             onZoneAdd = { viewModel.addZone() },
@@ -125,6 +144,34 @@ fun FestivalEntryBody(
             Text(text = stringResource(R.string.save_action))
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FestivalTopAppBar(
+    title: String,
+    canNavigateBack: Boolean,
+    navigateUp: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CenterAlignedTopAppBar(
+        title = { Text(title) },
+        modifier = modifier,
+        navigationIcon = {
+            if (canNavigateBack) {
+                IconButton(onClick = navigateUp) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Retour"
+                    )
+                }
+            }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary
+        )
+    )
 }
 
 @Composable

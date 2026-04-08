@@ -1,5 +1,7 @@
 package com.example.festimob.data.api
 
+import com.example.festimob.data.api.zone.ZoneTarif
+import com.example.festimob.data.api.zone.ZoneTarifAddRequest
 import kotlinx.coroutines.flow.Flow
 
 interface FestivalRepository {
@@ -14,5 +16,7 @@ interface FestivalRepository {
     suspend fun delete(festival: Festival)
 
     suspend fun addZone(zone: ZoneTarifAddRequest, festivalId: Int) {}
+
+    suspend fun getZonesByFestival(festivalId: Int): List<ZoneTarif>
 
 }

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel,
-    onLoginSuccess: (String?) -> Unit,
+    onLoginSuccess: (String?, Int) -> Unit,
     onRegisterClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -30,7 +30,7 @@ fun LoginScreen(
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
             viewModel.consumeLoginSuccess()
-            onLoginSuccess(uiState.loggedUserRole)
+            onLoginSuccess(uiState.loggedUserRole, uiState.loggedUserId)
         }
     }
 

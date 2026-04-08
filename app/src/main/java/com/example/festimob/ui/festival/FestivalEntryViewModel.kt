@@ -10,15 +10,12 @@ import com.example.festimob.data.api.Festival
 import com.example.festimob.data.api.FestivalAddRequest
 import com.example.festimob.data.api.FestivalRepository
 import com.example.festimob.data.api.FestivalUpdateRequest
-import com.example.festimob.data.api.ZoneTarif
+import com.example.festimob.data.api.zone.ZoneTarif
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import com.example.festimob.ui.utils.formatIsoToInput
-import java.net.UnknownHostException
-import kotlin.collections.set
-import kotlin.compareTo
 
 /**
  * ViewModel to validate and insert items in the Room database.
@@ -111,13 +108,13 @@ class FestivalEntryViewModel(
 
     fun addZone() {
         val currentZones = festivalUiState.festivalDetails.zones.toMutableList()
-        currentZones.add(ZoneTarif(name = "Nouvelle Zone", nb_table = 1, price_table = 5.00, price_m2 = 1.00))
+        currentZones.add(ZoneTarif(id_zt = 0, name = "Nouvelle Zone", nb_table = 1, price_table = 5.00, price_m2 = 1.00))
         updateUiState(festivalUiState.festivalDetails.copy(zones = currentZones))
     }
 
     fun removeZone(index: Int) {
         val currentZones = festivalUiState.festivalDetails.zones.toMutableList()
-        if (currentZones.size > 1) { // On garde au moins une zone comme sur le Web
+        if (currentZones.size > 1) {
             currentZones.removeAt(index)
             updateUiState(festivalUiState.festivalDetails.copy(zones = currentZones))
         }

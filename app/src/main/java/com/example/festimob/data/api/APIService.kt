@@ -9,6 +9,18 @@ import com.example.festimob.data.api.models.admin.user.DeleteUserResponse
 import com.example.festimob.data.api.models.admin.user.UpdateUserRoleRequest
 import com.example.festimob.data.api.models.admin.user.UpdateUserRoleResponse
 import com.example.festimob.data.api.models.admin.user.UsersResponse
+import com.example.festimob.data.api.models.zoneplan.ZonePlanResponse
+import com.example.festimob.data.api.reservation.AddGamesRequest
+import com.example.festimob.data.api.reservation.Editeur
+import com.example.festimob.data.api.reservation.Log
+import com.example.festimob.data.api.reservation.LogAddRequest
+import com.example.festimob.data.api.reservation.Reservation
+import com.example.festimob.data.api.reservation.ReservationAddRequest
+import com.example.festimob.data.api.reservation.ReservationEditRequest
+import com.example.festimob.data.api.zone.FestivalDeleteRequest
+import com.example.festimob.data.api.zone.ZoneDeleteRequest
+import com.example.festimob.data.api.zone.ZoneTarif
+import com.example.festimob.data.api.zone.ZoneTarifAddWrapper
 import com.example.festimob.data.api.models.editor.AddEditorRequest
 import com.example.festimob.data.api.models.editor.AddEditorResponse
 import com.example.festimob.data.api.models.editor.EditorResponse
@@ -60,6 +72,7 @@ interface APIService {
     suspend fun updateFestival(@Body festival: FestivalUpdateRequest): retrofit2.Response<Unit>
 
     // Zones
+    // Zones
     @GET("api/zoneTarif/getzones")
     suspend fun getAllZones(): List<ZoneTarif>
 
@@ -92,5 +105,59 @@ interface APIService {
     ): UpdateUserRoleResponse
 
     @DELETE("api/admin/users/{id}")
+    suspend fun deleteUser(
+        @Path("id") userId: Int
+    ): DeleteUserResponse
+
+    // ─── Réservations ──────────────────────────────────────────
+
+    @GET("api/festivals/{id}/reservations/all")
+    suspend fun getReservations(@Path("id") festivalId: Int): List<Reservation>
+
+    @POST("api/festivals/{id}/reservations/add")
+    suspend fun addReservation(
+        @Path("id") festivalId: Int,
+        @Body reservation: ReservationAddRequest
+    ): Response<Reservation>
+
+    @PUT("api/festivals/{id}/reservation/{id_r}/edit")
+    suspend fun editReservation(
+        @Path("id") festivalId: Int,
+        @Path("id_r") reservationId: Int,
+        @Body reservation: ReservationEditRequest
+    ): Response<Unit>
+
+    @POST("api/festivals/{id}/reservation/{id_r}/delete")
+    suspend fun deleteReservation(
+        @Path("id") festivalId: Int,
+        @Path("id_r") reservationId: Int
+    ): Response<Unit>
+
+    @POST("api/festivals/{id}/reservations/{id_r}/addgames")
+    suspend fun addGames(
+        @Path("id") festivalId: Int,
+        @Path("id_r") reservationId: Int,
+        @Body body: AddGamesRequest
+    ): Response<Unit>
+
+    // ─── Logs ──────────────────────────────────────────────────
+
+    @GET("api/festivals/{id}/logs/all")
+    suspend fun getLogs(@Path("id") festivalId: Int): List<Log>
+
+    @POST("api/festivals/{id}/logs/add")
+    suspend fun addLog(
+        @Path("id") festivalId: Int,
+        @Body log: LogAddRequest
+    ): Response<Log>
+
+    // ─── Éditeurs ──────────────────────────────────────────────
+
+    @GET("api/editeurs/all")
+    suspend fun getEditeurs(): List<Editeur>
+
+    @GET("api/auth/whoami")
+    suspend fun whoAmI(): LoginResponse
+
     suspend fun deleteUser(@Path("id") userId: Int): DeleteUserResponse
 }
