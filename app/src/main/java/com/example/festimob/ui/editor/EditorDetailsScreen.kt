@@ -162,60 +162,17 @@ fun EditorDetailsScreen(
                     )
                 }
             }
-            Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))) {
-                Row() {
-                    Text(
-                        text = "Current Tab: ${tabs[selectedTabIndex].title}",
-                        color = TextWhite,
+            Box(modifier = Modifier.weight(1f)) {
+                when (tabs[selectedTabIndex]) {
+                    EditorTab.Contacts -> ContactsTab(editor)
+                    EditorTab.Games -> GamesTab()
+                    EditorTab.Reservations -> ResTab()
+                    EditorTab.Other -> OtherTab(
+                        uiState = viewModel.uiState,
+                        onEditClick = { viewModel.toggleEditAddress() },
+                        onSaveClick = { /* TODO: Appel API Update */ viewModel.toggleEditAddress() }
                     )
-                    Spacer(modifier = Modifier.weight(1f))
-                    when(tabs[selectedTabIndex]) {
-                        EditorTab.Contacts -> {
-                            Button(
-                                onClick = {
-                                    // TODO : add contact add form nav here
-                                },
-                                modifier = Modifier.size(34.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                contentPadding = PaddingValues(0.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = BrandTeal,
-                                    contentColor = TextWhite,
-                                )
-                            ) {
-                                Icon(
-                                    Icons.Default.Add,
-                                    contentDescription = "Add Contact",
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-                        EditorTab.Games -> {
-                            Button(
-                                onClick = {
-                                    // TODO : add game add form nav here
-                                },
-                                modifier = Modifier.size(34.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                contentPadding = PaddingValues(0.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = BrandTeal,
-                                    contentColor = TextWhite,
-                                )
-                            ) {
-                                Icon(
-                                    Icons.Default.Add,
-                                    contentDescription = "Add Game",
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-                        EditorTab.Reservations -> {}
-                        EditorTab.Other -> {}
-                    }
-
                 }
-
             }
             Text("Congrats on reaching Editor ${viewModel.uiState.editor?.id} Details screen", color = TextWhite)
         }
