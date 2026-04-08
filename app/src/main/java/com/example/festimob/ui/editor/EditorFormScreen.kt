@@ -33,15 +33,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.FestiMobApplication
-import com.example.festimob.data.models.Address
-import com.example.festimob.data.models.Editor
-import com.example.festimob.data.models.EditorState
-import kotlinx.coroutines.coroutineScope
+import com.example.festimob.data.api.editor.Address
+import com.example.festimob.data.api.editor.Editor
+import com.example.festimob.data.api.editor.EditorState
 import kotlinx.coroutines.launch
 
 @Composable

@@ -1,6 +1,6 @@
 package com.example.festimob.ui.viewmodels
 
-import com.example.festimob.data.api.Festival
+import com.example.festimob.data.api.festival.Festival
 
 class APIStateViewModel {
 }

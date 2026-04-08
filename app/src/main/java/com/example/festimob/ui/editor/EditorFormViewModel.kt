@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.festimob.FestiMobApplication
-import com.example.festimob.data.models.EditorCreate
-import com.example.festimob.data.repositories.EditorsRepository
+import com.example.festimob.data.api.editor.EditorCreate
+import com.example.festimob.data.api.editor.EditorsRepository
 
 data class EditorFormUiState(
     val editorDetails : EditorDetails,

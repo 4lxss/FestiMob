@@ -46,6 +46,10 @@ import java.util.Currency
 import java.util.Locale
 import kotlin.collections.forEachIndexed
 
+/**
+ * Screen for adding a new festival or editing an existing one.
+ * It manages the form state and calls the ViewModel to persist data.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FestivalEntryScreen(
@@ -59,6 +63,7 @@ fun FestivalEntryScreen(
     val uiState = viewModel.festivalUiState
     val titleRes = if (isEditMode) R.string.edit_festival_title else R.string.add_festival_title
 
+    // Handle error messages via Snackbar
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(
@@ -69,6 +74,7 @@ fun FestivalEntryScreen(
         }
     }
 
+    // Load initial data if in edit mode
     LaunchedEffect(Unit) {
         if (isEditMode && festivalId != 0) {
             viewModel.loadFestivalData(festivalId)
@@ -113,6 +119,9 @@ fun FestivalEntryScreen(
     }
 }
 
+/**
+ * Main container for the entry form and the save action button.
+ */
 @Composable
 fun FestivalEntryBody(
     festivalUiState: FestivalUiState,
@@ -146,6 +155,9 @@ fun FestivalEntryBody(
     }
 }
 
+/**
+ * Top app bar with a back button and a title.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FestivalTopAppBar(
@@ -174,6 +186,9 @@ fun FestivalTopAppBar(
     )
 }
 
+/**
+ * Input form containing all festival general information and the zone management section.
+ */
 @Composable
 fun FestivalInputForm(
     festivalDetails: FestivalDetails,
@@ -188,6 +203,7 @@ fun FestivalInputForm(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
     ) {
+        // General Information Fields
         OutlinedTextField(
             value = festivalDetails.name,
             onValueChange = { onValueChange(festivalDetails.copy(name = it)) },
@@ -229,6 +245,7 @@ fun FestivalInputForm(
             enabled = enabled,
             singleLine = true
         )
+        // Resources Fields (Tables and Chairs)
         OutlinedTextField(
             value = festivalDetails.nb_table_big,
             onValueChange = { onValueChange(festivalDetails.copy(nb_table_big = it)) },
@@ -310,6 +327,7 @@ fun FestivalInputForm(
             color = MaterialTheme.colorScheme.primary
         )
 
+        // Zone and Pricing Section
         festivalDetails.zones.forEachIndexed { index, zone ->
             ZoneItem(
                 index = index,
@@ -330,6 +348,7 @@ fun FestivalInputForm(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 private fun FestivalEntryScreenPreview() {
@@ -344,6 +363,9 @@ private fun FestivalEntryScreenPreview() {
     }
 }
 
+/**
+ * Individual card item representing a pricing zone within the festival.
+ */
 @Composable
 fun ZoneItem(
     index: Int,

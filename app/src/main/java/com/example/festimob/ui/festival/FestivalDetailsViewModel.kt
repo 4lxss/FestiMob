@@ -3,13 +3,11 @@ package com.example.festimob.ui.festival
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewModelScope
-import com.example.festimob.data.api.Festival
-import com.example.festimob.data.api.FestivalRepository
-import com.example.festimob.data.api.OfflineFestivalRepository
+import com.example.festimob.data.api.festival.FestivalRepository
+import com.example.festimob.data.api.festival.OfflineFestivalRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map

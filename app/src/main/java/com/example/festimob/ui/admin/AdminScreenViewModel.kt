@@ -2,9 +2,9 @@ package com.example.festimob.ui.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.festimob.data.api.Role
-import com.example.festimob.data.api.User
-import com.example.festimob.data.api.UserRepository
+import com.example.festimob.data.api.user.Role
+import com.example.festimob.data.api.user.User
+import com.example.festimob.data.api.user.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

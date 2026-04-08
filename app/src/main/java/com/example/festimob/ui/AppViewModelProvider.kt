@@ -77,6 +77,11 @@ object AppViewModelProvider {
                 currentUserId = userId
             )
         }
+        initializer {
+            com.example.festimob.ui.home.HomeViewModel(
+                festivalRepository = festiMobApplication().container.festivalRepository
+            )
+        }
 
     }
 }

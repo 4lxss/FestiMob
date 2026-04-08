@@ -54,9 +54,9 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.festimob.FestiMobApplication
 import com.example.festimob.R
 import com.example.festimob.data.api.RetrofitInstance
-import com.example.festimob.data.api.Role
-import com.example.festimob.data.api.hasMinimumRole
-import com.example.festimob.games.GamesScreen
+import com.example.festimob.data.api.user.Role
+import com.example.festimob.data.api.user.hasMinimumRole
+import com.example.festimob.ui.games.GamesScreen
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.admin.AdminScreen
 import com.example.festimob.ui.auth.LoginScreen
@@ -72,6 +72,8 @@ import com.example.festimob.ui.festival.FestivalDetailsScreen
 import com.example.festimob.ui.festival.FestivalDetailsViewModel
 import com.example.festimob.ui.festival.FestivalEntryScreen
 import com.example.festimob.ui.festival.FestivalListScreen
+import com.example.festimob.ui.home.HomeScreen
+import com.example.festimob.ui.home.HomeViewModel
 import com.example.festimob.ui.reservation.ReservationDetailScreen
 import com.example.festimob.ui.reservation.ReservationFormScreen
 import com.example.festimob.ui.reservation.ReservationListScreen
@@ -317,9 +319,16 @@ fun SmallNavigation() {
                 entryProvider = { key ->
                     when (key) {
                         is Destination.Accueil -> NavEntry(key) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Text("PLAYLISTS")
+                            val context = LocalContext.current.applicationContext as FestiMobApplication
+                            val extras = MutableCreationExtras().apply {
+                                set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, context)
                             }
+
+                            val homeViewModel: HomeViewModel = viewModel(
+                                factory = AppViewModelProvider.Factory,
+                                extras = extras
+                            )
+                            HomeScreen(viewModel = homeViewModel)
                         }
 
                         is Destination.EditorList -> NavEntry(key) {

@@ -21,17 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.festimob.FestiMobApplication
 import com.example.festimob.R
-import com.example.festimob.data.UserPreferencesRepository
-import com.example.festimob.data.api.Festival
-import com.example.festimob.data.api.FestivalRepository
-import com.example.festimob.data.api.OfflineFestivalRepository
+import com.example.festimob.data.api.UserPreferencesRepository
+import com.example.festimob.data.api.festival.Festival
+import com.example.festimob.data.api.festival.FestivalRepository
+import com.example.festimob.data.api.festival.OfflineFestivalRepository
 import com.example.festimob.ui.viewmodels.UiState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -41,19 +36,29 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+/**
+ * ViewModel responsible for managing the festival list, search logic, and layout preferences.
+ */
 class FestivalListViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val festivalRepository: FestivalRepository
 ) : ViewModel() {
+    // Tracks if the app is currently connected to the network
     private var _isOnline = mutableStateOf(false)
     val isOnline: State<Boolean> = _isOnline
-    private var internalState : MutableState<UiState> = mutableStateOf(UiState.Loading)
 
+    // Main UI state (Loading, Success, or Error)
+    private var internalState : MutableState<UiState> = mutableStateOf(UiState.Loading)
+    val state : State<UiState> = internalState
+
+    // Current search string typed by the user
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
 
-    val state : State<UiState> = internalState
-    // UI states access for various [FestivalListUiState]
+    /**
+     * UI state flow for layout preferences (Linear vs Grid).
+     * Uses stateIn to survive configuration changes like screen rotation.
+     */
     val uiState: StateFlow<FestivalListUiState> =
         userPreferencesRepository.isLinearLayout.map { isLinearLayout ->
             FestivalListUiState(isLinearLayout)
@@ -70,9 +75,8 @@ class FestivalListViewModel(
             }
         )
 
-    /*
-     * [selectLayout] change the layout and icons accordingly and
-     * save the selection in DataStore through [userPreferencesRepository]
+    /**
+     * Saves the user's preferred layout (List or Grid) to local storage.
      */
     fun selectLayout(isLinearLayout: Boolean) {
         viewModelScope.launch {
@@ -80,10 +84,16 @@ class FestivalListViewModel(
         }
     }
 
+    /**
+     * Updates the search query and triggers a filter on the list.
+     */
     fun onSearchQueryChange(newQuery: String) {
         _searchQuery.value = newQuery
     }
 
+    /**
+     * Computed property that filters the festival list based on the search query.
+     */
     val filteredFestivals: List<Festival>
         get() {
             val currentStats = state.value
@@ -98,11 +108,15 @@ class FestivalListViewModel(
             } else emptyList()
         }
 
+    // Initialize data observation and refresh on creation
     init {
         observeFestivals()
         refreshData()
     }
 
+    /**
+     * Collects festival data from the repository and updates the internal state.
+     */
     private fun observeFestivals() {
         viewModelScope.launch {
             festivalRepository.getFestivals().collect { festivals ->
@@ -114,6 +128,9 @@ class FestivalListViewModel(
         }
     }
 
+    /**
+     * Forces a data refresh from the remote API, typically used for pull-to-refresh.
+     */
     fun refreshData() {
         viewModelScope.launch {
             try {
@@ -131,8 +148,8 @@ class FestivalListViewModel(
     }
 }
 
-/*
- * Data class containing various UI States for Dessert Release screens
+/**
+ * Data class for layout-specific UI states like icons and accessibility descriptions.
  */
 data class FestivalListUiState(
     val isLinearLayout: Boolean = true,
@@ -142,6 +159,9 @@ data class FestivalListUiState(
         if (isLinearLayout) R.drawable.ic_grid_layout else R.drawable.ic_linear_layout
 )
 
+/**
+ * Centered loading spinner shown during data fetching.
+ */
 @Composable
 fun LoadingView() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -149,6 +169,9 @@ fun LoadingView() {
     }
 }
 
+/**
+ * Error message display when a data fetch fails.
+ */
 @Composable
 fun ErrorView(message: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -156,6 +179,9 @@ fun ErrorView(message: String) {
     }
 }
 
+/**
+ * Scrollable list of festival cards.
+ */
 @Composable
 fun FestivalList(festivals: List<Festival>, modifier : Modifier) {
     LazyColumn(
