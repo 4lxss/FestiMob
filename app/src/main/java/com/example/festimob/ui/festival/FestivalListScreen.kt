@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -51,21 +50,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.festimob.R
-import com.example.festimob.data.api.Festival
+import com.example.festimob.data.api.festival.Festival
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.theme.FestiMobTheme
 import com.example.festimob.ui.viewmodels.UiState
 import com.example.festimob.ui.utils.formatIsoNative
 
+/**
+ * Main screen for displaying the list of festivals.
+ * It handles the data refresh logic and coordinates the UI based on the ViewModel state.
+ */
 @Composable
 fun FestivalListScreen(
     navigateToFestivalEntry: () -> Unit,
     navigateToFestivalDetails: (Int) -> Unit,
     viewModel: FestivalListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    // Refresh data from the API every time the screen is first composed
     LaunchedEffect(key1 = true) {
         viewModel.refreshData()
     }
+    // Collect states from the ViewModel
     val filteredList = viewModel.filteredFestivals
     val uiState by viewModel.uiState.collectAsState()
     val state by viewModel.state
@@ -84,6 +89,10 @@ fun FestivalListScreen(
     )
 }
 
+/**
+ * Internal content of the Festival screen, including the TopBar (Search/Sync)
+ * and the Floating Action Button for adding new festivals.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FestivalListContent(
@@ -100,6 +109,7 @@ private fun FestivalListContent(
 ) {
     Scaffold(
         topBar = {
+            // Header containing Sync button, Layout toggle, and Search bar
             Column(
                 modifier = Modifier
                     .padding(8.dp)
@@ -121,7 +131,7 @@ private fun FestivalListContent(
                         )
                     }
                 }
-
+                // Search Bar implementation
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -170,6 +180,7 @@ private fun FestivalListContent(
             }
         },
         floatingActionButton = {
+            // Only show the Add button if the user is online and data loaded successfully
             if (state is UiState.Success && isOnline) {
                 FloatingActionButton(
                     onClick = onAddClick,
@@ -184,10 +195,12 @@ private fun FestivalListContent(
             }
         },
     ) { innerPadding ->
+        // Handle different loading states (Loading, Error, Success)
         when (state) {
             is UiState.Loading -> LoadingView()
             is UiState.Error -> ErrorView(message = state.message)
             is UiState.Success -> {
+                // Switch between Linear and Grid layout based on user preference
                 if (uiState.isLinearLayout) {
                     FestivalListLinearLayout(
                         festivals = festivals,
@@ -207,6 +220,9 @@ private fun FestivalListContent(
 
 }
 
+/**
+ * Standard list layout showing one festival per row.
+ */
 @Composable
 fun FestivalListLinearLayout(
     festivals: List<Festival>,
@@ -242,6 +258,9 @@ fun FestivalListLinearLayout(
     }
 }
 
+/**
+ * Grid layout showing festivals in multiple columns (3 columns).
+ */
 @Composable
 fun FestivalListGridLayout(
     festivals: List<Festival>,
@@ -280,6 +299,7 @@ fun FestivalListGridLayout(
                             .align(Alignment.CenterHorizontally),
                         textAlign = TextAlign.Center
                     )
+                    // Display festival dates inside the grid item
                     Row() {
                         Text(
                             text = formatIsoNative(festival.start_date) + "-" ,

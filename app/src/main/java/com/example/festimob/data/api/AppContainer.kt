@@ -1,9 +1,14 @@
 package com.example.festimob.data.api
 
 import android.content.Context
-import com.example.festimob.data.UserPreferencesRepository
+import com.example.festimob.data.api.UserPreferencesRepository
+import com.example.festimob.data.api.festival.FestivalRepository
+import com.example.festimob.data.api.festival.OfflineFestivalRepository
 import com.example.festimob.data.api.reservation.OfflineReservationRepository
 import com.example.festimob.data.api.reservation.ReservationRepository
+import com.example.festimob.data.api.user.OnlineUserRepository
+import com.example.festimob.data.api.user.UserRepository
+import com.example.festimob.data.api.zone.OfflineZonePlanRepository
 import com.example.festimob.data.api.zone.ZonePlanRepository
 import com.example.festimob.dataStore
 
@@ -16,7 +21,7 @@ interface AppContainer {
 }
 
 /**
- * [AppContainer] implementation that provides instance of [OfflineFestivalRepository]
+ * [AppContainer] implementation that provides instance of [com.example.festimob.data.api.festival.OfflineFestivalRepository]
  */
 class AppDataContainer(private val context: Context) : AppContainer {
     /**
@@ -43,9 +48,5 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
     override val reservationRepository: ReservationRepository by lazy {
         OfflineReservationRepository(RetrofitInstance.api)
-    }
-
-    override val zonePlanRepository: ZonePlanRepository by lazy {
-        OfflineZonePlanRepository(RetrofitInstance.api)
     }
 }

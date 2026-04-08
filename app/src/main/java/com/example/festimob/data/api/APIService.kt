@@ -1,15 +1,21 @@
 package com.example.festimob.data.api
 
-import com.example.festimob.data.api.models.admin.login.LoginRequest
-import com.example.festimob.data.api.models.admin.login.LoginResponse
-import com.example.festimob.data.api.models.admin.logout.LogoutResponse
-import com.example.festimob.data.api.models.admin.register.RegisterRequest
-import com.example.festimob.data.api.models.admin.register.RegisterResponse
-import com.example.festimob.data.api.models.admin.user.DeleteUserResponse
-import com.example.festimob.data.api.models.admin.user.UpdateUserRoleRequest
-import com.example.festimob.data.api.models.admin.user.UpdateUserRoleResponse
-import com.example.festimob.data.api.models.admin.user.UsersResponse
-import com.example.festimob.data.api.models.zoneplan.ZonePlanResponse
+import com.example.festimob.data.api.festival.FestivalAddResponse
+import com.example.festimob.data.api.festival.FestivalAddWrapper
+import com.example.festimob.data.api.festival.FestivalNetwork
+import com.example.festimob.data.api.festival.FestivalUpdateRequest
+import com.example.festimob.data.api.games.CreateJeuRequest
+import com.example.festimob.data.api.games.JeuDto
+import com.example.festimob.data.api.games.MecanismDto
+import com.example.festimob.data.api.admin.login.LoginRequest
+import com.example.festimob.data.api.admin.login.LoginResponse
+import com.example.festimob.data.api.admin.logout.LogoutResponse
+import com.example.festimob.data.api.admin.register.RegisterRequest
+import com.example.festimob.data.api.admin.register.RegisterResponse
+import com.example.festimob.data.api.admin.user.DeleteUserResponse
+import com.example.festimob.data.api.admin.user.UpdateUserRoleRequest
+import com.example.festimob.data.api.admin.user.UpdateUserRoleResponse
+import com.example.festimob.data.api.admin.user.UsersResponse
 import com.example.festimob.data.api.reservation.AddGamesRequest
 import com.example.festimob.data.api.reservation.Editeur
 import com.example.festimob.data.api.reservation.Log
@@ -21,10 +27,10 @@ import com.example.festimob.data.api.zone.FestivalDeleteRequest
 import com.example.festimob.data.api.zone.ZoneDeleteRequest
 import com.example.festimob.data.api.zone.ZoneTarif
 import com.example.festimob.data.api.zone.ZoneTarifAddWrapper
-import com.example.festimob.data.api.models.editor.AddEditorRequest
-import com.example.festimob.data.api.models.editor.AddEditorResponse
-import com.example.festimob.data.api.models.editor.EditorResponse
-import com.example.festimob.data.api.models.zoneplan.ZonePlanResponse
+import com.example.festimob.data.api.editor.AddEditorRequest
+import com.example.festimob.data.api.editor.AddEditorResponse
+import com.example.festimob.data.api.editor.EditorResponse
+import com.example.festimob.data.api.zone.ZonePlanResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -105,9 +111,7 @@ interface APIService {
     ): UpdateUserRoleResponse
 
     @DELETE("api/admin/users/{id}")
-    suspend fun deleteUser(
-        @Path("id") userId: Int
-    ): DeleteUserResponse
+    suspend fun deleteUser(@Path("id") userId: Int): DeleteUserResponse
 
     // ─── Réservations ──────────────────────────────────────────
 
@@ -159,5 +163,4 @@ interface APIService {
     @GET("api/auth/whoami")
     suspend fun whoAmI(): LoginResponse
 
-    suspend fun deleteUser(@Path("id") userId: Int): DeleteUserResponse
 }

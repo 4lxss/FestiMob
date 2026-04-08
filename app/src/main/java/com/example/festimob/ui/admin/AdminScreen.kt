@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.festimob.data.api.User
+import com.example.festimob.data.api.user.User
 import com.example.festimob.ui.AppViewModelProvider
 import com.example.festimob.ui.festival.ErrorView
 import com.example.festimob.ui.festival.LoadingView

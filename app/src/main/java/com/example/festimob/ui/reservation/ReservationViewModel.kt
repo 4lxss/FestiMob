@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.festimob.data.api.festival.FestivalRepository
 import com.example.festimob.data.api.reservation.Editeur
 import com.example.festimob.data.api.reservation.Log
 import com.example.festimob.data.api.reservation.LogAddRequest
@@ -38,7 +39,7 @@ data class ReservationUiState(
  */
 class ReservationViewModel(
     private val repository: ReservationRepository,
-    private val festivalRepository: com.example.festimob.data.api.FestivalRepository,
+    private val festivalRepository: FestivalRepository,
     private val festivalId: Int,
     private val currentUserId: Int
 ) : ViewModel() {

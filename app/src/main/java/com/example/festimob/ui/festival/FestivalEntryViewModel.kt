@@ -6,10 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.festimob.data.api.Festival
-import com.example.festimob.data.api.FestivalAddRequest
-import com.example.festimob.data.api.FestivalRepository
-import com.example.festimob.data.api.FestivalUpdateRequest
+import com.example.festimob.data.api.festival.Festival
+import com.example.festimob.data.api.festival.FestivalAddRequest
+import com.example.festimob.data.api.festival.FestivalRepository
+import com.example.festimob.data.api.festival.FestivalUpdateRequest
 import com.example.festimob.data.api.zone.ZoneTarif
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
