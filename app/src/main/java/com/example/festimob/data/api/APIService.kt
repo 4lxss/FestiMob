@@ -33,6 +33,12 @@ interface APIService {
     @GET("api/editeurs/{id}")
     suspend fun getEditor(@Path("id") id: Int): EditorResponse
 
+    @PUT("api/editeurs/{id}")
+    suspend fun updateEditor(
+        @Path("id") id: Int,
+        @Body request: AddEditorRequest
+    ): Response<Unit>
+
     // Games (used in app)
     @GET("api/jeux/all")
     suspend fun getJeux(): List<JeuDto>
