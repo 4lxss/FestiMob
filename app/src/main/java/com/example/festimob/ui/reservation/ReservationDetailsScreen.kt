@@ -40,6 +40,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+/**
+ * Main screen that displays all the details of a specific reservation.
+ * It shows information, zones, games, and contact logs.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservationDetailScreen(
@@ -48,6 +52,7 @@ fun ReservationDetailScreen(
     navigateToEdit: (Int) -> Unit,
     navigateBack: () -> Unit
 ) {
+    // Get data from the ViewModel
     val uiState = viewModel.uiState
     val reservation = uiState.reservations.find { it.id_r == reservationId }
     val logsForReservation = uiState.logs.filter { log ->
@@ -57,17 +62,18 @@ fun ReservationDetailScreen(
         uiState.editeurs.find { it.id_e == id }
     }
 
-
-
+    // State variables for showing or hiding dialogs
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
     var showAddLogDialog by remember { mutableStateOf(false) }
     var logContent by remember { mutableStateOf("") }
 
+    // If no reservation is found, go back to the previous screen
     if (reservation == null) {
         navigateBack()
         return
     }
 
+    // Dialog to confirm if the user wants to delete the reservation
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -85,6 +91,7 @@ fun ReservationDetailScreen(
         )
     }
 
+    // Dialog to type and add a new contact log
     if (showAddLogDialog) {
         AlertDialog(
             onDismissRequest = { showAddLogDialog = false },
@@ -153,7 +160,7 @@ fun ReservationDetailScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // ─── Infos générales ───────────────────────────────
+            // Section: General information (Type, State, Price)
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -177,7 +184,7 @@ fun ReservationDetailScreen(
                 }
             }
 
-            // ─── Zones ─────────────────────────────────────────
+            // Section: List of reserved areas (Zones)
             if (reservation.zones.isNotEmpty()) {
                 Card {
                     Column(
@@ -198,7 +205,7 @@ fun ReservationDetailScreen(
                 }
             }
 
-            // ─── Jeux ──────────────────────────────────────────
+            // Section: List of games included in the reservation
             if (reservation.jeux.isNotEmpty()) {
                 Card {
                     Column(
@@ -219,7 +226,7 @@ fun ReservationDetailScreen(
                 }
             }
 
-            // ─── Logs ──────────────────────────────────────────
+            // Section: History of logs/comments for this reservation
             Card {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -267,6 +274,9 @@ fun ReservationDetailScreen(
     }
 }
 
+/**
+ * A simple reusable row to display a label on the left and a value on the right.
+ */
 @Composable
 private fun DetailRow(label: String, value: String) {
     Row(

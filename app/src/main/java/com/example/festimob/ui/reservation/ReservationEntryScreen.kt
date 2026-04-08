@@ -54,14 +54,19 @@ data class ZoneFormEntry(
     var nbTable: Int
 )
 
+/**
+ * Main form screen used to either create a new reservation or edit an existing one.
+ * It manages text fields, dropdown menus, and a dynamic list of zones.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservationFormScreen(
     viewModel: ReservationViewModel,
-    zones: List<ZoneTarif>,           // zones du festival courant
-    reservationId: Int? = null,       // null = ajout, non-null = modification
+    zones: List<ZoneTarif>,
+    reservationId: Int? = null,
     navigateBack: () -> Unit
 ) {
+    // Access global data and find the specific reservation if in edit mode
     val uiState = viewModel.uiState
     val existingReservation: Reservation? = reservationId?.let { id ->
         uiState.reservations.find { it.id_r == id }
@@ -70,17 +75,21 @@ fun ReservationFormScreen(
     val isEditMode = existingReservation != null
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // ─── Champs du formulaire ──────────────────────────────────
+    // --- Form State Variables ---
+    // These variables store the current values typed or selected by the user
     var nameR by remember { mutableStateOf(existingReservation?.name_r ?: "") }
     var typeReservation by remember { mutableStateOf(existingReservation?.type_reservation ?: "Visiteur") }
     var nbChair by remember { mutableStateOf(existingReservation?.nb_chair?.toString() ?: "0") }
     var multiSocket by remember { mutableStateOf(existingReservation?.multi_socket?.toString() ?: "0") }
     var state by remember { mutableStateOf(existingReservation?.state ?: "reserved") }
     var selectedEditeurId by remember { mutableStateOf(existingReservation?.id_reservant) }
+
+    // Variables to control if dropdown menus are open or closed
     var editeurExpanded by remember { mutableStateOf(false) }
     var typeExpanded by remember { mutableStateOf(false) }
     var stateExpanded by remember { mutableStateOf(false) }
 
+    // List of zones added to this reservation (dynamic list)
     val zoneEntries = remember {
         mutableStateListOf<ZoneFormEntry>().also { list ->
             existingReservation?.zones?.forEach { rz ->
@@ -90,6 +99,7 @@ fun ReservationFormScreen(
         }
     }
 
+    // Automatically calculate the total price when zones or items change
     val totalPrice = remember(zoneEntries.toList(), multiSocket) {
         val zonesTotal = zoneEntries.sumOf { entry ->
             val zone = zones.find { it.id_zt == entry.id_zt }
@@ -102,6 +112,7 @@ fun ReservationFormScreen(
     val typeOptions = listOf("Visiteur", "Editeur", "Prestataire", "Association")
     val stateOptions = listOf("reserved" to "Réservée", "facture" to "Facturée", "paid" to "Payée")
 
+    // Show a message at the bottom of the screen if there is an error
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
             snackbarHostState.showSnackbar(it)
@@ -133,17 +144,17 @@ fun ReservationFormScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // ─── Nom ───────────────────────────────────────────
+            // --- Name Input ---
             OutlinedTextField(
                 value = nameR,
                 onValueChange = { nameR = it },
                 label = { Text("Nom du réservant") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                enabled = !isEditMode  // en édition le nom ne change pas
+                enabled = !isEditMode
             )
 
-            // ─── Type ──────────────────────────────────────────
+            // --- Type Selection (Dropdown) ---
             ExposedDropdownMenuBox(
                 expanded = typeExpanded,
                 onExpandedChange = { typeExpanded = it }
@@ -166,7 +177,7 @@ fun ReservationFormScreen(
                 }
             }
 
-            // ─── Éditeur (optionnel) ───────────────────────────
+            // --- Editor Association (Optional Dropdown) ---
             ExposedDropdownMenuBox(
                 expanded = editeurExpanded,
                 onExpandedChange = { editeurExpanded = it }
@@ -193,7 +204,7 @@ fun ReservationFormScreen(
                 }
             }
 
-            // ─── État ──────────────────────────────────────────
+            // --- Status Selection (Dropdown) ---
             ExposedDropdownMenuBox(
                 expanded = stateExpanded,
                 onExpandedChange = { stateExpanded = it }
@@ -216,7 +227,7 @@ fun ReservationFormScreen(
                 }
             }
 
-            // ─── Chaises & Multiprises ─────────────────────────
+            // --- Equipment (Chairs & Sockets) ---
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = nbChair,
@@ -236,7 +247,7 @@ fun ReservationFormScreen(
                 )
             }
 
-            // ─── Zones (seulement en mode ajout) ──────────────
+            // --- Zone Selection Section (Only visible when creating a new reservation) ---
             if (!isEditMode) {
                 Text("Zones et tables", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
 
@@ -276,7 +287,7 @@ fun ReservationFormScreen(
                     Text("Ajouter une zone")
                 }
 
-                // Total calculé
+                // Box displaying the total calculated price
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer
@@ -294,7 +305,8 @@ fun ReservationFormScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ─── Bouton sauvegarder ────────────────────────────
+            // --- Submit Button ---
+            // Check if the form is valid (required fields filled) before allowing click
             val isValid = nameR.isNotBlank() && typeReservation.isNotBlank() &&
                     (isEditMode || zoneEntries.isNotEmpty())
 
@@ -338,6 +350,10 @@ fun ReservationFormScreen(
     }
 }
 
+/**
+ * A sub-component representing one row in the zone list.
+ * Includes a dropdown for the zone name and a number field for tables.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ZoneEntryRow(
@@ -360,7 +376,7 @@ private fun ZoneEntryRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Sélecteur de zone
+            // Zone Selector Dropdown
             ExposedDropdownMenuBox(
                 expanded = zoneExpanded,
                 onExpandedChange = { zoneExpanded = it },
@@ -385,7 +401,7 @@ private fun ZoneEntryRow(
                 }
             }
 
-            // Nb tables
+            // Input field for the number of tables
             OutlinedTextField(
                 value = nbTableText,
                 onValueChange = {
@@ -398,6 +414,7 @@ private fun ZoneEntryRow(
                 singleLine = true
             )
 
+            // Button to remove this specific zone row
             IconButton(onClick = onRemove) {
                 Icon(
                     Icons.Default.Delete,

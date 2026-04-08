@@ -44,6 +44,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.festimob.data.api.reservation.Reservation
 
+/**
+ * Main screen that displays the list of all reservations for a festival.
+ * It includes search, filtering by status, and a button to add a new reservation.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservationListScreen(
@@ -52,11 +56,13 @@ fun ReservationListScreen(
     navigateToAdd: () -> Unit,
     navigateBack: () -> Unit
 ) {
+    // States for search text and the status filter
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf<String?>(null) }
 
+    // Show error messages if something goes wrong
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
             snackbarHostState.showSnackbar(it)
@@ -64,6 +70,7 @@ fun ReservationListScreen(
         }
     }
 
+    // Show success messages (e.g., after deleting or adding)
     LaunchedEffect(uiState.successMessage) {
         uiState.successMessage?.let {
             snackbarHostState.showSnackbar(it)
@@ -71,6 +78,7 @@ fun ReservationListScreen(
         }
     }
 
+    // Filter the list based on user search input and selected status chip
     val filteredReservations = uiState.reservations.filter { r ->
         val matchesSearch = searchQuery.isBlank() ||
                 r.name_r.contains(searchQuery, ignoreCase = true)
@@ -98,6 +106,7 @@ fun ReservationListScreen(
             )
         },
         floatingActionButton = {
+            // Button to open the form for a new reservation
             FloatingActionButton(onClick = navigateToAdd) {
                 Icon(Icons.Default.Add, contentDescription = "Ajouter")
             }
@@ -112,7 +121,7 @@ fun ReservationListScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Barre de recherche
+            // Search bar to find a specific reservation by name
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
@@ -123,7 +132,7 @@ fun ReservationListScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Filtres par état
+            // Row of chips to filter by status (All, Reserved, Invoiced, Paid)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf(null to "Tous", "reserved" to "Réservée", "facture" to "Facturée", "paid" to "Payée")
                     .forEach { (value, label) ->
@@ -137,6 +146,7 @@ fun ReservationListScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Logic to show a loading spinner, an empty message, or the actual list
             if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -159,8 +169,12 @@ fun ReservationListScreen(
     }
 }
 
+/**
+ * A reusable card component to show summary info for one reservation in the list.
+ */
 @Composable
 fun ReservationCard(reservation: Reservation, onClick: () -> Unit) {
+    // Determine the color and label based on the reservation status
     val stateColor = when (reservation.state) {
         "paid" -> MaterialTheme.colorScheme.tertiary
         "facture" -> MaterialTheme.colorScheme.secondary
@@ -172,6 +186,7 @@ fun ReservationCard(reservation: Reservation, onClick: () -> Unit) {
         else -> "Réservée"
     }
 
+    // Status badge inside the card
     Card(
         modifier = Modifier
             .fillMaxWidth()

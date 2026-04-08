@@ -17,6 +17,10 @@ import com.example.festimob.data.api.zone.ZoneTarif
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+/**
+ * Data class representing the UI state for reservations.
+ * It holds lists of data, loading status, and feedback messages.
+ */
 data class ReservationUiState(
     val reservations: List<Reservation> = emptyList(),
     val logs: List<Log> = emptyList(),
@@ -26,23 +30,30 @@ data class ReservationUiState(
     val successMessage: String? = null,
     val festivalZones: List<ZoneTarif> = emptyList(),
     val festivalName: String = "Chargement...",
-
 )
 
+/**
+ * ViewModel that manages the logic and data for the reservation screens.
+ * it connects the UI to the repositories and handles background tasks.
+ */
 class ReservationViewModel(
     private val repository: ReservationRepository,
     private val festivalRepository: com.example.festimob.data.api.FestivalRepository,
     private val festivalId: Int,
     private val currentUserId: Int
 ) : ViewModel() {
-
+    // Observable state that the UI reacts to
     var uiState by mutableStateOf(ReservationUiState())
         private set
 
+    // Automatically load all necessary data when the ViewModel is created
     init {
         loadAll()
     }
 
+    /**
+     * Fetches reservations, logs, editors, zones, and festival details from the server.
+     */
     fun loadAll() {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, errorMessage = null)
@@ -70,6 +81,9 @@ class ReservationViewModel(
         }
     }
 
+    /**
+     * Sends a request to create a new reservation and refreshes the list on success.
+     */
     fun addReservation(
         id_u: Int?,
         nameR: String,
@@ -109,6 +123,9 @@ class ReservationViewModel(
         }
     }
 
+    /**
+     * Updates an existing reservation with new information.
+     */
     fun editReservation(
         reservationId: Int,
         nbChair: Int,
@@ -144,6 +161,9 @@ class ReservationViewModel(
         }
     }
 
+    /**
+     * Removes a reservation from the system using its ID.
+     */
     fun deleteReservation(reservationId: Int, onSuccess: () -> Unit) {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, errorMessage = null)
@@ -161,6 +181,9 @@ class ReservationViewModel(
         }
     }
 
+    /**
+     * Adds a new contact log (comment) for a specific editor.
+     */
     fun addLog(editeurId: Int, content: String, id_f: Int, onSuccess: () -> Unit) {
         viewModelScope.launch {
             uiState = uiState.copy(errorMessage = null)
@@ -181,6 +204,9 @@ class ReservationViewModel(
         }
     }
 
+    /**
+     * Clears error and success messages from the UI state.
+     */
     fun resetMessages() {
         uiState = uiState.copy(errorMessage = null, successMessage = null)
     }
