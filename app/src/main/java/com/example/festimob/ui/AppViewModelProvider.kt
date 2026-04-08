@@ -15,7 +15,6 @@ import com.example.festimob.ui.auth.RegisterViewModel
 import com.example.festimob.ui.zoneplan.ZonePlanListViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import com.example.festimob.ui.zoneplan.ZonePlanListViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app

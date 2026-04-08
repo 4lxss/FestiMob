@@ -9,7 +9,6 @@ import com.example.festimob.data.api.models.admin.user.DeleteUserResponse
 import com.example.festimob.data.api.models.admin.user.UpdateUserRoleRequest
 import com.example.festimob.data.api.models.admin.user.UpdateUserRoleResponse
 import com.example.festimob.data.api.models.admin.user.UsersResponse
-import com.example.festimob.data.api.models.zoneplan.ZonePlanResponse
 import com.example.festimob.data.api.reservation.AddGamesRequest
 import com.example.festimob.data.api.reservation.Editeur
 import com.example.festimob.data.api.reservation.Log
@@ -105,9 +104,7 @@ interface APIService {
     ): UpdateUserRoleResponse
 
     @DELETE("api/admin/users/{id}")
-    suspend fun deleteUser(
-        @Path("id") userId: Int
-    ): DeleteUserResponse
+    suspend fun deleteUser(@Path("id") userId: Int): DeleteUserResponse
 
     // ─── Réservations ──────────────────────────────────────────
 
@@ -159,5 +156,4 @@ interface APIService {
     @GET("api/auth/whoami")
     suspend fun whoAmI(): LoginResponse
 
-    suspend fun deleteUser(@Path("id") userId: Int): DeleteUserResponse
 }

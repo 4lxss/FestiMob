@@ -44,8 +44,4 @@ class AppDataContainer(private val context: Context) : AppContainer {
     override val reservationRepository: ReservationRepository by lazy {
         OfflineReservationRepository(RetrofitInstance.api)
     }
-
-    override val zonePlanRepository: ZonePlanRepository by lazy {
-        OfflineZonePlanRepository(RetrofitInstance.api)
-    }
 }
