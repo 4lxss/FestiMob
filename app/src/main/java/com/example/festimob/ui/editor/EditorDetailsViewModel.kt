@@ -17,10 +17,10 @@ import kotlinx.coroutines.launch
 data class EditorDetailsUiState(
     val editor: Editor?,
     val isEditingAddress: Boolean = false,
-    // Edition de l'adresse
+    // Edition address
     val editStreet: String = "",
     val editCity: String = "",
-    val editPostalCode: String = ""
+    val editPostalCode: String = "",
 )
 
 class EditorDetailsViewModel(
@@ -47,6 +47,20 @@ class EditorDetailsViewModel(
 
     fun updateEditField(street: String, city: String, zip: String) {
         uiState = uiState.copy(editStreet = street, editCity = city, editPostalCode = zip)
+    }
+
+    fun saveChanges() {
+        val currentEditor = uiState.editor ?: return
+        viewModelScope.launch {
+            val updatedEditor = currentEditor.copy(
+                address = currentEditor.address?.copy(
+                    street = uiState.editStreet,
+                    city = uiState.editCity,
+                    postalCode = uiState.editPostalCode
+                )
+            )
+            uiState = uiState.copy(editor = updatedEditor, isEditingAddress = false)
+        }
     }
 
     companion object {
