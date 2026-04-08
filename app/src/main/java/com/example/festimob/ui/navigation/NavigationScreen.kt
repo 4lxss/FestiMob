@@ -80,31 +80,41 @@ import com.example.festimob.ui.zoneplan.ZonePlanListScreen
 import com.example.festimob.ui.zoneplan.ZonePlanListViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Main navigation component of the app.
+ * It manages the backstack, user roles, side drawer, and all screens.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallNavigation() {
+    // Navigation state and user session info
     val backStack = remember { mutableStateListOf<Destination>(Destination.Accueil) }
     var isLoggedIn by rememberSaveable { mutableStateOf(false) }
     var currentUserRole by rememberSaveable { mutableStateOf<String?>(null) }
     var currentUserId by rememberSaveable { mutableStateOf(0) }
     var logoutError by rememberSaveable { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
+
+    // Role-based access control logic
     val canAccessAdmin = isLoggedIn && hasMinimumRole(currentUserRole, Role.ADMIN)
     val canAccessFestivals = isLoggedIn && hasMinimumRole(currentUserRole, Role.SUPER_ORGANIZER)
     val canAccessGames = isLoggedIn && hasMinimumRole(currentUserRole, Role.VOLUNTEER)
     val canAccessEditors = isLoggedIn && hasMinimumRole(currentUserRole, Role.VOLUNTEER)
     val canAccessDrawer = isLoggedIn && hasMinimumRole(currentUserRole, Role.VOLUNTEER)
+
     val bottomNavItems = listOf(Destination.Accueil)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val currentDestination = backStack.lastOrNull() ?: Destination.Accueil
     val topBarTitle = if (currentDestination == Destination.Accueil) "FestiJeux" else currentDestination.label
 
+    // Close the menu automatically if the user loses access permissions
     LaunchedEffect(canAccessDrawer) {
         if (!canAccessDrawer && drawerState.isOpen) {
             drawerState.close()
         }
     }
 
+    // Side navigation menu containing links to different modules
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = canAccessDrawer,
@@ -113,6 +123,7 @@ fun SmallNavigation() {
                 modifier = Modifier.fillMaxWidth(2f / 3f),
                 drawerContainerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
+                // Navigation items in the drawer, filtered by user role
                 if (canAccessEditors) {
                     NavigationDrawerItem(
                         label = { Text("Editors") },
@@ -216,6 +227,7 @@ fun SmallNavigation() {
     ) {
         Scaffold(
             topBar = {
+                // Top bar with title, menu toggle, and Login/Logout button
                 CenterAlignedTopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -266,6 +278,7 @@ fun SmallNavigation() {
                 )
             },
             bottomBar = {
+                // Simple bottom navigation bar for quick access to Home
                 BottomAppBar(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary,
@@ -296,6 +309,7 @@ fun SmallNavigation() {
                 }
             }
         ) { innerPadding ->
+            // Container that displays the screen content based on the current backstack
             NavDisplay(
                 backStack = backStack,
                 onBack = { backStack.removeLastOrNull() },
@@ -603,6 +617,10 @@ fun SmallNavigation() {
     }
 }
 
+/**
+ * Sealed class defining all possible screens (destinations) in the app.
+ * Each object/data class includes a label, icon, and unique route string.
+ */
 sealed class Destination(
     val label: String,
     val icon: ImageVector,
