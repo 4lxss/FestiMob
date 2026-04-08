@@ -21,6 +21,10 @@ import com.example.festimob.data.api.zone.FestivalDeleteRequest
 import com.example.festimob.data.api.zone.ZoneDeleteRequest
 import com.example.festimob.data.api.zone.ZoneTarif
 import com.example.festimob.data.api.zone.ZoneTarifAddWrapper
+import com.example.festimob.data.api.models.editor.AddEditorRequest
+import com.example.festimob.data.api.models.editor.AddEditorResponse
+import com.example.festimob.data.api.models.editor.EditorResponse
+import com.example.festimob.data.api.models.zoneplan.ZonePlanResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -31,21 +35,41 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 
 interface APIService {
+    // Editors
+    @GET("api/editeurs/all")
+    suspend fun getEditors(): List<EditorResponse>
+
+    @POST("api/editeurs/add")
+    suspend fun addEditor(@Body request: AddEditorRequest): AddEditorResponse
+
+    @GET("api/editeurs/{id}")
+    suspend fun getEditor(@Path("id") id: Int): EditorResponse
+
+    // Games (used in app)
+    @GET("api/jeux/all")
+    suspend fun getJeux(): List<JeuDto>
+
+    @GET("api/mecanisms/all")
+    suspend fun getMecanisms(): List<MecanismDto>
+
+    @POST("api/editeurs/{editeurId}/jeux")
+    suspend fun createJeuForEditeur(
+        @Path("editeurId") editeurId: Int,
+        @Body body: CreateJeuRequest
+    ): JeuDto
+
     // Festivals
     @GET("api/festivals/all")
     suspend fun getFestivalsRaw(): List<FestivalNetwork>
 
     @POST("api/festivals/add")
-    suspend fun addFestival(@Body wrapper: FestivalAddWrapper): retrofit2.Response<FestivalAddResponse>
+    suspend fun addFestival(@Body wrapper: FestivalAddWrapper): Response<FestivalAddResponse>
 
     @POST("api/festivals/deleteone")
-    suspend fun deleteFestival(@Body body: FestivalDeleteRequest): retrofit2.Response<Unit>
+    suspend fun deleteFestival(@Body body: FestivalDeleteRequest): Response<Unit>
 
-    // Festivals + zones
     @PUT("api/festivals/update-full")
     suspend fun updateFestival(@Body festival: FestivalUpdateRequest): retrofit2.Response<Unit>
-
-
 
     // Zones
     // Zones
@@ -61,7 +85,7 @@ interface APIService {
     @GET("api/zonePlan/all")
     suspend fun getAllZonePlans(): List<ZonePlanResponse>
 
-    // Admin
+    // Admin/auth
     @GET("api/admin/users")
     suspend fun getUsers(): UsersResponse
 
@@ -135,4 +159,5 @@ interface APIService {
     @GET("api/auth/whoami")
     suspend fun whoAmI(): LoginResponse
 
+    suspend fun deleteUser(@Path("id") userId: Int): DeleteUserResponse
 }

@@ -26,11 +26,9 @@ class OfflineZonePlanRepository(
                 id = zonePlan.id_zp,
                 name = zonePlan.name,
                 zoneTarifName = associatedZoneTarifName,
-                description = zonePlan.description?.takeIf { it.isNotBlank() }
-                    ?: "Aucune description",
+                description = zonePlan.description?.takeIf { it.isNotBlank() } ?: "Aucune description",
                 gameNames = gameNames,
-                tableCount = tableCountFromZoneTarif ?: zonePlan.max_table
-                ?: tableCountFromPlacements
+                tableCount = tableCountFromZoneTarif ?: zonePlan.max_table ?: tableCountFromPlacements
             )
         }
     }

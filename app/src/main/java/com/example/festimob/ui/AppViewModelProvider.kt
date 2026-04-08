@@ -12,6 +12,7 @@ import com.example.festimob.ui.festival.FestivalListViewModel
 import com.example.festimob.ui.admin.AdminScreenViewModel
 import com.example.festimob.ui.auth.LoginViewModel
 import com.example.festimob.ui.auth.RegisterViewModel
+import com.example.festimob.ui.zoneplan.ZonePlanListViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.festimob.ui.zoneplan.ZonePlanListViewModel
